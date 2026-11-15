@@ -65,7 +65,11 @@ const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events:
    ЛОГИКА КАРТЫ И ИНТЕРФЕЙСА
    ============================================================ */
 const map = L.map('mapContainer', { center: [52.8928, 30.0272], zoom: 14 });
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO',
+  subdomains: 'abcd',
+  maxZoom: 20
+}).addTo(map);
 
 const markerMap = new Map();
 
@@ -172,6 +176,9 @@ function renderAllCards() {
   renderCards('youth', 'youthList');
   renderCards('events', 'eventsList');
 }
+
+// Запускаем фильтры сразу после загрузки
+applyFilters();
 
 // Модалка (на всякий случай)
 const modal = document.getElementById('modal');
