@@ -93,9 +93,7 @@ DATA.forEach(item => {
 
   const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
   
-  if (item.layer === 'objects' || item.layer === 'events') {
-    marker.addTo(map);
-  }
+  marker.addTo(map);
 
   markerMap.set(item.id, { marker, data: item });
 });
@@ -112,7 +110,7 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) {
+      if (!map.hasLayer(marker)) {
         marker.addTo(map);
       }
       visible++;
