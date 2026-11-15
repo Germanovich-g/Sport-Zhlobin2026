@@ -70,28 +70,28 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:
 const markerMap = new Map();
 
 DATA.forEach(item => {
-// Создаем иконку
-const icon = L.divIcon({
-className: '',
-html: <div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>,
-iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
+  // Создаем иконку
+  const icon = L.divIcon({
+    className: '',
+    html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
+    iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
+  });
+
+  // Создаем попап
+  const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
+  const linkHTML = item.link ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` : '';
+  const popupHTML = `<div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>`;
+
+  const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
+  
+  // ДОБАВЛЯЕМ НА КАРТУ ТОЛЬКО ОБЪЕКТЫ И СОБЫТИЯ
+  if (item.layer === 'objects' || item.layer === 'events') {
+    marker.addTo(map);
+  }
+
+  markerMap.set(item.id, { marker, data: item });
 });
 
-// Создаем попап
-const photoHTML = item.photo ? <img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'"> : '';
-const linkHTML = item.link ? <a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a> : '';
-const popupHTML = <div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>;
-
-const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
-
-// ДОБАВЛЯЕМ НА КАРТУ ТОЛЬКО ОБЪЕКТЫ И СОБЫТИЯ
-if (item.layer === 'objects' || item.layer === 'events') {
-marker.addTo(map);
-}
-
-markerMap.set(item.id, { marker, data: item });
-});
-// Р¤РёР»СЊС‚СЂС‹ Рё РїРѕРёСЃРє
 let currentLayer = 'all';
 let currentSearch = '';
 
@@ -104,13 +104,13 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker)) marker.addTo(map);
+      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) marker.addTo(map);
       visible++;
     } else {
       if (map.hasLayer(marker)) map.removeLayer(marker);
     }
   });
-  document.getElementById('resultHint').innerHTML = `РџРѕРєР°Р·Р°РЅРѕ С‚РѕС‡РµРє: <strong>${visible}</strong> РёР· ${DATA.length}`;
+  document.getElementById('resultHint').innerHTML = `Показано точек: <strong>${visible}</strong> из ${DATA.length}`;
   renderAllCards();
 }
 
@@ -128,13 +128,12 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
   applyFilters();
 });
 
-// Р“РµРЅРµСЂР°С†РёСЏ РєР°СЂС‚РѕС‡РµРє
 function cardHTML(item) {
   const img = item.photo ? `<img src="${item.photo}" alt="${item.title}" onerror="this.style.display='none'">` : LAYER_EMOJI[item.layer];
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
   const tag = item.link ? 'a' : 'div';
   const href = item.link ? `href="${item.link}"` : '';
-  const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Р§РёС‚Р°С‚СЊ Р±РёРѕРіСЂР°С„РёСЋ в†’</p>` : '';
+  const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
 
   return `
     <${tag} ${href} class="card" style="text-decoration: none; color: inherit;">
@@ -142,7 +141,7 @@ function cardHTML(item) {
       <div class="card-content">
         <h3>${item.title}</h3>
         <p>${item.text}</p>
-        <p class="card__meta">рџ“Ќ ${item.address}</p>
+        <p class="card__meta">📍 ${item.address}</p>
         ${readMore}
       </div>
     </${tag}>`;
@@ -178,27 +177,18 @@ function renderAllCards() {
   renderCards('events', 'eventsList');
 }
 
-// РњРѕРґР°Р»РєР° (РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№)
+applyFilters();
+
 const modal = document.getElementById('modal');
 document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => modal.classList.remove('open')));
-function openModal(item) {
-  document.getElementById('modalPhoto').innerHTML = item.photo ? `<img src="${item.photo}">` : LAYER_EMOJI[item.layer];
-  document.getElementById('modalBadge').textContent = item.layer;
-  document.getElementById('modalTitle').textContent = item.title;
-  document.getElementById('modalText').textContent = item.text;
-  document.getElementById('modalMeta').textContent = item.address;
-  modal.classList.add('open');
-}
 
-// РўРµРјР°
 const themeToggle = document.getElementById('themeToggle');
 if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
-themeToggle.addEventListener('click', () => {
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
-  themeToggle.textContent = isDark ? 'рџЊ™' : 'вЂпёЏ';
-});
-
-// РЎС‚Р°СЂС‚
-renderAllCards();
+if(themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      themeToggle.textContent = isDark ? '🌙' : '☀️';
+    });
+}
