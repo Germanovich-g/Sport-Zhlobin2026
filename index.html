@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Жлобин — кузница спортивных рекордов</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Шапка -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="logo">
+        <span class="logo__badge">🏅</span>
+        <span>Жлобин<b>·</b>Спорт</span>
+      </a>
+      <nav class="nav">
+        <a href="#map">Карта</a>
+        <a href="#objects">Объекты</a>
+        <a href="#people">Легенды</a>
+        <a href="#youth">Молодежь</a>
+        <a href="#events">События</a>
+      </nav>
+      <button class="icon-btn" id="themeToggle">🌙</button>
+    </div>
+  </header>
+
+  <!-- Главный экран -->
+  <section class="hero" id="top">
+    <div class="container hero-content">
+      <span class="hero__pill">🚀 Интерактивный краеведческий проект</span>
+      <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
+      <p class="hero__lead">Арены, олимпийские чемпионы и крупные турниры города — на одной живой карте.</p>
+      <div class="hero__actions">
+        <a href="#map" class="btn">Открыть карту</a>
+        <a href="#people" class="btn btn--ghost">Спортсмены</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Карта -->
+  <section class="section" id="map">
+    <div class="container">
+      <h2 class="section__title">Карта города</h2>
+      <div class="map-toolbar">
+        <div class="search">
+          <input type="search" id="searchInput" placeholder="Поиск объекта или спортсмена...">
+        </div>
+        <div class="filters">
+          <button class="chip is-active" data-layer="all">✨ Все</button>
+          <button class="chip" data-layer="objects">🏟️ Объекты</button>
+          <button class="chip chip--legends" data-layer="legends">🏆 Легенды</button>
+          <button class="chip chip--youth" data-layer="youth">⭐ Молодежь</button>
+          <button class="chip" data-layer="events">🎉 События</button>
+        </div>
+      </div>
+      <div id="mapContainer" class="map-container"></div>
+      <p class="map__hint" id="resultHint">Показано точек: <strong>0</strong></p>
+    </div>
+  </section>
+
+  <!-- Объекты -->
+  <section class="section section--alt" id="objects">
+    <div class="container">
+      <h2 class="section__title">Спортивные объекты</h2>
+      <div class="cards" id="objectsList"></div>
+    </div>
+  </section>
+
+  <!-- Легенды -->
+  <section class="section" id="people">
+    <div class="container">
+      <h2 class="section__title">Гордость Жлобина (Легенды)</h2>
+      <div class="cards" id="legendsList"></div>
+    </div>
+  </section>
+
+  <!-- Молодежь -->
+  <section class="section section--alt" id="youth">
+    <div class="container">
+      <h2 class="section__title">Молодое поколение</h2>
+      <div class="cards" id="youthList"></div>
+    </div>
+  </section>
+
+  <!-- События -->
+  <section class="section" id="events">
+    <div class="container">
+      <h2 class="section__title">События и история</h2>
+      <div class="cards" id="eventsList"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 «Жлобин — кузница спортивных рекордов»</p>
+    </div>
+  </footer>
+
+  <!-- Модальное окно -->
+  <div class="modal" id="modal">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__box">
+      <button class="modal__close" data-close>×</button>
+      <div class="modal__photo" id="modalPhoto"></div>
+      <span class="modal__badge" id="modalBadge"></span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+      <p class="modal__meta" id="modalMeta"></p>
+      <a href="#" id="modalLink" class="btn" style="display:none; margin-top:15px; width:100%; text-align:center;">Читать биографию</a>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

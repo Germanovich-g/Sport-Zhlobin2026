@@ -1,0 +1,119 @@
+/* ============================================================
+   СТАЛЬНОЙ СПОРТИВНЫЙ МОДЕРН (Steel Sport Modern)
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', system-ui, sans-serif; }
+
+:root {
+  --bg: #f4f7f9;
+  --bg-alt: #e2e8f0;
+  --card: #ffffff;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --primary: #f97316; /* Оранжевый */
+  --primary-hover: #ea580c;
+  --secondary: #0f172a; /* Темно-синий */
+  --accent: #06b6d4; /* Бирюзовый */
+  --border: #cbd5e1;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-alt: #1e293b;
+  --card: #1e293b;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+body { background-color: var(--bg); color: var(--text); line-height: 1.6; transition: 0.3s; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+a { text-decoration: none; color: inherit; }
+
+/* --- Шапка --- */
+.header { background: var(--secondary); color: #fff; padding: 15px 0; position: sticky; top: 0; z-index: 1000; }
+.header__inner { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 10px; }
+.logo__badge { background: var(--primary); padding: 5px 10px; border-radius: 8px; }
+.nav { display: flex; gap: 20px; }
+.nav a { font-weight: 700; font-size: 0.9rem; text-transform: uppercase; transition: 0.2s; }
+.nav a:hover { color: var(--primary); }
+.icon-btn { background: var(--bg-alt); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
+
+/* --- Главный экран --- */
+.hero {
+  height: 80vh; min-height: 600px; display: flex; align-items: center;
+  background: linear-gradient(to right, rgba(15,23,42,0.9), rgba(15,23,42,0.4)), url('hero-bg.jpg') center/cover no-repeat;
+  background-color: var(--secondary); color: #fff;
+}
+.hero-content { max-width: 700px; }
+.hero__pill { display: inline-block; padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 20px; backdrop-filter: blur(5px); }
+.hero__title { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; }
+.hero__title span { color: var(--primary); }
+.hero__lead { font-size: 1.2rem; margin-bottom: 30px; color: #e2e8f0; }
+.btn { display: inline-block; padding: 15px 35px; background: var(--primary); color: #fff; font-weight: 800; border-radius: 50px; text-transform: uppercase; transition: 0.3s; border: 2px solid var(--primary); cursor: pointer; }
+.btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
+.btn--ghost { background: transparent; border-color: #fff; margin-left: 10px; }
+.btn--ghost:hover { background: #fff; color: var(--secondary); box-shadow: none; }
+
+/* --- Секции --- */
+.section { padding: 80px 0; }
+.section--alt { background: var(--bg-alt); }
+.section__title { font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 40px; text-transform: uppercase; }
+.section__title::after { content: ""; display: block; width: 60px; height: 4px; background: var(--primary); margin: 15px auto 0; border-radius: 2px; }
+
+/* --- Карта --- */
+.map-toolbar { display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+.search input { padding: 12px 20px; border-radius: 50px; border: 1px solid var(--border); width: 300px; font-size: 1rem; background: var(--card); color: var(--text); }
+.filters { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: 700; cursor: pointer; transition: 0.2s; }
+.chip.is-active { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+.chip--legends.is-active { background: #ef476f; border-color: #ef476f; }
+.chip--youth.is-active { background: #facc15; border-color: #facc15; color: var(--secondary); }
+.map-container { height: 500px; border-radius: var(--radius); border: 5px solid var(--card); box-shadow: var(--shadow); z-index: 1; }
+.map__hint { margin-top: 15px; font-weight: 600; color: var(--text-muted); }
+
+/* --- Карточки --- */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+.card { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; display: flex; flex-direction: column; border-bottom: 4px solid var(--primary); }
+.card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+.card__img { height: 200px; background: var(--bg-alt); display: flex; justify-content: center; align-items: center; font-size: 3rem; color: var(--text-muted); overflow: hidden; }
+.card__img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.card:hover .card__img img { transform: scale(1.08); }
+.card__img--people img { object-position: top center; } /* Чтобы лица не обрезались */
+.card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+.card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+.card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 15px; flex-grow: 1; }
+.card__meta { font-weight: 800; color: var(--primary); font-size: 0.85rem; text-transform: uppercase; }
+
+/* --- Модальное окно --- */
+.modal { position: fixed; inset: 0; display: none; z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+.modal.open { display: flex; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+.modal__box { position: relative; background: var(--card); padding: 30px; border-radius: var(--radius); max-width: 500px; width: 100%; box-shadow: var(--shadow); }
+.modal__close { position: absolute; top: 15px; right: 15px; background: var(--bg-alt); border: none; font-size: 1.5rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+.modal__photo { width: 100%; height: 200px; background: var(--bg-alt); border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; font-size: 4rem; overflow: hidden; }
+.modal__photo img { width: 100%; height: 100%; object-fit: cover; }
+.modal__badge { color: var(--primary); font-weight: 800; text-transform: uppercase; font-size: 0.8rem; }
+.modal__box h3 { font-size: 1.5rem; margin: 10px 0; }
+.modal__meta { margin-top: 15px; font-weight: 700; color: var(--text-muted); }
+
+.footer { background: var(--secondary); color: #fff; text-align: center; padding: 30px 0; margin-top: 40px; }
+
+/* --- Метки Leaflet --- */
+.pin-marker { width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.pin-marker span { transform: rotate(45deg); font-size: 0.8rem; }
+.pin-marker--objects { background: #3b82f6; }
+.pin-marker--legends { background: #ef476f; }
+.pin-marker--youth { background: #facc15; }
+.pin-marker--events { background: #8b5cf6; }
+
+@media (max-width: 768px) {
+  .header__inner { flex-direction: column; gap: 15px; }
+  .nav { display: none; }
+  .hero__title { font-size: 2.5rem; }
+  .map-toolbar { flex-direction: column; }
+  .search input { width: 100%; }
+}
