@@ -70,22 +70,27 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:
 const markerMap = new Map();
 
 DATA.forEach(item => {
-  // РЎРѕР·РґР°РµРј РёРєРѕРЅРєСѓ
-  const icon = L.divIcon({
-    className: '',
-    html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
-    iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
-  });
-
-  // РЎРѕР·РґР°РµРј РїРѕРїР°Рї
-  const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
-  const linkHTML = item.link ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Р§РёС‚Р°С‚СЊ Р±РёРѕРіСЂР°С„РёСЋ</a>` : '';
-  const popupHTML = `<div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>`;
-
-  const marker = L.marker([item.lat, item.lng], { icon }).addTo(map).bindPopup(popupHTML);
-  markerMap.set(item.id, { marker, data: item });
+// Создаем иконку
+const icon = L.divIcon({
+className: '',
+html: <div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>,
+iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
 });
 
+// Создаем попап
+const photoHTML = item.photo ? <img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'"> : '';
+const linkHTML = item.link ? <a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a> : '';
+const popupHTML = <div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>;
+
+const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
+
+// ДОБАВЛЯЕМ НА КАРТУ ТОЛЬКО ОБЪЕКТЫ И СОБЫТИЯ
+if (item.layer === 'objects' || item.layer === 'events') {
+marker.addTo(map);
+}
+
+markerMap.set(item.id, { marker, data: item });
+});
 // Р¤РёР»СЊС‚СЂС‹ Рё РїРѕРёСЃРє
 let currentLayer = 'all';
 let currentSearch = '';
