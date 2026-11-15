@@ -65,7 +65,10 @@ const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events:
    ЛОГИКА КАРТЫ И ИНТЕРФЕЙСА
    ============================================================ */
 const map = L.map('mapContainer', { center: [52.8928, 30.0272], zoom: 14 });
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+  maxZoom: 16
+}).addTo(map);
   attribution: '&copy; OpenStreetMap &copy; CARTO',
   subdomains: 'abcd',
   maxZoom: 20
