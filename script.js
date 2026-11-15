@@ -112,12 +112,17 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) marker.addTo(map);
+      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) {
+        marker.addTo(map);
+      }
       visible++;
     } else {
-      if (map.hasLayer(marker)) map.removeLayer(marker);
+      if (map.hasLayer(marker)) {
+        map.removeLayer(marker);
+      }
     }
   });
+  
   document.getElementById('resultHint').innerHTML = `Показано точек: <strong>${visible}</strong> из ${DATA.length}`;
   renderAllCards();
 }
