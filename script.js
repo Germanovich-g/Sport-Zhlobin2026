@@ -1,10 +1,10 @@
 const DATA = [
   // ---------- ОБЪЕКТЫ ----------
-  { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'led.jpg' },
-  { id:'dvor', layer:'objects', title:'Дворец игровых видов спорта', address:'ул. Карла Маркса, 3/1', text:'Комплекс на 1500 мест.', lat:52.8920, lng:30.0280, photo:'dvor.jpg' },
-  { id:'pool', layer:'objects', title:'Плавательный бассейн', address:'ул. Карла Маркса, 3/1', text:'Арена с 50-метровыми дорожками.', lat:52.8915, lng:30.0270, photo:'pool.jpg' },
-  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'stadium.jpg' },
-  { id:'sdyushor', layer:'objects', title:'Жлобинская районная СДЮШОР', address:'ул. Первомайская, 1А', text:'Кузница будущих чемпионов.', lat:52.8940, lng:30.0250, photo:'sdyushor.jpg' },
+  { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'' },
+  { id:'dvor', layer:'objects', title:'Дворец игровых видов спорта', address:'ул. Карла Маркса, 3/1', text:'Комплекс на 1500 мест.', lat:52.8920, lng:30.0280, photo:'' },
+  { id:'pool', layer:'objects', title:'Плавательный бассейн', address:'ул. Карла Маркса, 3/1', text:'Арена с 50-метровыми дорожками.', lat:52.8915, lng:30.0270, photo:'' },
+  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'' },
+  { id:'sdyushor', layer:'objects', title:'Жлобинская районная СДЮШОР', address:'ул. Первомайская, 1А', text:'Кузница будущих чемпионов.', lat:52.8940, lng:30.0250, photo:'' },
 
   // ---------- ЛЕГЕНДЫ ----------
   { id:'rudenkov', layer:'legends', title:'Василий Руденков', address:'Олимпийский чемпион 1960', text:'Олимпийский чемпион по метанию молота.', lat:52.8935, lng:30.0310, photo:'', link: 'rudenkov.html' },
@@ -29,30 +29,22 @@ const DATA = [
   { id:'novikov', layer:'youth', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'', link: 'novikov.html' },
 
   // ---------- СОБЫТИЯ ----------
-  { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'cis-games.jpg' },
-  { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg' },
-  { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg' }
+  { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'' },
+  { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'' },
+  { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'' }
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
-
-/* ============================================================
-   ЛОГИКА КАРТЫ И ИНТЕРФЕЙСА
-   ============================================================ */
 
 const map = L.map('mapContainer', { 
   center: [52.8928, 30.0272], 
   zoom: 14,
   minZoom: 12, 
-  maxBounds: [
-    [52.8500, 29.9500], 
-    [52.9300, 30.1000]  
-  ]
+  maxBounds: [ [52.8500, 29.9500], [52.9300, 30.1000] ]
 });
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap',
-  maxZoom: 19
+  attribution: '&copy; OpenStreetMap', maxZoom: 19
 }).addTo(map);
 
 const markerMap = new Map();
@@ -89,14 +81,10 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) {
-        marker.addTo(map);
-      }
+      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) marker.addTo(map);
       visible++;
     } else {
-      if (map.hasLayer(marker)) {
-        map.removeLayer(marker);
-      }
+      if (map.hasLayer(marker)) map.removeLayer(marker);
     }
   });
   
