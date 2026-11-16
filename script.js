@@ -26,6 +26,10 @@ const DATA = [
   { id:'yurkovets', layer:'youth', title:'Иван Юрковец', address:'Лёгкая атлетика', text:'Юный спринтер.', lat:52.8960, lng:30.0260, photo:'', link: 'yurkovets.html' },
   { id:'kuprienko', layer:'youth', title:'Ульян Куприенко', address:'Самбо', text:'Юный самбист.', lat:52.8970, lng:30.0280, photo:'', link: 'kuprienko.html' },
   { id:'tishkova', layer:'youth', title:'Надежда Тишкова', address:'Волейбол', text:'Капитан «Искры».', lat:52.8935, lng:30.0325, photo:'', link: 'tishkova.html' },
+  { id:'pogranovskaya', layer:'youth', title:'Альбина Пограновская', address:'Гребля', text:'Серебряный призёр соревнований.', lat:52.8875, lng:30.0255, photo:'', link: 'pogranovskaya.html' },
+  { id:'malyshev', layer:'youth', title:'Даниил Малышев', address:'Биатлон', text:'Победитель масс-старта.', lat:52.8885, lng:30.0320, photo:'', link: 'malyshev.html' },
+  { id:'vashchenko', layer:'youth', title:'Владислав Ващенко', address:'Единоборства', text:'Призёр международных турниров.', lat:52.8945, lng:30.0225, photo:'', link: 'vashchenko.html' },
+  { id:'malashchenko', layer:'youth', title:'Малащенко (Имя)', address:'Спорт', text:'Юный талант.', lat:52.8915, lng:30.0315, photo:'', link: 'malashchenko.html' }, 
   { id:'novikov', layer:'youth', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'', link: 'novikov.html' },
 
   // ---------- СОБЫТИЯ ----------
