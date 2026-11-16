@@ -25,31 +25,20 @@ const DATA = [
   { id:'hodorenko', layer:'youth', title:'Арина Ходоренко', address:'Биатлон', text:'Золото на Кубке БФБ.', lat:52.8880, lng:30.0310, photo:'hodorenko.jpeg', link: 'hodorenko.html' },
   { id:'malyshev', layer:'youth', title:'Даниил Малышев', address:'Биатлон', text:'Золото в масс-старте.', lat:52.8885, lng:30.0320, photo:'malyshev.jpeg', link: 'malyshev.html' },
   { id:'kondratieva', layer:'youth', title:'Ксения Кондратьева', address:'Биатлон', text:'Победительница эстафеты.', lat:52.8885, lng:30.0330, photo:'kondratieva.jpeg', link: 'kondratieva.html' },
-  { id:'melnik', layer:'youth', title:'Виктория Мельник', address:'Биатлон', text:'Участница первенств.', lat:52.8882, lng:30.0340, photo:'melnik.jpeg', link: 'melnik.html' },
+  
 
   { id:'yurkovets', layer:'youth', title:'Иван Юрковец', address:'Лёгкая атлетика', text:'Золото на 60 м.', lat:52.8960, lng:30.0260, photo:'yurkovets.jpeg', link: 'yurkovets.html' },
-  { id:'danchenko', layer:'youth', title:'Валерия Данченко', address:'Лёгкая атлетика', text:'Успешно выступила на первенстве.', lat:52.8965, lng:30.0265, photo:'danchenko.jpeg', link: 'danchenko.html' },
-  { id:'kikinev', layer:'youth', title:'Никита Кикинев', address:'Лёгкая атлетика', text:'Чемпион республики.', lat:52.8970, lng:30.0270, photo:'kikinev.jpeg', link: 'kikinev.html' },
-  { id:'popov', layer:'youth', title:'Иван Попов', address:'Лёгкая атлетика', text:'Чемпион республики.', lat:52.8975, lng:30.0275, photo:'popov.jpeg', link: 'popov.html' },
+  
+  
+  
   { id:'kuprienko', layer:'youth', title:'Ульян Куприенко', address:'Лёгкая атлетика', text:'Бронзовый призёр.', lat:52.8970, lng:30.0280, photo:'kuprienko.jpeg', link: 'kuprienko.html' },
-  { id:'nikitina', layer:'youth', title:'Валерия Никитина', address:'Лёгкая атлетика', text:'Бронзовый призёр.', lat:52.8965, lng:30.0285, photo:'nikitina.jpeg', link: 'nikitina.html' },
-
-  { id:'volleyball', layer:'youth', title:'Волейболисты ЦОР', address:'Волейбол', text:'Многократные победители.', lat:52.8930, lng:30.0330, photo:'volleyball.jpg' },
-  { id:'football', layer:'youth', title:'Футбольные команды ДЮСШ', address:'Футбол', text:'Победители турниров.', lat:52.8890, lng:30.0180, photo:'football.jpg' },
+ 
+  
   { id:'bondarenko', layer:'youth', title:'Маргарита Бондаренко', address:'Гребля', text:'Серебряный призёр.', lat:52.8870, lng:30.0250, photo:'bondarenko.jpeg', link: 'bondarenko.html' },
   { id:'pogranovskaya', layer:'youth', title:'Альбина Пограновская', address:'Гребля', text:'Серебряный призёр.', lat:52.8875, lng:30.0255, photo:'pogranovskaya.jpeg', link: 'pogranovskaya.html' },
   { id:'tishkova', layer:'youth', title:'Надежда Тишкова', address:'Волейбол', text:'Лидер «Искры».', lat:52.8935, lng:30.0325, photo:'tishkova.jpeg', link: 'tishkova.html' },
 
-  { id:'isakovich_a', layer:'youth', title:'Артём Исакович', address:'Борьба', text:'Победитель турнира.', lat:52.8955, lng:30.0230, photo:'isakovich_a.jpeg', link: 'isakovich_a.html' },
-  { id:'shevtsov', layer:'youth', title:'Тимофей Шевцов', address:'Борьба', text:'Победитель турнира.', lat:52.8960, lng:30.0235, photo:'shevtsov.jpeg', link: 'shevtsov.html' },
-  { id:'baklanov', layer:'youth', title:'Максим Бакланов', address:'Борьба', text:'Победитель турнира.', lat:52.8965, lng:30.0240, photo:'baklanov.jpeg', link: 'baklanov.html' },
-  { id:'isakovich_i', layer:'youth', title:'Илья Исакович', address:'Борьба', text:'Серебряный призёр.', lat:52.8970, lng:30.0245, photo:'isakovich_i.jpeg', link: 'isakovich_i.html' },
-  { id:'kirgizov', layer:'youth', title:'Алексей Киргизов', address:'Единоборства', text:'Клуб «Виктория».', lat:52.8960, lng:30.0310, photo:'kirgizov.jpeg', link: 'kirgizov.html' },
-  { id:'gavrilova', layer:'youth', title:'Виктория Гаврилова', address:'Единоборства', text:'Клуб «Виктория».', lat:52.8965, lng:30.0315, photo:'gavrilova.jpeg', link: 'gavrilova.html' },
-  { id:'mentov', layer:'youth', title:'Никита Ментов', address:'Единоборства', text:'Клуб «Виктория».', lat:52.8970, lng:30.0320, photo:'mentov.jpeg', link: 'mentov.html' },
-  { id:'shchegolev', layer:'youth', title:'Михаил Щеголев', address:'Единоборства', text:'Спортшкола «Юниор».', lat:52.8945, lng:30.0220, photo:'shchegolev.jpeg', link: 'shchegolev.html' },
-  { id:'hrapov', layer:'youth', title:'Игорь Храпов', address:'Единоборства', text:'Спортшкола «Юниор».', lat:52.8950, lng:30.0225, photo:'hrapov.jpeg', link: 'hrapov.html' },
-  { id:'shevchenko', layer:'youth', title:'Владислав Шевченко', address:'Единоборства', text:'Спортшкола «Юниор».', lat:52.8955, lng:30.0225, photo:'shevchenko.jpeg', link: 'shevchenko.html' },
+  
 
   // ---------- СОБЫТИЯ ----------
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'cis-games.jpg' },
