@@ -62,9 +62,7 @@ DATA.forEach(item => {
 
   const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
   
-  if (item.layer === 'objects' || item.layer === 'events') {
-    marker.addTo(map);
-  }
+  marker.addTo(map); // Теперь ВСЕ метки добавляются на карту
 
   markerMap.set(item.id, { marker, data: item });
 });
@@ -81,7 +79,7 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker) marker.addTo(map);
+      if (!map.hasLayer(marker)) marker.addTo(map);
       visible++;
     } else {
       if (map.hasLayer(marker)) map.removeLayer(marker);
