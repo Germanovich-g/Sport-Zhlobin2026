@@ -1,48 +1,36 @@
-/* ============================================================
-   ДАННЫЕ ДЛЯ САЙТА
-   ============================================================ */
-
 const DATA = [
   // ---------- ОБЪЕКТЫ ----------
-  { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'ledd.jpg' },
-  { id:'dvor', layer:'objects', title:'Дворец игровых видов спорта', address:'ул. Карла Маркса, 3/1', text:'Комплекс на 1500 мест.', lat:52.8920, lng:30.0280, photo:'led.jpg' },
-  { id:'pool', layer:'objects', title:'Плавательный бассейн', address:'ул. Карла Маркса, 3/1', text:'Арена с 50-метровыми дорожками.', lat:52.8915, lng:30.0270, photo:'bas.jpg' },
-  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'stadium.jpeg' },
+  { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'led.jpg' },
+  { id:'dvor', layer:'objects', title:'Дворец игровых видов спорта', address:'ул. Карла Маркса, 3/1', text:'Комплекс на 1500 мест.', lat:52.8920, lng:30.0280, photo:'dvor.jpg' },
+  { id:'pool', layer:'objects', title:'Плавательный бассейн', address:'ул. Карла Маркса, 3/1', text:'Арена с 50-метровыми дорожками.', lat:52.8915, lng:30.0270, photo:'pool.jpg' },
+  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'stadium.jpg' },
   { id:'sdyushor', layer:'objects', title:'Жлобинская районная СДЮШОР', address:'ул. Первомайская, 1А', text:'Кузница будущих чемпионов.', lat:52.8940, lng:30.0250, photo:'sdyushor.jpg' },
 
   // ---------- ЛЕГЕНДЫ ----------
-  { id:'rudenkov', layer:'legends', title:'Василий Руденков', address:'Олимпийский чемпион 1960', text:'Олимпийский чемпион по метанию молота.', lat:52.8935, lng:30.0310, photo:'rudenkov.jpg', link: 'rudenkov.html' },
-  { id:'lovetsky', layer:'legends', title:'Владимир Ловецкий', address:'Серебро Олимпиады-1972', text:'Серебряный призёр в эстафете 4×100 м.', lat:52.8945, lng:30.0320, photo:'lovec.jpg', link: 'lovetsky.html' },
-  { id:'kirov', layer:'legends', title:'Николай Киров', address:'Бронза Олимпиады-1980', text:'Бронзовый призёр в беге на 800 м.', lat:52.8950, lng:30.0290, photo:'kirov2.jpg', link: 'kirov.html' },
+  { id:'rudenkov', layer:'legends', title:'Василий Руденков', address:'Олимпийский чемпион 1960', text:'Олимпийский чемпион по метанию молота.', lat:52.8935, lng:30.0310, photo:'', link: 'rudenkov.html' },
+  { id:'lovetsky', layer:'legends', title:'Владимир Ловецкий', address:'Серебро Олимпиады-1972', text:'Серебряный призёр в эстафете 4×100 м.', lat:52.8945, lng:30.0320, photo:'', link: 'lovetsky.html' },
+  { id:'kirov', layer:'legends', title:'Николай Киров', address:'Бронза Олимпиады-1980', text:'Бронзовый призёр в беге на 800 м.', lat:52.8950, lng:30.0290, photo:'', link: 'kirov.html' },
+  { id:'kikinov', layer:'legends', title:'Александр Кикинёв', address:'Чемпион Европы', text:'Один из самых титулованных борцов.', lat:52.8940, lng:30.0300, photo:'', link: 'kikinov.html' },
+  { id:'dybinin', layer:'legends', title:'Юрий Дубинин', address:'Участник Олимпиады-2008', text:'Мастер спорта международного класса.', lat:52.8930, lng:30.0310, photo:'', link: 'dybinin.html' },
+  { id:'petrenko', layer:'legends', title:'Игорь Петренко', address:'Участник двух Олимпиад', text:'Одна из ключевых фигур жлобинской борьбы.', lat:52.8935, lng:30.0320, photo:'', link: 'petrenko.html' },
+  { id:'narmania', layer:'legends', title:'Шота Нармания', address:'Мастер спорта', text:'Капитан милиции, погибший при исполнении.', lat:52.8945, lng:30.0330, photo:'', link: 'narmania.html' },
 
   // ---------- МОЛОДЕЖЬ ----------
-  { id:'levshunov', layer:'youth', title:'Артём Левшунов', address:'Драфт НХЛ — 2-й номер', text:'Играет за «Чикаго».', lat:52.8900, lng:30.0270, photo:'levshun.jpg', link: 'levshunov.html' },
-  { id:'pinchuk', layer:'youth', title:'Виталий Пинчук', address:'Сборная Беларуси · НХЛ', text:'Нападающий «Нэшвилл».', lat:52.8910, lng:30.0300, photo:'pinchuk.jpeg', link: 'pinchuk.html' },
-  { id:'borikov', layer:'youth', title:'Егор Бориков', address:'Контракт с «Ютой» (НХЛ)', text:'Молодой талант.', lat:52.8895, lng:30.0250, photo:'borikov.jpeg', link: 'borikov.html' },
-  { id:'metallurg', layer:'youth', title:'ХК «Металлург-Жлобин»', address:'4-кратный чемпион', text:'Чемпион Беларуси.', lat:52.8928, lng:30.0285, photo:'hkk.jpeg' },
-  { id:'iskra', layer:'youth', title:'ВК «Искра»', address:'Чемпион 2023/2024', text:'Чемпион РБ по волейболу.', lat:52.8922, lng:30.0282, photo:'iskra.jpg' },
-  
-  { id:'hodorenko', layer:'youth', title:'Арина Ходоренко', address:'Биатлон', text:'Золото на Кубке БФБ.', lat:52.8880, lng:30.0310, photo:'hodorenko.jpeg', link: 'hodorenko.html' },
-  { id:'malyshev', layer:'youth', title:'Даниил Малышев', address:'Биатлон', text:'Золото в масс-старте.', lat:52.8885, lng:30.0320, photo:'malyshev.jpeg', link: 'malyshev.html' },
-  { id:'kondratieva', layer:'youth', title:'Ксения Кондратьева', address:'Биатлон', text:'Победительница эстафеты.', lat:52.8885, lng:30.0330, photo:'kondratieva.jpeg', link: 'kondratieva.html' },
-  
-
-  { id:'yurkovets', layer:'youth', title:'Иван Юрковец', address:'Лёгкая атлетика', text:'Золото на 60 м.', lat:52.8960, lng:30.0260, photo:'yurkovets.jpeg', link: 'yurkovets.html' },
-  
-  
-  
-  { id:'kuprienko', layer:'youth', title:'Ульян Куприенко', address:'Лёгкая атлетика', text:'Бронзовый призёр.', lat:52.8970, lng:30.0280, photo:'kuprienko.jpeg', link: 'kuprienko.html' },
- 
-  
-  { id:'bondarenko', layer:'youth', title:'Маргарита Бондаренко', address:'Гребля', text:'Серебряный призёр.', lat:52.8870, lng:30.0250, photo:'bondarenko.jpeg', link: 'bondarenko.html' },
-  { id:'pogranovskaya', layer:'youth', title:'Альбина Пограновская', address:'Гребля', text:'Серебряный призёр.', lat:52.8875, lng:30.0255, photo:'pogranovskaya.jpeg', link: 'pogranovskaya.html' },
-  { id:'tishkova', layer:'youth', title:'Надежда Тишкова', address:'Волейбол', text:'Лидер «Искры».', lat:52.8935, lng:30.0325, photo:'tishkova.jpeg', link: 'tishkova.html' },
-
-  
+  { id:'levshunov', layer:'youth', title:'Артём Левшунов', address:'Драфт НХЛ — 2-й номер', text:'Играет за «Чикаго».', lat:52.8900, lng:30.0270, photo:'', link: 'levshunov.html' },
+  { id:'pinchuk', layer:'youth', title:'Виталий Пинчук', address:'Сборная Беларуси · НХЛ', text:'Нападающий «Нэшвилл».', lat:52.8910, lng:30.0300, photo:'', link: 'pinchuk.html' },
+  { id:'borikov', layer:'youth', title:'Егор Бориков', address:'Контракт с «Ютой» (НХЛ)', text:'Молодой талант.', lat:52.8895, lng:30.0250, photo:'', link: 'borikov.html' },
+  { id:'dygar', layer:'youth', title:'Кирилл Дугарь', address:'Бокс', text:'Мастер спорта РБ.', lat:52.8915, lng:30.0280, photo:'', link: 'dygar.html' },
+  { id:'bondarenko', layer:'youth', title:'Маргарита Бондаренко', address:'Гребля, плавание', text:'Юная воспитанница ЦОР.', lat:52.8870, lng:30.0250, photo:'', link: 'bondarenko.html' },
+  { id:'kondratieva', layer:'youth', title:'Ксения Кондратьева', address:'Биатлон', text:'Юная биатлонистка.', lat:52.8885, lng:30.0330, photo:'', link: 'kondratieva.html' },
+  { id:'hodorenko', layer:'youth', title:'Арина Ходоренко', address:'Биатлон', text:'Победительница масс-старта.', lat:52.8880, lng:30.0310, photo:'', link: 'hodorenko.html' },
+  { id:'yurkovets', layer:'youth', title:'Иван Юрковец', address:'Лёгкая атлетика', text:'Юный спринтер.', lat:52.8960, lng:30.0260, photo:'', link: 'yurkovets.html' },
+  { id:'kuprienko', layer:'youth', title:'Ульян Куприенко', address:'Самбо', text:'Юный самбист.', lat:52.8970, lng:30.0280, photo:'', link: 'kuprienko.html' },
+  { id:'tishkova', layer:'youth', title:'Надежда Тишкова', address:'Волейбол', text:'Капитан «Искры».', lat:52.8935, lng:30.0325, photo:'', link: 'tishkova.html' },
+  { id:'novikov', layer:'youth', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'', link: 'novikov.html' },
 
   // ---------- СОБЫТИЯ ----------
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'cis-games.jpg' },
-  { id:'narmania', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg' },
+  { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg' }
 ];
 
@@ -82,7 +70,9 @@ DATA.forEach(item => {
 
   const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
   
-  marker.addTo(map);
+  if (item.layer === 'objects' || item.layer === 'events') {
+    marker.addTo(map);
+  }
 
   markerMap.set(item.id, { marker, data: item });
 });
@@ -99,7 +89,7 @@ function applyFilters() {
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
     if (layerOk && searchOk) {
-      if (!map.hasLayer(marker)) {
+      if (!map.hasLayer(marker) && (data.layer === 'objects' || data.layer === 'events')) {
         marker.addTo(map);
       }
       visible++;
