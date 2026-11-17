@@ -248,9 +248,24 @@ a { text-decoration: none; color: inherit; }
 #events { background-image: url('bg-events.jpg'); }
 
 /* --- НОВЫЕ БЛОКИ: О проекте и Методичка (Яркие) --- */
-#about, #method, #quiz { background: var(--bg); color: var(--text); }
-#about::before, #method::before, #quiz::before { display: none; }
-#about .section__title, #method .section__title, #quiz .section__title { color: var(--text); }
+/* О проекте — тёмный фон */
+#about { 
+  background: var(--secondary); 
+  color: #fff; 
+}
+#about::before { display: none; }
+#about .section__title { color: #fff; }
+#about .info-card h3 { color: #fff; }
+#about .info-card li, #about .info-card p { color: #e2e8f0; }
+#about .info-card { border-top: none; border-left: 6px solid var(--primary); }
+
+/* Учителю и Тесты — светло-серый фон */
+#method, #quiz { 
+  background: var(--bg-alt); 
+  color: var(--text); 
+}
+#method::before, #quiz::before { display: none; }
+#method .section__title, #quiz .section__title { color: var(--text); }
 
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 .info-card { 
@@ -258,7 +273,7 @@ a { text-decoration: none; color: inherit; }
   padding: 35px; 
   border-radius: var(--radius); 
   box-shadow: var(--shadow); 
-  border-top: 6px solid var(--primary); 
+  border-left: 6px solid var(--primary); 
   transition: 0.3s;
   position: relative;
   overflow: hidden;
