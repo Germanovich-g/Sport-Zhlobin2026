@@ -3,53 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Арина Ходоренко — Жлобин Спорт</title>
+  <title>Арина Ходоренко | Гордость Жлобина</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .profile-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; min-height: 100vh; }
-    .back-btn { display: inline-block; margin-bottom: 30px; color: var(--primary); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
-    .back-btn:hover { color: var(--primary-hover); }
-    .profile-header { display: flex; gap: 40px; align-items: center; background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; flex-wrap: wrap; color: var(--text); }
-    .profile-header img { width: 250px; height: 250px; object-fit: cover; border-radius: 20px; border: 5px solid var(--bg-alt); }
-    .profile-title h1 { font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; }
-    .profile-title p { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
-    .profile-content { background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); color: var(--text-muted); line-height: 1.8; font-size: 1.1rem; }
-    .profile-content h2 { color: var(--secondary); margin-bottom: 20px; border-bottom: 2px solid var(--bg-alt); padding-bottom: 10px; }
-    .profile-content h3 { color: var(--secondary); margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
-    .profile-content p { margin-bottom: 15px; }
-    .profile-content ul { margin-bottom: 15px; padding-left: 20px; }
-    .profile-content li { margin-bottom: 10px; }
+    /* Дополнительные стили для страницы биографии */
+    .bio-header {
+      position: relative;
+      padding: 120px 0 80px;
+      /* Фон-картинка с лыжником, которую ты прислал (если загрузишь в репозиторий) */
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 1)), 
+                  url('ski-bg.jpg') center/cover no-repeat;
+      background-color: #0f172a;
+      text-align: center;
+      color: #fff;
+    }
+    .bio-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+    .bio-subtitle { font-size: 1.2rem; color: var(--primary); font-weight: 700; letter-spacing: 1px; }
+    
+    .bio-content { padding: 60px 0; background: var(--bg); color: var(--text); }
+    .bio-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px; align-items: start; }
+    
+    .bio-photo-box {
+      background: var(--card);
+      padding: 15px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border-top: 6px solid var(--primary);
+    }
+    .bio-photo-box img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    
+    .bio-text-box h2 { font-size: 2rem; margin-bottom: 20px; color: var(--secondary); }
+    .bio-text-box p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; color: var(--text-muted); }
+    
+    .achievement-list { list-style: none; margin-top: 30px; }
+    .achievement-list li {
+      background: var(--card);
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--accent);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .achievement-list li::before {
+      content: '🏅';
+      font-size: 1.5rem;
+    }
+
+    .back-btn { margin-top: 40px; display: inline-block; }
+
+    @media (max-width: 768px) {
+      .bio-grid { grid-template-columns: 1fr; gap: 30px; }
+      .bio-title { font-size: 2.5rem; }
+    }
   </style>
 </head>
-<body style="background: var(--bg);">
-  <div class="profile-page">
-    <a href="index.html#people" class="back-btn">← Назад к спортсменам</a>
-    <div class="profile-header">
-      <img src="hodorenko.jpg" alt="Арина Ходоренко" onerror="this.style.display='none'">
-      <div class="profile-title">
-        <h1>Арина Ходоренко</h1>
-        <p>Биатлон</p>
+<body>
+  <!-- Шапка (как на главной) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="logo">
+        <span class="logo__badge">🏅</span>
+        <span>Жлобин<b>·</b>Спорт</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">← На главную</a>
+      </nav>
+      <button class="icon-btn" id="themeToggle">🌙</button>
+    </div>
+  </header>
+
+  <!-- Шапка биографии -->
+  <section class="bio-header">
+    <div class="container">
+      <div class="bio-subtitle">Молодое поколение · Биатлон</div>
+      <h1 class="bio-title">Арина Ходоренко</h1>
+    </div>
+  </section>
+
+  <!-- Основной контент -->
+  <section class="bio-content">
+    <div class="container">
+      <div class="bio-grid">
+        
+        <!-- Колонка с фото -->
+        <div class="bio-photo-box">
+          <!-- Вставь сюда название своего загруженного фото -->
+          <img src="arina.jpg" alt="Арина Ходоренко">
+        </div>
+
+        <!-- Колонка с текстом -->
+        <div class="bio-text-box">
+          <h2>Путь к вершинам</h2>
+          <p>Арина Ходоренко — юная и перспективная воспитанница жлобинской школы биатлона, представляющая спортивный клуб «Белоруснефть» и сборную Республики Беларусь. С ранних лет она демонстрирует упорство, волю к победе и искреннюю любовь к лыжным гонкам и стрельбе.</p>
+          
+          <p>Благодаря систематическим тренировкам и поддержке тренеров, Арина быстро прогрессирует и становится заметной фигурой на республиканских и международных стартах. Она — пример для сверстников, доказывающий, что труд и целеустремленность всегда приводят к результату.</p>
+
+          <h2 style="margin-top: 40px;">Главные достижения</h2>
+          <ul class="achievement-list">
+            <li>Победительница и призёр республиканских соревнований по биатлону</li>
+            <li>Участница юношеских и юниорских Кубков Беларуси</li>
+            <li>Успешное выступление на турнирах в рамках Спартакиады Союзного государства</li>
+            <li>Обладательница высоких спортивных разрядов</li>
+          </ul>
+
+          <a href="index.html" class="btn back-btn">← Вернуться к карте</a>
+        </div>
+
       </div>
     </div>
-    <div class="profile-content">
-      <h2>Биография</h2>
-      <p><strong>Арина Ходоренко</strong> — юная биатлонистка из Жлобина, одна из самых перспективных в Беларуси спортсменок своего возраста (2012 года рождения). Её основные достижения уже сейчас включают победу на международных стартах и медали Кубка Белорусской федерации биатлона.</p>
+  </section>
 
-      <h3>Начало пути</h3>
-      <p>Арина родилась в 2012 году и живёт в Жлобине, учится в гимназии № 8 имени В.И. Козлова. Занимается в Центре олимпийского резерва Жлобина, где сильная лыжно-биатлонная школа. В спорт она попала неожиданно: сначала хотела записаться на футбол, но по совету маминой подруги пошла в биатлон. С того момента тренируется практически каждый день и уже в 12 лет открыто говорила, что задумывается о профессиональной спортивной карьере. Равняться она советовала на сильнейших — в частности, мечтала выступить на стартах на призы олимпийской чемпионки Динары Смольской.</p>
-
-      <h3>Спортивные достижения</h3>
-      <ul>
-        <li><strong>2024</strong> — победа в масс-старте на открытом первенстве Могилёвской области по летнему биатлону на призы Динары Смольской в Чаусах. Около 100 юных участников съехались со всей Могилёвщины, из Витебска, Гомеля и Жлобина, а 12-летняя Арина финишировала первой и сразу поблагодарила тренеров.</li>
-        <li><strong>2023/2024</strong> — сезон на Кубке Белорусской федерации биатлона: третье место в гонке преследования и масс-старте среди девушек 2011–2012 г.р. на этапе в Новополоцке (Городок).</li>
-        <li><strong>2024/2025</strong> — снова призовое место на 3-м этапе Кубка БФБ в Городке: бронза в масс-старте.</li>
-        <li><strong>2026</strong> — золотая серия: в июле Арина выиграла масс-старт среди девушек 2012–2013 г.р. на первом этапе международного Кубка Белорусской федерации в Речице, обойдя соперниц из Татарстана и Рязанской области. До этого в феврале в Новополоцке взяла бронзу в смешанной эстафете на спартакиаде среди ДЮСШ в составе команды ЦОРа Жлобина.</li>
-        <li>Параллельно в лыжных гонках — диплом II степени в индивидуальной гонке свободным стилем на 2 км на республиканской спартакиаде школьников 2026 года, где вся команда Гомельской области заняла третье место.</li>
-      </ul>
-
-      <h3>Что говорят о ней</h3>
-      <p>Тренеры и организаторы отмечают упорство Арины: она тренируется почти ежедневно и не боится соперничать со спортсменками из разных областей Беларуси и даже из России. Сама она на победы отвечает благодарностью тренерам, признаваясь, что без их труда и времени результатов бы не было.</p>
+  <!-- Футер -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 «Жлобин — кузница спортивных рекордов»</p>
     </div>
-  </div>
+  </footer>
+
+  <!-- Скрипт для переключения темы -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+    if(themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const isDark = document.documentElement.dataset.theme === 'dark';
+          document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+          localStorage.setItem('theme', isDark ? '🌙' : '☀️');
+          themeToggle.textContent = isDark ? '🌙' : '☀️';
+        });
+    }
+  </script>
 </body>
 </html>
