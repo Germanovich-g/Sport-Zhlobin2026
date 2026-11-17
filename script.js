@@ -35,11 +35,15 @@ const DATA = [
   // ---------- СОБЫТИЯ ----------
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'' },
   { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'' },
-  { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'' }
+  { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'' },
+  
+  // ---------- СКРЫТЫЙ ОБЪЕКТ (появится после теста) ----------
+  { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию! Жлобинские спортсмены всегда славились силой духа. Продолжайте изучать историю!', lat:52.8928, lng:30.0272, photo:'', hidden: true }
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
 
+// --- Инициализация карты ---
 const map = L.map('mapContainer', { 
   center: [52.8928, 30.0272], 
   zoom: 14,
@@ -53,6 +57,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const markerMap = new Map();
 
+// --- Отрисовка меток ---
 DATA.forEach(item => {
   const icon = L.divIcon({
     className: '',
@@ -60,17 +65,26 @@ DATA.forEach(item => {
     iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
   });
 
+  // Проверка ссылки на биографию
+  const linkHTML = (item.link && !item.hidden) 
+    ? `<a href="${item.link}" onclick="return confirm('Перейти к биографии? (Если файла нет, страница не откроется)')" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` 
+    : '';
+
   const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
-  const linkHTML = item.link ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` : '';
+  
   const popupHTML = `<div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>`;
 
   const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
   
-  marker.addTo(map); // Теперь ВСЕ метки добавляются на карту
+  // Скрытые метки не добавляем сразу
+  if (!item.hidden) {
+    marker.addTo(map);
+  }
 
   markerMap.set(item.id, { marker, data: item });
 });
 
+// --- Фильтры и поиск ---
 let currentLayer = 'all';
 let currentSearch = '';
 
@@ -79,6 +93,9 @@ function applyFilters() {
   const q = currentSearch.trim().toLowerCase();
 
   markerMap.forEach(({ marker, data }) => {
+    // Если объект скрыт, проверяем, открыт ли он через квиз (глобальная переменная isSecretUnlocked)
+    if (data.hidden && !window.isSecretUnlocked) return;
+
     const layerOk = currentLayer === 'all' || data.layer === currentLayer;
     const searchOk = !q || data.title.toLowerCase().includes(q) || data.text.toLowerCase().includes(q);
     
@@ -90,7 +107,7 @@ function applyFilters() {
     }
   });
   
-  document.getElementById('resultHint').innerHTML = `Показано точек: <strong>${visible}</strong> из ${DATA.length}`;
+  document.getElementById('resultHint').innerHTML = `Показано точек: <strong>${visible}</strong> из ${DATA.filter(d => !d.hidden || window.isSecretUnlocked).length}`;
   renderAllCards();
 }
 
@@ -108,11 +125,12 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
   applyFilters();
 });
 
+// --- Отрисовка карточек ---
 function cardHTML(item) {
   const img = item.photo ? `<img src="${item.photo}" alt="${item.title}" onerror="this.style.display='none'">` : LAYER_EMOJI[item.layer];
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
   const tag = item.link ? 'a' : 'div';
-  const href = item.link ? `href="${item.link}"` : '';
+  const href = item.link ? `href="${item.link}" onclick="return confirm('Перейти к биографии? (Если файла нет, страница не откроется)')"` : '';
   const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
 
   return `
@@ -133,7 +151,7 @@ function renderCards(layer, containerId) {
   container.innerHTML = '';
   
   const q = currentSearch.trim().toLowerCase();
-  const items = DATA.filter(i => i.layer === layer && (currentLayer === 'all' || i.layer === currentLayer) && (!q || i.title.toLowerCase().includes(q)));
+  const items = DATA.filter(i => i.layer === layer && !i.hidden && (currentLayer === 'all' || i.layer === currentLayer) && (!q || i.title.toLowerCase().includes(q)));
 
   items.forEach(item => {
     const card = document.createElement('div');
@@ -157,11 +175,63 @@ function renderAllCards() {
   renderCards('events', 'eventsList');
 }
 
+// --- ТЕСТ (КВИЗ) ---
+const QUIZ_QUESTIONS = [
+  { q: 'Кто из уроженцев Жлобина стал олимпийским чемпионом 1960 года по метанию молота?', options: ['Василий Руденков', 'Владимир Ловецкий', 'Николай Киров'], correct: 0 },
+  { q: 'В каком году Артём Левшунов был выбран под 2-м номером на драфте НХЛ?', options: ['2022', '2023', '2024'], correct: 2 },
+  { q: 'Какой вид спорта прославил Шоту Нарманию?', options: ['Греко-римская борьба', 'Лёгкая атлетика', 'Хоккей'], correct: 0 },
+  { q: 'Сколько метров в длину имеют дорожки в плавательном бассейне Жлобина?', options: ['25 метров', '50 метров', '100 метров'], correct: 1 },
+  { q: 'Какое крупное событие принимал Жлобин в 2023 году?', options: ['Олимпийские игры', 'II Игры стран СНГ', 'Чемпионат мира по футболу'], correct: 1 }
+];
+
+function renderQuiz() {
+  const box = document.getElementById('quizBox');
+  if (!box) return;
+  box.innerHTML = QUIZ_QUESTIONS.map((q, i) => `
+    <div class="quiz-question">
+      <h4>${i + 1}. ${q.q}</h4>
+      ${q.options.map((opt, j) => `
+        <label class="quiz-option">
+          <input type="radio" name="q${i}" value="${j}">
+          ${opt}
+        </label>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+document.getElementById('quizSubmit').addEventListener('click', () => {
+  let score = 0;
+  QUIZ_QUESTIONS.forEach((q, i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    const options = document.querySelectorAll(`input[name="q${i}"]`).forEach(input => {
+        const label = input.parentElement;
+        label.classList.remove('correct', 'incorrect');
+        if (input.value == q.correct) label.classList.add('correct');
+    });
+
+    if (selected && selected.value == q.correct) {
+      score++;
+    } else if (selected) {
+      selected.parentElement.classList.add('incorrect');
+    }
+  });
+
+  const resultBox = document.getElementById('quizResult');
+  if (score === QUIZ_QUESTIONS.length) {
+    resultBox.innerHTML = `<span style="color:#22c55e; font-size:1.2rem;">🎉 Отлично! Вы ответили на все вопросы верно!</span><br><br>Секретная метка активирована на карте. Найдите её!`;
+    window.isSecretUnlocked = true;
+    applyFilters(); // Перерисовываем карту, чтобы показать скрытую метку
+  } else {
+    resultBox.innerHTML = `<span style="color:#ef4444; font-size:1.2rem;">Вы ответили верно на ${score} из ${QUIZ_QUESTIONS.length}. Попробуйте ещё раз!</span>`;
+  }
+});
+
+// --- Инициализация ---
+renderQuiz();
 applyFilters();
 
-const modal = document.getElementById('modal');
-document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => modal.classList.remove('open')));
-
+// --- Тема ---
 const themeToggle = document.getElementById('themeToggle');
 if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
 if(themeToggle) {
