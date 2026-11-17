@@ -89,13 +89,13 @@ background: linear-gradient(90deg, rgba(20, 33, 61, 0.4) 0%, transparent 60%);
 z-index: 1;
 }
 
-/* Контейнер прижимает плашку вправо /
+/* Контейнер прижимает плашку вправо */
 .hero .container {
 position: relative;
 z-index: 2;
 width: 100%;
 display: flex;
-justify-content: flex-end; / ВОТ ЭТО СДВИГАЕТ ПЛАШКУ ВПРАВО */
+justify-content: flex-end; /* ВОТ ЭТО СДВИГАЕТ ПЛАШКУ ВПРАВО */
 }
 
 /* Сама стеклянная карточка */
