@@ -60,10 +60,12 @@ const markerMap = new Map();
 // --- Отрисовка меток ---
 DATA.forEach(item => {
   const icon = L.divIcon({
-    className: '',
-    html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
-    iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30]
-  });
+  className: '',
+  html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
+  iconSize: [38, 38],
+  iconAnchor: [19, 38],   // остриё капли внизу
+  popupAnchor: [0, -38]
+});
 
   // Проверка ссылки на биографию
   const linkHTML = (item.link && !item.hidden) 
