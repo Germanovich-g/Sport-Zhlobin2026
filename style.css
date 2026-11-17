@@ -1,20 +1,20 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', system-ui, sans-serif; }
 
 :root {
-  --bg: #f8fafc;
+  --bg: #f4f7f9;
   --bg-alt: #e2e8f0;
   --card: #ffffff;
   --text: #0f172a;
   --text-muted: #475569;
-  --primary: #f97316; /* Оранжевый */
-  --primary-hover: #ea580c;
-  --secondary: #0f172a;
-  --accent: #06b6d4; /* Голубой */
+  --primary: #d32f2f; /* Красный */
+  --primary-hover: #b71c1c;
+  --secondary: #0f172a; /* Тёмно-синий */
+  --accent: #2e7d32; /* Зелёный */
   --border: #cbd5e1;
   --radius: 20px;
   --shadow: 0 10px 30px rgba(0,0,0,0.08);
-  --gradient-sport: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-  --gradient-blue: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --gradient-sport: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+  --gradient-blue: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
 }
 
 [data-theme="dark"] {
