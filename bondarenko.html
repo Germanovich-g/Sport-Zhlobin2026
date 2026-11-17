@@ -6,22 +6,37 @@
   <title>Маргарита Бондаренко — Жлобин Спорт</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .profile-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; min-height: 100vh; }
+       .profile-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 2; }
+    
     .back-btn { display: inline-block; margin-bottom: 30px; color: var(--primary); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
-    .back-btn:hover { color: var(--primary-hover); }
-    .profile-header { display: flex; gap: 40px; align-items: center; background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; flex-wrap: wrap; color: var(--text); }
-    .profile-header img { width: 250px; height: 250px; object-fit: cover; border-radius: 20px; border: 5px solid var(--bg-alt); }
-    .profile-title h1 { font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; }
+    .back-btn:hover { text-shadow: 0 0 10px rgba(204, 255, 0, 0.5); }
+    
+    .profile-header { 
+      display: flex; gap: 40px; align-items: center; 
+      background: rgba(30, 41, 59, 0.85); /* Темная стеклянная карточка */
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 30px; 
+    }
+    .profile-header img { width: 250px; height: 250px; object-fit: cover; border-radius: 20px; border: 5px solid var(--primary); }
+    .profile-title h1 { font-size: 2.5rem; color: #fff; margin-bottom: 10px; }
     .profile-title p { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
-    .profile-content { background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); color: var(--text-muted); line-height: 1.8; font-size: 1.1rem; }
-    .profile-content h2 { color: var(--secondary); margin-bottom: 20px; border-bottom: 2px solid var(--bg-alt); padding-bottom: 10px; }
-    .profile-content h3 { color: var(--secondary); margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
-    .profile-content p { margin-bottom: 15px; }
+    
+    .profile-content { 
+      background: rgba(30, 41, 59, 0.85); /* Темная стеклянная карточка */
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+      color: #e2e8f0; line-height: 1.8; font-size: 1.1rem; 
+    }
+    .profile-content h2 { color: #fff; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block; }
+    .profile-content h3 { color: #fff; margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
+    .profile-content p { margin-bottom: 15px; text-align: justify; }
     .profile-content ul { margin-bottom: 15px; padding-left: 20px; }
     .profile-content li { margin-bottom: 10px; }
   </style>
 </head>
-<body style="background: var(--bg);">
+<body style="background: linear-gradient(rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.95)), url('ski-bg.jpg') center/cover no-repeat fixed; background-color: #0a192f; color: #fff;">
   <div class="profile-page">
     <a href="index.html#people" class="back-btn">← Назад к спортсменам</a>
     <div class="profile-header">
