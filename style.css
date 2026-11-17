@@ -448,3 +448,55 @@ a { text-decoration: none; color: inherit; }
 .leaflet-control-attribution img {
   display: none !important;
 }
+
+/* --- ОБЩИЙ СТИЛЬ ДЛЯ ВСЕХ БИОГРАФИЙ --- */
+body.bio-page {
+  /* Темный спортивный фон с лыжником */
+  background: linear-gradient(rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.95)), 
+              url('ski-bg.jpg') center/cover no-repeat fixed;
+  background-color: #0a192f;
+  color: #fff;
+}
+
+/* Делаем карточки биографии полупрозрачными (эффект стекла) */
+body.bio-page .container > div,
+body.bio-page .bio-card {
+  background: rgba(30, 41, 59, 0.85) !important; /* Темно-синее стекло */
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  color: #f8fafc;
+}
+
+/* Делаем заголовки и ссылки яркими (в цвет нового дизайна) */
+body.bio-page h1, 
+body.bio-page h2, 
+body.bio-page h3 {
+  color: #fff !important;
+}
+
+body.bio-page .subtitle,
+body.bio-page .sport-category {
+  color: var(--primary) !important; /* Лаймовый акцент */
+  font-weight: 800;
+}
+
+/* Текст делаем светлым, чтобы читался на темном фоне */
+body.bio-page p, 
+body.bio-page li,
+body.bio-page div {
+  color: #e2e8f0;
+}
+
+/* Ссылка "Назад" */
+body.bio-page a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+body.bio-page a:hover {
+  text-shadow: 0 0 10px rgba(204, 255, 0, 0.75); /* Неоновое свечение */
+}
