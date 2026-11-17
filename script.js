@@ -67,8 +67,8 @@ DATA.forEach(item => {
 
   // Проверка ссылки на биографию
   const linkHTML = (item.link && !item.hidden) 
-    ? `<a href="${item.link}" onclick="return confirm('Перейти к биографии? (Если файла нет, страница не откроется)')" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` 
-    : '';
+  ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` 
+  : '';
 
   const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
   
@@ -130,7 +130,7 @@ function cardHTML(item) {
   const img = item.photo ? `<img src="${item.photo}" alt="${item.title}" onerror="this.style.display='none'">` : LAYER_EMOJI[item.layer];
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
   const tag = item.link ? 'a' : 'div';
-  const href = item.link ? `href="${item.link}" onclick="return confirm('Перейти к биографии? (Если файла нет, страница не откроется)')"` : '';
+  const href = item.link ? `href="${item.link}"` : '';
   const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
 
   return `
