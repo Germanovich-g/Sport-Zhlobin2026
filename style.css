@@ -65,24 +65,58 @@ a { text-decoration: none; color: inherit; }
 /* ============================================================
    ГЛАВНЫЙ ЭКРАН (HERO) СО СТЕКЛЯННОЙ КАРТОЧКОЙ
    ============================================================ */
+/* --- ГЛАВНЫЙ ЭКРАН (HERO) СО СТЕКЛЯННОЙ КАРТОЧКОЙ --- */
 .hero {
-  min-height: 680px; height: 86vh;
-  background-image: url('hero-bg.jpg'); /* Фото остается ярким */
-  background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat;
-  position: relative; 
-  overflow: hidden; 
-  display: flex; 
-  align-items: center; 
-  color: #fff;
+min-height: 680px;
+height: 86vh;
+background-image: url('hero-bg.jpg');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+position: relative;
+overflow: hidden;
+display: flex;
+align-items: center;
+color: #fff;
 }
 
-/* Немного притемняем фото по краям, чтобы стекло выделялось */
+/* Затемняем фото, чтобы текст читался, но не слишком сильно */
 .hero::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(20, 33, 61, 0.6) 0%, transparent 60%);
-  z-index: 1;
+content: '';
+position: absolute;
+inset: 0;
+background: linear-gradient(90deg, rgba(20, 33, 61, 0.4) 0%, transparent 60%);
+z-index: 1;
+}
+
+/* Контейнер прижимает плашку вправо /
+.hero .container {
+position: relative;
+z-index: 2;
+width: 100%;
+display: flex;
+justify-content: flex-end; / ВОТ ЭТО СДВИГАЕТ ПЛАШКУ ВПРАВО */
+}
+
+/* Сама стеклянная карточка */
+.hero__content-box {
+max-width: 650px;
+padding: 50px 60px;
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(15px);
+-webkit-backdrop-filter: blur(15px);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 32px;
+box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+animation: floatIn 1s ease-out;
+}
+
+.hero__title {
+font-size: 3.5rem; /* Уменьшенный размер */
+font-weight: 900;
+line-height: 1.1;
+margin-bottom: 20px;
+text-transform: uppercase;
 }
 
 /* СТЕКЛЯННАЯ КАРТОЧКА */
