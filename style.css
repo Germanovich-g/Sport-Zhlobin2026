@@ -201,3 +201,75 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
   .profile-header { flex-direction: column; text-align: center; padding: 30px; }
   .profile-header img { width: 180px; height: 180px; }
 }
+/* ============================================================
+   ОБЪЕМНЫЕ КРАСОЧНЫЕ МАРКЕРЫ НА КАРТЕ
+   ============================================================ */
+.pin-marker {
+  width: 38px;
+  height: 38px;
+  border-radius: 50% 50% 50% 0;          /* форма капли */
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 6px 14px rgba(20, 33, 61, 0.35),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.18),
+    inset 0 4px 8px rgba(255, 255, 255, 0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* блик (объём) */
+.pin-marker::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 12px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  filter: blur(1px);
+  transform: rotate(45deg);
+}
+
+/* эмодзи внутри — возвращаем в нормальный угол */
+.pin-marker span {
+  transform: rotate(45deg);
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+/* цвета по слоям (градиенты для объёма) */
+.pin-marker--objects {
+  background: radial-gradient(circle at 30% 25%, #6ee7d8, #16b8a6 55%, #0d7f73);
+}
+.pin-marker--legends {
+  background: radial-gradient(circle at 30% 25%, #ffd166, #ff6b35 55%, #d63a12);
+}
+.pin-marker--youth {
+  background: radial-gradient(circle at 30% 25%, #a5b4ff, #3978ff 55%, #1e4fd6);
+}
+.pin-marker--events {
+  background: radial-gradient(circle at 30% 25%, #f9a8d4, #ec4899 55%, #be185d);
+}
+
+/* ховер */
+.leaflet-marker-icon:hover .pin-marker {
+  transform: rotate(-45deg) scale(1.12);
+  box-shadow:
+    0 10px 20px rgba(20, 33, 61, 0.45),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.18),
+    inset 0 4px 8px rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================================
+   УБИРАЕМ ФЛАГ У АТРИБУЦИИ LEAFLET
+   ============================================================ */
+.leaflet-control-attribution .leaflet-attribution-flag,
+.leaflet-attribution-flag {
+  display: none !important;
+}
