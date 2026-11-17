@@ -257,7 +257,14 @@ a { text-decoration: none; color: inherit; }
 #about .section__title { color: #fff; }
 #about .info-card h3 { color: #fff; }
 #about .info-card li, #about .info-card p { color: #e2e8f0; }
-#about .info-card { border-top: none; border-left: 6px solid var(--primary); }
+#about .info-card { 
+  border-top: none; 
+  border-left: 6px solid var(--primary); 
+  background: rgba(255, 255, 255, 0.05); /* Темная полупрозрачная подложка */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+#about .info-card h3 { color: var(--primary); } /* Заголовки сделаем неоновыми */
+#about .info-card p, #about .info-card li { color: #e2e8f0; } /* Текст светло-серым */
 
 /* Учителю и Тесты — светло-серый фон */
 #method, #quiz { 
@@ -281,11 +288,7 @@ a { text-decoration: none; color: inherit; }
 .info-card::before {
   content: '';
   position: absolute;
-  top: 0; right: 0; width: 100px; height: 100px;
-  background: var(--gradient-sport);
-  opacity: 0.1;
-  border-radius: 50%;
-  transform: translate(30%, -30%);
+  ...
 }
 .info-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(249, 115, 22, 0.15); }
 .info-card h3 { margin-bottom: 15px; color: var(--secondary); font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
