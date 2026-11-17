@@ -358,3 +358,7 @@ a { text-decoration: none; color: inherit; }
   .quiz-container { padding: 25px; }
   .info-grid, .method-steps { grid-template-columns: 1fr; }
 }
+.leaflet-control-attribution svg, 
+.leaflet-control-attribution img {
+  display: none !important;
+}
