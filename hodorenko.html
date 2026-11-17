@@ -6,48 +6,109 @@
   <title>Арина Ходоренко | Гордость Жлобина</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Дополнительные стили для страницы биографии */
-    .bio-header {
-      position: relative;
-      padding: 120px 0 80px;
-      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 1)), 
-                  url('ski-bg.jpg') center/cover no-repeat;
+    /* --- НОВЫЙ ДИЗАЙН БИОГРАФИИ НА ВЕСЬ ЭКРАН --- */
+    body {
+      /* Фон с лыжником на весь экран, фиксированный */
+      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                  url('ski-bg.jpg') center/cover no-repeat fixed;
       background-color: #0f172a;
-      text-align: center;
-      color: #fff;
     }
-    .bio-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-    .bio-subtitle { font-size: 1.2rem; color: var(--primary); font-weight: 700; letter-spacing: 1px; }
-    
-    .bio-content { padding: 60px 0; background: var(--bg); color: var(--text); }
-    .bio-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px; align-items: start; }
-    
-    .bio-photo-box {
-      background: var(--card);
-      padding: 15px;
+
+    /* Шапка сайта делаем полупрозрачной, чтобы не выбивалась */
+    .header {
+      background: rgba(15, 23, 42, 0.7) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .bio-wrapper {
+      padding: 120px 0 80px; /* Отступ сверху под фиксированную шапку */
+      min-height: 100vh;
+    }
+
+    .bio-header-title {
+      text-align: center;
+      margin-bottom: 50px;
+      text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    .bio-subtitle { 
+      font-size: 1.1rem; 
+      color: var(--primary); 
+      font-weight: 800; 
+      letter-spacing: 2px; 
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .bio-title { 
+      font-size: 4.5rem; 
+      font-weight: 900; 
+      text-transform: uppercase; 
+      color: #fff; 
+      line-height: 1.1;
+    }
+
+    /* Стеклянная карточка с контентом */
+    .bio-glass-card {
+      background: rgba(255, 255, 255, 0.95);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border-top: 6px solid var(--primary);
+      padding: 50px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 50px;
+      align-items: start;
+      border-top: 8px solid var(--primary);
+    }
+
+    /* Адаптация для темной темы сайта */
+    [data-theme="dark"] .bio-glass-card {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-top: 8px solid var(--primary);
+    }
+
+    .bio-photo-box {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       position: sticky;
-      top: 100px;
+      top: 110px;
     }
     .bio-photo-box img {
       width: 100%;
-      border-radius: 10px;
       display: block;
       object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .bio-photo-box:hover img {
+      transform: scale(1.05);
     }
     
-    .bio-text-box h2 { font-size: 2rem; margin-bottom: 20px; color: var(--secondary); border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-    .bio-text-box p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; color: var(--text-muted); text-align: justify; }
+    .bio-text-box h2 { 
+      font-size: 2rem; 
+      margin-bottom: 20px; 
+      color: var(--secondary); 
+      border-bottom: 3px solid var(--primary); 
+      padding-bottom: 10px;
+      display: inline-block;
+    }
+    [data-theme="dark"] .bio-text-box h2 { color: #fff; }
+
+    .bio-text-box p { 
+      font-size: 1.1rem; 
+      line-height: 1.8; 
+      margin-bottom: 20px; 
+      color: var(--text-muted); 
+      text-align: justify; 
+    }
     
     .achievement-list { list-style: none; margin-top: 30px; margin-bottom: 40px; }
     .achievement-list li {
-      background: var(--card);
+      background: var(--bg);
       padding: 15px 20px;
       margin-bottom: 15px;
       border-radius: 10px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       border-left: 4px solid var(--accent);
       font-weight: 500;
       display: flex;
@@ -55,6 +116,8 @@
       gap: 15px;
       line-height: 1.5;
     }
+    [data-theme="dark"] .achievement-list li { background: rgba(0,0,0,0.2); }
+    
     .achievement-list li::before {
       content: '🏅';
       font-size: 1.5rem;
@@ -63,10 +126,10 @@
 
     .back-btn { margin-top: 20px; display: inline-block; }
 
-    @media (max-width: 768px) {
-      .bio-grid { grid-template-columns: 1fr; gap: 30px; }
-      .bio-title { font-size: 2.5rem; }
-      .bio-photo-box { position: relative; top: 0; }
+    @media (max-width: 992px) {
+      .bio-glass-card { grid-template-columns: 1fr; padding: 30px; }
+      .bio-title { font-size: 3rem; }
+      .bio-photo-box { position: relative; top: 0; max-width: 400px; margin: 0 auto; }
     }
   </style>
 </head>
@@ -85,18 +148,16 @@
     </div>
   </header>
 
-  <!-- Шапка биографии -->
-  <section class="bio-header">
+  <!-- Основной контент биографии на весь экран -->
+  <div class="bio-wrapper">
     <div class="container">
-      <div class="bio-subtitle">Молодое поколение · Биатлон</div>
-      <h1 class="bio-title">Арина Ходоренко</h1>
-    </div>
-  </section>
+      
+      <div class="bio-header-title">
+        <div class="bio-subtitle">Молодое поколение · Биатлон</div>
+        <h1 class="bio-title">Арина Ходоренко</h1>
+      </div>
 
-  <!-- Основной контент -->
-  <section class="bio-content">
-    <div class="container">
-      <div class="bio-grid">
+      <div class="bio-glass-card">
         
         <!-- Колонка с фото -->
         <div class="bio-photo-box">
@@ -110,7 +171,7 @@
           <h2>Начало пути</h2>
           <p>Арина родилась в 2012 году и живёт в Жлобине, учится в гимназии № 8 имени В.И. Козлова. Занимается в Центре олимпийского резерва Жлобина, где сильная лыжнобиатлонная школа. В спорт она попала неожиданно: сначала хотела записаться на футбол, но по совету маминой подруги пошла в биатлон. С того момента тренируется практически каждый день и уже в 12 лет открыто говорила, что задумывается о профессиональной спортивной карьере. Равняться она советовала на сильнейших — в частности, мечтала выступить на стартах на призы олимпийской чемпионки Динары Смольской.</p>
 
-          <h2>Спортивные достижения</h2>
+          <h2 style="margin-top: 40px;">Спортивные достижения</h2>
           <ul class="achievement-list">
             <li><strong>2024</strong> — победа в масс-старте на открытом первенстве Могилёвской области по летнему биатлону на призы Динары Смольской в Чаусах. Около 100 юных участников съехались со всей Могилёвщины, из Витебска, Гомеля и Жлобина, а 12-летняя Арина финишировала первой и сразу поблагодарила тренеров.</li>
             <li><strong>2023/2024</strong> — сезон на Кубке Белорусской федерации биатлона: третье место в гонке преследования и масс-старте среди девушек 2011–2012 г.р. на этапе в Новополоцке (Городок).</li>
@@ -127,10 +188,10 @@
 
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Футер -->
-  <footer class="footer">
+  <footer class="footer" style="margin-top: 0; background: rgba(15, 23, 42, 0.9);">
     <div class="container">
       <p>© 2026 «Жлобин — кузница спортивных рекордов»</p>
     </div>
