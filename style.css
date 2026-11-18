@@ -302,3 +302,106 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
     grid-template-columns: 1fr;
   }
 }
+/* ============================================================
+   ПЛИТКИ БЛОКОВ (раздел «Учителю»)
+   ============================================================ */
+.method-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.method-tile {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-bottom: 5px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 25px 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.method-tile:hover { transform: translateY(-5px); border-bottom-color: var(--accent); }
+.method-tile__icon { font-size: 2.5rem; margin-bottom: 12px; }
+.method-tile__title { font-weight: 800; font-size: 1.1rem; color: var(--text); margin-bottom: 6px; }
+.method-tile__count { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+
+/* ============================================================
+   КАРТОЧКА ТЕМЫ
+   ============================================================ */
+.method-detail {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.method-detail__header {
+  padding: 25px 30px;
+  background: var(--bg-alt);
+  border-bottom: 2px solid var(--border);
+}
+.method-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 12px;
+  padding: 0;
+}
+.method-detail__back:hover { text-decoration: underline; }
+.method-detail__title { font-size: 1.6rem; font-weight: 900; color: var(--text); margin: 0; }
+.method-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 15px 30px 0;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+.method-tab {
+  padding: 10px 16px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.method-tab:hover { color: var(--text); }
+.method-tab.is-active {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--border);
+  margin-bottom: -1px;
+}
+.method-tab__content { padding: 30px; color: var(--text-muted); line-height: 1.7; }
+.method-tab__content h4 { color: var(--text); margin: 15px 0 10px; font-size: 1.1rem; }
+.method-tab__content h4:first-child { margin-top: 0; }
+.method-tab__content ul, .method-tab__content ol { padding-left: 22px; margin-bottom: 15px; }
+.method-tab__content li { margin-bottom: 8px; }
+.method-tab__content p { margin-bottom: 12px; }
+
+@media (max-width: 768px) {
+  .method-tiles { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .method-tile { padding: 18px 12px; }
+  .method-tile__icon { font-size: 2rem; }
+  .method-tile__title { font-size: 1rem; }
+  .method-tabs { padding: 12px 15px 0; }
+  .method-tab { padding: 8px 12px; font-size: 0.8rem; }
+  .method-tab__content { padding: 20px 15px; }
+  .method-detail__header { padding: 20px 15px; }
+  .method-detail__title { font-size: 1.3rem; }
+}
