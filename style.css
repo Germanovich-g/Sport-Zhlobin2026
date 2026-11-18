@@ -411,158 +411,104 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
    ИНДИВИДУАЛЬНЫЕ ФОНЫ ДЛЯ СПОРТСМЕНОВ
    ============================================================ */
 
-/* 1. Общая база для всех страниц участников */
-.bio-wrapper, .profile-page {
-  position: relative;
-  z-index: 1;
-}
-
-/* Создаем полупрозрачный слой поверх любой картинки, чтобы текст читался */
-/* 1. База для страниц участников */
+/* Базовая настройка для страниц участников */
 .bio-wrapper, 
 .profile-page {
   position: relative;
   z-index: 1;
 }
 
-/* Делаем фон на весь экран для всех видов спорта */
-body:has(.sport-ski) { background: url('img/bg-ski.jpg') center/cover fixed; }
-body:has(.sport-hockey) { background: url('img/bg-hockey.jpg') center/cover fixed; }
-body:has(.sport-wrestling) { background: url('img/bg-wrestling.jpg') center/cover fixed; }
-body:has(.sport-swimming) { background: url('img/bg-swimming.jpg') center/cover fixed; }
-body:has(.sport-athletics) { background: url('img/bg-athletics.jpg') center/cover fixed; }
-body:has(.sport-boxing) { background: url('img/bg-boxing.jpg') center/cover fixed; }
-body:has(.sport-rowing) { background: url('img/bg-rowing.jpg') center/cover fixed; }
-body:has(.sport-martial) { background: url('img/bg-martial.jpg') center/cover fixed; }
-body:has(.sport-volleyball) { background: url('img/bg-volleyball.jpg') center/cover fixed; }
-body:has(.sport-hammer) { background: url('img/bg-hammer.jpg') center/cover fixed; }
+/* 
+   ФОН И ВУАЛЬ
+   Мы используем linear-gradient, чтобы сразу задать и картинку, и полупрозрачный слой. 
+   В светлой теме это rgba(245, 248, 255, 0.6), в темной — rgba(16, 26, 46, 0.8).
+*/
 
-/* Полупрозрачная вуаль на весь экран */
-body:has(.sport-ski)::before,
-body:has(.sport-hockey)::before,
-body:has(.sport-wrestling)::before,
-body:has(.sport-swimming)::before,
-body:has(.sport-athletics)::before,
-body:has(.sport-boxing)::before,
-body:has(.sport-rowing)::before,
-body:has(.sport-martial)::before,
-body:has(.sport-volleyball)::before,
-body:has(.sport-hammer)::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(245, 248, 255, 0.85); /* Светлая вуаль */
-  z-index: -1;
-  pointer-events: none;
+/* 1. Лыжи / Биатлон */
+body:has(.sport-ski) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-ski.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-ski) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-ski.jpg') center/cover fixed no-repeat;
 }
 
-/* Темная тема для вуали */
-[data-theme="dark"] body:has(.sport-ski)::before,
-[data-theme="dark"] body:has(.sport-hockey)::before,
-[data-theme="dark"] body:has(.sport-wrestling)::before,
-[data-theme="dark"] body:has(.sport-swimming)::before,
-[data-theme="dark"] body:has(.sport-athletics)::before,
-[data-theme="dark"] body:has(.sport-boxing)::before,
-[data-theme="dark"] body:has(.sport-rowing)::before,
-[data-theme="dark"] body:has(.sport-martial)::before,
-[data-theme="dark"] body:has(.sport-volleyball)::before,
-[data-theme="dark"] body:has(.sport-hammer)::before {
-  background: rgba(16, 26, 46, 0.9); 
+/* 2. Хоккей */
+body:has(.sport-hockey) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hockey.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-hockey) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hockey.jpg') center/cover fixed no-repeat;
 }
 
-/* Темная тема для вуали */
-[data-theme="dark"] .bio-wrapper::before, [data-theme="dark"] .profile-page::before {
-
-  background: rgba(16, 26, 46, 0.9); 
+/* 3. Борьба */
+body:has(.sport-wrestling) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-wrestling.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-wrestling) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-wrestling.jpg') center/cover fixed no-repeat;
 }
 
-/* 2. Хоккей (Левшунов, Пинчук, Бориков) */
-.sport-hockey {
-  background-image: url('img/bg-hockey.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 4. Плавание */
+body:has(.sport-swimming) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-swimming.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-swimming) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-swimming.jpg') center/cover fixed no-repeat;
 }
 
-/* 3. Лыжи / Биатлон (Ходоренко, Кондратьева, Малышев, Новиков) */
-.sport-ski {
-  background-image: url('img/bg-ski.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 5. Легкая атлетика */
+body:has(.sport-athletics) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-athletics.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-athletics) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-athletics.jpg') center/cover fixed no-repeat;
 }
 
-/* 4. Борьба (Нармания, Петренко) */
-.sport-wrestling {
-  background-image: url('img/bg-wrestling.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 6. Бокс */
+body:has(.sport-boxing) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-boxing.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-boxing) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-boxing.jpg') center/cover fixed no-repeat;
 }
 
-/* 5. Плавание (Бондаренко) */
-.sport-swimming {
-  background-image: url('img/bg-swimming.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 7. Гребля */
+body:has(.sport-rowing) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-rowing.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-rowing) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-rowing.jpg') center/cover fixed no-repeat;
 }
 
-/* 6. Легкая атлетика (Юрковец, Ловецкий, Киров) */
-.sport-athletics {
-  background-image: url('img/bg-athletics.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 8. Единоборства / Самбо */
+body:has(.sport-martial) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-martial.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-martial) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-martial.jpg') center/cover fixed no-repeat;
 }
 
-/* 7. Бокс (Дугарь) */
-.sport-boxing {
-  background-image: url('img/bg-boxing.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 9. Волейбол */
+body:has(.sport-volleyball) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-volleyball) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat;
 }
 
-/* 8. Гребля (Бондаренко, Пограновская) */
-.sport-rowing {
-  background-image: url('img/bg-rowing.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+/* 10. Метание молота */
+body:has(.sport-hammer) {
+  background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hammer.jpg') center/cover fixed no-repeat;
+}
+[data-theme="dark"] body:has(.sport-hammer) {
+  background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hammer.jpg') center/cover fixed no-repeat;
 }
 
-/* 9. Единоборства / Самбо (Куприенко, Ващенко) */
-.sport-martial {
-  background-image: url('img/bg-martial.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* 10. Волейбол (Тишкова) */
-.sport-volleyball {
-  background-image: url('img/bg-volleyball.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* 11. Метание молота (Руденков) */
-.sport-hammer {
-  background-image: url('img/bg-hammer.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-/* ============================================================
-   ИСПРАВЛЕНИЕ ОБРЕЗКИ ЛИЦА НА ГЛАВНОЙ
-   ============================================================ */
+/* ИСПРАВЛЕНИЕ ОБРЕЗКИ ЛИЦА НА ГЛАВНОЙ */
 .card__img img { 
   width: 100%; 
   height: 100%; 
   object-fit: cover; 
-  object-position: top center; /* Прижимаем фото к верхнему краю */
+  object-position: top center; 
   transition: 0.6s; 
 }
