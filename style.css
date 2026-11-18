@@ -407,3 +407,118 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
 .leaflet-attribution-flag {
   display: none !important;
 }
+/* ============================================================
+   ИНДИВИДУАЛЬНЫЕ ФОНЫ ДЛЯ СПОРТСМЕНОВ
+   ============================================================ */
+
+/* 1. Общая база для всех страниц участников */
+.profile-page {
+  position: relative;
+  z-index: 1;
+}
+
+/* Создаем полупрозрачный слой поверх любой картинки, чтобы текст читался */
+.profile-page::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(245, 248, 255, 0.85); /* Светлая вуаль */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Темная тема для вуали */
+[data-theme="dark"] .profile-page::before {
+  background: rgba(16, 26, 46, 0.9); 
+}
+
+/* 2. Хоккей (Левшунов, Пинчук, Бориков) */
+.sport-hockey {
+  background-image: url('img/bg-hockey.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 3. Лыжи / Биатлон (Ходоренко, Кондратьева, Малышев, Новиков) */
+.sport-ski {
+  background-image: url('img/bg-ski.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 4. Борьба (Нармания, Петренко) */
+.sport-wrestling {
+  background-image: url('img/bg-wrestling.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 5. Плавание (Бондаренко) */
+.sport-swimming {
+  background-image: url('img/bg-swimming.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 6. Легкая атлетика (Юрковец, Ловецкий, Киров) */
+.sport-athletics {
+  background-image: url('img/bg-athletics.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 7. Бокс (Дугарь) */
+.sport-boxing {
+  background-image: url('img/bg-boxing.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 8. Гребля (Бондаренко, Пограновская) */
+.sport-rowing {
+  background-image: url('img/bg-rowing.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 9. Единоборства / Самбо (Куприенко, Ващенко) */
+.sport-martial {
+  background-image: url('img/bg-martial.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 10. Волейбол (Тишкова) */
+.sport-volleyball {
+  background-image: url('img/bg-volleyball.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* 11. Метание молота (Руденков) */
+.sport-hammer {
+  background-image: url('img/bg-hammer.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* ============================================================
+   ИСПРАВЛЕНИЕ ОБРЕЗКИ ЛИЦА НА ГЛАВНОЙ
+   ============================================================ */
+.card__img img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  object-position: top center; /* Прижимаем фото к верхнему краю */
+  transition: 0.6s; 
+}
