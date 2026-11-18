@@ -1,26 +1,43 @@
-/* БАЗА */
+/* ============================================================
+   БАЗА И ШРИФТЫ
+   ============================================================ */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', system-ui, sans-serif; }
+
 :root {
-  --bg: #f5f8ff; --bg-alt: #e8efff; --card: #ffffff;
-  --text: #14213d; --text-muted: #53627f;
-  --primary: #ff6b35; --primary-hover: #e95122;
-  --secondary: #14213d; --accent: #16b8a6;
-  --border: #d9e2f2; --radius: 24px;
+  --bg: #f5f8ff;
+  --bg-alt: #e8efff;
+  --card: #ffffff;
+  --text: #14213d;
+  --text-muted: #53627f;
+  --primary: #ff6b35;
+  --primary-hover: #e95122;
+  --secondary: #14213d;
+  --accent: #16b8a6;
+  --border: #d9e2f2;
+  --radius: 24px;
   --shadow: 0 14px 40px rgba(20, 33, 61, 0.10);
   --gradient-sport: linear-gradient(135deg, #ff6b35, #ff3d71);
   --gradient-blue: linear-gradient(135deg, #16b8a6, #3978ff);
 }
+
 [data-theme="dark"] {
-  --bg: #101a2e; --bg-alt: #1b2942; --card: #1b2942;
-  --text: #f4f7ff; --text-muted: #b1bfd8;
-  --border: #33435f; --shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  --bg: #101a2e;
+  --bg-alt: #1b2942;
+  --card: #1b2942;
+  --text: #f4f7ff;
+  --text-muted: #b1bfd8;
+  --border: #33435f;
+  --shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
 }
+
 html { scroll-behavior: smooth; scroll-padding-top: 90px; }
 body { background: var(--bg); color: var(--text); line-height: 1.6; transition: 0.3s; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 a { text-decoration: none; color: inherit; }
 
-/* ШАПКА */
+/* ============================================================
+   ШАПКА
+   ============================================================ */
 .header { background: rgba(20, 33, 61, 0.94); border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 1000; padding: 15px 0; backdrop-filter: blur(10px); }
 .header__inner { display: flex; justify-content: space-between; align-items: center; }
 .logo { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 10px; color: #fff; }
@@ -31,7 +48,9 @@ a { text-decoration: none; color: inherit; }
 .icon-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 12px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
 .icon-btn:hover { background: var(--primary); }
 
-/* ГЛАВНЫЙ ЭКРАН */
+/* ============================================================
+   ГЛАВНЫЙ ЭКРАН (HERO)
+   ============================================================ */
 .hero { min-height: 680px; height: 86vh; background: linear-gradient(90deg, rgba(20, 33, 61, 0.7), rgba(20, 33, 61, 0.2)), url('hero-bg.jpg') center/cover no-repeat; position: relative; display: flex; align-items: center; color: #fff; }
 .glass-box { position: relative; z-index: 2; background: rgba(20, 33, 61, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 32px; padding: 50px 60px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3); max-width: 750px; margin-left: 0; }
 .hero__pill { display: inline-block; padding: 10px 24px; background: rgba(22, 184, 166, 0.25); border: 1px solid rgba(22, 184, 166, 0.6); border-radius: 50px; font-size: 0.85rem; font-weight: 800; color: #6ee7d8; margin-bottom: 25px; }
@@ -40,19 +59,25 @@ a { text-decoration: none; color: inherit; }
 .hero__lead { color: #dbe6f7; line-height: 1.7; font-size: 1.1rem; margin-bottom: 35px; max-width: 550px; }
 .hero__actions { display: flex; gap: 15px; flex-wrap: wrap; }
 
-/* КНОПКИ */
+/* ============================================================
+   КНОПКИ
+   ============================================================ */
 .btn { padding: 16px 36px; background: var(--gradient-sport); color: #fff; font-weight: 800; border-radius: 16px; text-transform: uppercase; transition: 0.3s; border: none; cursor: pointer; font-size: 0.95rem; box-shadow: 0 10px 25px rgba(255, 80, 65, 0.3); display: inline-block; }
 .btn:hover { transform: translateY(-3px); }
 .btn--ghost { background: transparent; border: 2px solid rgba(255, 255, 255, 0.5); box-shadow: none; }
 .btn--ghost:hover { background: #fff; color: var(--secondary); border-color: #fff; }
 
-/* СЕКЦИИ */
+/* ============================================================
+   СЕКЦИИ
+   ============================================================ */
 .section { padding: 85px 0; background-color: var(--bg); }
 .section--alt { background-color: var(--bg-alt); }
 .section__title { color: var(--text); font-size: clamp(2rem, 4vw, 3rem); text-align: center; margin-bottom: 50px; font-weight: 900; }
 .section__title::after { content: ""; display: block; width: 66px; height: 5px; border-radius: 10px; background: var(--gradient-sport); margin: 15px auto 0; }
 
-/* КАРТА */
+/* ============================================================
+   КАРТА
+   ============================================================ */
 .map-toolbar { display: flex; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; align-items: center; }
 .search input { padding: 14px 25px; border-radius: 14px; border: 1px solid var(--border); width: 320px; font-size: 1rem; background: var(--card); color: var(--text); }
 .search input:focus { outline: none; border-color: var(--primary); }
@@ -62,7 +87,9 @@ a { text-decoration: none; color: inherit; }
 .map-container { height: 550px; border-radius: 22px; border: 6px solid var(--card); box-shadow: var(--shadow); }
 .map__hint { margin-top: 20px; font-weight: 700; color: var(--text-muted); text-align: center; font-size: 1.1rem; }
 
-/* КАРТОЧКИ */
+/* ============================================================
+   КАРТОЧКИ
+   ============================================================ */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
 .card { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s; cursor: pointer; display: flex; flex-direction: column; border: 1px solid var(--border); border-bottom: 5px solid var(--primary); color: var(--text); }
 .card:hover { transform: translateY(-7px); }
@@ -74,7 +101,9 @@ a { text-decoration: none; color: inherit; }
 .card p { color: var(--text-muted); font-size: 1rem; margin-bottom: 15px; flex-grow: 1; }
 .card__meta { font-weight: 800; color: var(--primary); font-size: 0.9rem; text-transform: uppercase; }
 
-/* ИНФО-КАРТОЧКИ И МЕТОДИКА */
+/* ============================================================
+   ИНФО-КАРТОЧКИ И МЕТОДИКА
+   ============================================================ */
 .info-grid, .method-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 .info-card, .method-step { background: var(--card); padding: 35px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); border-top: 5px solid var(--primary); }
 .method-step { position: relative; border-top: none; border-left: 5px solid var(--accent); }
@@ -82,7 +111,9 @@ a { text-decoration: none; color: inherit; }
 .method-step h4 { color: var(--text); margin-top: 15px; margin-bottom: 10px; font-weight: 800; }
 .method-step p, .info-card p, .info-card li { color: var(--text-muted); font-size: 1rem; }
 
-/* ТЕОРИЯ (АККОРДЕОНЫ) */
+/* ============================================================
+   ТЕОРИЯ (АККОРДЕОНЫ)
+   ============================================================ */
 .theory-grid { display: flex; flex-direction: column; gap: 15px; max-width: 900px; margin: 0 auto; }
 .theory-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
 .theory-card summary { padding: 20px 30px; font-size: 1.2rem; font-weight: 800; color: var(--secondary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
@@ -95,7 +126,9 @@ a { text-decoration: none; color: inherit; }
 .theory-content ul { padding-left: 20px; margin-bottom: 15px; }
 .theory-content li { margin-bottom: 8px; }
 
-/* ТЕСТЫ */
+/* ============================================================
+   ТЕСТЫ
+   ============================================================ */
 .quiz-container { max-width: 800px; margin: 0 auto; background: var(--card); padding: 50px; border-radius: 28px; box-shadow: var(--shadow); border: 1px solid var(--border); }
 .quiz-question { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px dashed var(--border); }
 .quiz-question h4 { color: var(--text); margin-bottom: 15px; font-size: 1.2rem; font-weight: 800; }
@@ -104,7 +137,9 @@ a { text-decoration: none; color: inherit; }
 .quiz-option.correct { background: #dcfce7; border-color: #22c55e; color: #166534; }
 .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
 
-/* ФУТЕР И МОДАЛКА */
+/* ============================================================
+   ФУТЕР И МОДАЛКА
+   ============================================================ */
 .footer { background: #14213d; color: #fff; text-align: center; padding: 40px 0; border-top: 4px solid var(--primary); font-size: 1rem; margin-top: 40px; }
 .modal { position: fixed; inset: 0; display: none; z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
 .modal.open { display: flex; }
@@ -113,7 +148,23 @@ a { text-decoration: none; color: inherit; }
 .modal__close { position: absolute; top: 15px; right: 15px; background: var(--bg-alt); border: none; font-size: 1.5rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: var(--text); }
 .modal__box h3 { color: var(--text); margin-bottom: 10px; font-size: 1.8rem; }
 
-/* МАРКЕРЫ */
+/* ============================================================
+   БИОГРАФИИ (Единый стиль)
+   ============================================================ */
+.bio-wrapper, .profile-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; min-height: 100vh; position: relative; z-index: 2; }
+.back-btn { display: inline-block; margin-bottom: 30px; color: var(--primary); font-weight: 800; text-decoration: none; font-size: 1.1rem; }
+.back-btn:hover { text-shadow: 0 0 10px rgba(255, 107, 53, 0.3); }
+.profile-header { background: var(--card); border: 1px solid var(--border); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; display: flex; gap: 40px; align-items: center; }
+.profile-header img { width: 220px; height: 220px; object-fit: cover; border-radius: 20px; border: 5px solid var(--primary); }
+.profile-title h1 { font-size: 2.8rem; color: var(--text); margin-bottom: 10px; font-weight: 900; text-transform: uppercase; }
+.profile-title p { color: var(--primary); font-weight: 800; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+.profile-content { background: var(--card); border: 1px solid var(--border); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); color: var(--text-muted); line-height: 1.8; font-size: 1.1rem; }
+.profile-content h2 { color: var(--text); margin-bottom: 20px; border-bottom: 3px solid var(--primary); padding-bottom: 10px; display: inline-block; font-weight: 800; }
+.profile-content p { margin-bottom: 15px; text-align: justify; }
+
+/* ============================================================
+   МАРКЕРЫ
+   ============================================================ */
 .pin-marker { width: 38px; height: 38px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 3px solid #ffffff; box-shadow: 0 6px 14px rgba(20, 33, 61, 0.35), inset 0 -4px 8px rgba(0, 0, 0, 0.18), inset 0 4px 8px rgba(255, 255, 255, 0.55); }
 .pin-marker::after { content: ''; position: absolute; top: 6px; left: 8px; width: 12px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); filter: blur(1px); transform: rotate(45deg); }
 .pin-marker span { transform: rotate(45deg); font-size: 18px; line-height: 1; }
@@ -124,7 +175,53 @@ a { text-decoration: none; color: inherit; }
 .leaflet-marker-icon:hover .pin-marker { transform: rotate(-45deg) scale(1.12); }
 .leaflet-control-attribution .leaflet-attribution-flag { display: none !important; }
 
-/* АДАПТИВ */
+/* ============================================================
+   ИНДИВИДУАЛЬНЫЕ ФОНЫ ДЛЯ СПОРТСМЕНОВ
+   ============================================================ */
+body:has(.sport-ski) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-ski.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-ski) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-ski.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-hockey) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hockey.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-hockey) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hockey.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-wrestling) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-wrestling.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-wrestling) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-wrestling.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-swimming) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-swimming.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-swimming) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-swimming.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-athletics) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-athletics.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-athletics) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-athletics.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-boxing) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-boxing.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-boxing) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-boxing.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-rowing) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-rowing.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-rowing) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-rowing.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-martial) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-martial.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-martial) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-martial.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-volleyball) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-volleyball) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat; }
+
+body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hammer.jpg') center/cover fixed no-repeat; }
+[data-theme="dark"] body:has(.sport-hammer) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hammer.jpg') center/cover fixed no-repeat; }
+
+/* ============================================================
+   ИСПРАВЛЕНИЕ ОБРЕЗКИ ЛИЦА НА ГЛАВНОЙ
+   ============================================================ */
+.card__img img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  object-position: top center; 
+  transition: 0.6s; 
+}
+
+/* ============================================================
+   АДАПТИВ
+   ============================================================ */
 @media (max-width: 768px) {
   .header__inner { flex-direction: column; gap: 15px; }
   .nav { display: none; }
@@ -139,4 +236,6 @@ a { text-decoration: none; color: inherit; }
   .search input { width: 100%; }
   .quiz-container { padding: 25px; }
   .info-grid, .method-steps { grid-template-columns: 1fr; }
+  .profile-header { flex-direction: column; text-align: center; padding: 30px; }
+  .profile-header img { width: 180px; height: 180px; }
 }
