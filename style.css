@@ -418,13 +418,56 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
 }
 
 /* Создаем полупрозрачный слой поверх любой картинки, чтобы текст читался */
-.bio-wrapper::before, .profile-page::before {
+/* 1. База для страниц участников */
+.bio-wrapper, 
+.profile-page {
+  position: relative;
+  z-index: 1;
+}
+
+/* Делаем фон на весь экран для всех видов спорта */
+body:has(.sport-ski) { background: url('img/bg-ski.jpg') center/cover fixed; }
+body:has(.sport-hockey) { background: url('img/bg-hockey.jpg') center/cover fixed; }
+body:has(.sport-wrestling) { background: url('img/bg-wrestling.jpg') center/cover fixed; }
+body:has(.sport-swimming) { background: url('img/bg-swimming.jpg') center/cover fixed; }
+body:has(.sport-athletics) { background: url('img/bg-athletics.jpg') center/cover fixed; }
+body:has(.sport-boxing) { background: url('img/bg-boxing.jpg') center/cover fixed; }
+body:has(.sport-rowing) { background: url('img/bg-rowing.jpg') center/cover fixed; }
+body:has(.sport-martial) { background: url('img/bg-martial.jpg') center/cover fixed; }
+body:has(.sport-volleyball) { background: url('img/bg-volleyball.jpg') center/cover fixed; }
+body:has(.sport-hammer) { background: url('img/bg-hammer.jpg') center/cover fixed; }
+
+/* Полупрозрачная вуаль на весь экран */
+body:has(.sport-ski)::before,
+body:has(.sport-hockey)::before,
+body:has(.sport-wrestling)::before,
+body:has(.sport-swimming)::before,
+body:has(.sport-athletics)::before,
+body:has(.sport-boxing)::before,
+body:has(.sport-rowing)::before,
+body:has(.sport-martial)::before,
+body:has(.sport-volleyball)::before,
+body:has(.sport-hammer)::before {
   content: '';
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background: rgba(245, 248, 255, 0.85); /* Светлая вуаль */
   z-index: -1;
   pointer-events: none;
+}
+
+/* Темная тема для вуали */
+[data-theme="dark"] body:has(.sport-ski)::before,
+[data-theme="dark"] body:has(.sport-hockey)::before,
+[data-theme="dark"] body:has(.sport-wrestling)::before,
+[data-theme="dark"] body:has(.sport-swimming)::before,
+[data-theme="dark"] body:has(.sport-athletics)::before,
+[data-theme="dark"] body:has(.sport-boxing)::before,
+[data-theme="dark"] body:has(.sport-rowing)::before,
+[data-theme="dark"] body:has(.sport-martial)::before,
+[data-theme="dark"] body:has(.sport-volleyball)::before,
+[data-theme="dark"] body:has(.sport-hammer)::before {
+  background: rgba(16, 26, 46, 0.9); 
 }
 
 /* Темная тема для вуали */
