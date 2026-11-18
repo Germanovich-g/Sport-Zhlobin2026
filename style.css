@@ -405,3 +405,9 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
   .method-detail__header { padding: 20px 15px; }
   .method-detail__title { font-size: 1.3rem; }
 }
+/* Кнопка вызова нормативов */
+.ufp-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
