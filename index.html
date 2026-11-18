@@ -93,56 +93,40 @@
     </div>
   </section>
 
-  <!-- Учащимся (Теория и нормативы) -->
+  <!-- Учащимся -->
   <section class="section" id="students">
     <div class="container">
-      <h2 class="section__title">Учащимся: Теория и нормативы</h2>
+      <h2 class="section__title">Учащимся: Теория и практика</h2>
       <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">
         Материалы разработаны на основе учебной программы «Физическая культура и здоровье» (Постановление МО РБ № 137 от 01.08.2025).
       </p>
 
-      <!-- Переключатель классов -->
       <div class="filters" style="justify-content: center; margin-bottom: 40px;" id="gradeFilters">
         <button class="chip is-active" data-grade="1-4">1–4 классы</button>
         <button class="chip" data-grade="5-9">5–9 классы</button>
         <button class="chip" data-grade="10-11">10–11 классы</button>
       </div>
 
-      <div class="theory-grid" id="theoryContainer">
-        <!-- Контент генерируется через JS -->
-      </div>
+      <div class="theory-grid" id="theoryContainer"></div>
     </div>
   </section>
 
   <!-- Учителю -->
   <section class="section section--alt" id="method">
     <div class="container">
-      <h2 class="section__title">Учителю на заметку</h2>
-      <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted); font-size: 1.1rem;">
-        Методические материалы на основе обновлённой программы (Постановление № 137 от 01.08.2025).
+      <h2 class="section__title">Учителю: Методическая копилка</h2>
+      <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">
+        Поурочное планирование, методика обучения и контроль по обновлённой программе (Постановление № 137 от 01.08.2025).
       </p>
-      <div class="method-steps">
-        <div class="method-step">
-          <span class="step-num">1</span>
-          <h4>Структура урока (3 часа в неделю)</h4>
-          <p>Согласно программе, урок делится на инвариантный (базовый) компонент и вариативный (третий час, игровой). На вариативном компоненте рекомендуется использовать плавание, бадминтон, теннис настольный или атлетическую гимнастику.</p>
-        </div>
-        <div class="method-step">
-          <span class="step-num">2</span>
-          <h4>Оценка УФП (уровень физподготовки)</h4>
-          <p>Используйте Приложение 1 из программы для контроля динамики. Тестирование проводится дважды в год (сентябрь, май). Сравнивайте результаты не с абсолютным максимумом, а с индивидуальным приростом ученика.</p>
-        </div>
-        <div class="method-step">
-          <span class="step-num">3</span>
-          <h4>Техника безопасности</h4>
-          <p>Согласно обновлённой программе, формирование навыков безопасного поведения — одна из ключевых обучающих задач. Проводите инструктаж перед каждым разделом (особенно перед гимнастикой и лыжами).</p>
-        </div>
-        <div class="method-step">
-          <span class="step-num">4</span>
-          <h4>Домашние задания</h4>
-          <p>Программа предусматривает самостоятельное усвоение материала и развитие двигательных качеств. Задавайте комплексы упражнений на развитие силы, гибкости и выносливости во внеурочное время.</p>
-        </div>
+
+      <div class="filters" style="justify-content: center; margin-bottom: 40px;" id="methodFilters">
+        <button class="chip is-active" data-block="gym">🤸 Гимнастика</button>
+        <button class="chip" data-block="athletics">🏃 Лёгкая атлетика</button>
+        <button class="chip" data-block="games">🏐 Спорт. игры</button>
+        <button class="chip" data-block="ski">🎿 Лыжи</button>
       </div>
+
+      <div class="theory-grid" id="methodContainer"></div>
     </div>
   </section>
 
