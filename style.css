@@ -412,13 +412,13 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
    ============================================================ */
 
 /* 1. Общая база для всех страниц участников */
-.profile-page {
+.bio-wrapper, .profile-page {
   position: relative;
   z-index: 1;
 }
 
 /* Создаем полупрозрачный слой поверх любой картинки, чтобы текст читался */
-.profile-page::before {
+.bio-wrapper::before, .profile-page::before {
   content: '';
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -428,7 +428,8 @@ body:has(.profile-page), body:has(.bio-wrapper) { background: var(--bg); color: 
 }
 
 /* Темная тема для вуали */
-[data-theme="dark"] .profile-page::before {
+[data-theme="dark"] .bio-wrapper::before, [data-theme="dark"] .profile-page::before {
+
   background: rgba(16, 26, 46, 0.9); 
 }
 
