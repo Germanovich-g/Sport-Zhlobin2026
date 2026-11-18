@@ -37,13 +37,13 @@ const DATA = [
   { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'' },
   
-  // ---------- СКРЫТЫЙ ОБЪЕКТ (появится после теста) ----------
-  { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию! Жлобинские спортсмены всегда славились силой духа. Продолжайте изучать историю!', lat:52.8928, lng:30.0272, photo:'', hidden: true }
+  // ---------- СКРЫТЫЙ ОБЪЕКТ ----------
+  { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию! Жлобинские спортсмены всегда славились силой духа.', lat:52.8928, lng:30.0272, photo:'', hidden: true }
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
 
-// --- Инициализация карты ---
+// Инициализация карты
 const map = L.map('mapContainer', { 
   center: [52.8928, 30.0272], 
   zoom: 14,
@@ -57,28 +57,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const markerMap = new Map();
 
-// --- Отрисовка меток ---
+// Отрисовка меток
 DATA.forEach(item => {
   const icon = L.divIcon({
-  className: '',
-  html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
-  iconSize: [38, 38],
-  iconAnchor: [19, 38],   // остриё капли внизу
-  popupAnchor: [0, -38]
-});
+    className: '',
+    html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -38]
+  });
 
-  // Проверка ссылки на биографию
-  const linkHTML = (item.link && !item.hidden) 
-  ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` 
-  : '';
-
+  const linkHTML = (item.link && !item.hidden) ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#ff6b35; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` : '';
   const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
-  
   const popupHTML = `<div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>`;
 
   const marker = L.marker([item.lat, item.lng], { icon }).bindPopup(popupHTML);
   
-  // Скрытые метки не добавляем сразу
   if (!item.hidden) {
     marker.addTo(map);
   }
@@ -86,7 +80,7 @@ DATA.forEach(item => {
   markerMap.set(item.id, { marker, data: item });
 });
 
-// --- Фильтры и поиск ---
+// Фильтры
 let currentLayer = 'all';
 let currentSearch = '';
 
@@ -95,7 +89,6 @@ function applyFilters() {
   const q = currentSearch.trim().toLowerCase();
 
   markerMap.forEach(({ marker, data }) => {
-    // Если объект скрыт, проверяем, открыт ли он через квиз (глобальная переменная isSecretUnlocked)
     if (data.hidden && !window.isSecretUnlocked) return;
 
     const layerOk = currentLayer === 'all' || data.layer === currentLayer;
@@ -127,7 +120,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
   applyFilters();
 });
 
-// --- Отрисовка карточек ---
+// Карточки
 function cardHTML(item) {
   const img = item.photo ? `<img src="${item.photo}" alt="${item.title}" onerror="this.style.display='none'">` : LAYER_EMOJI[item.layer];
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
@@ -177,7 +170,7 @@ function renderAllCards() {
   renderCards('events', 'eventsList');
 }
 
-// --- ТЕСТ (КВИЗ) ---
+// Тест
 const QUIZ_QUESTIONS = [
   { q: 'Кто из уроженцев Жлобина стал олимпийским чемпионом 1960 года по метанию молота?', options: ['Василий Руденков', 'Владимир Ловецкий', 'Николай Киров'], correct: 0 },
   { q: 'В каком году Артём Левшунов был выбран под 2-м номером на драфте НХЛ?', options: ['2022', '2023', '2024'], correct: 2 },
@@ -223,17 +216,16 @@ document.getElementById('quizSubmit').addEventListener('click', () => {
   if (score === QUIZ_QUESTIONS.length) {
     resultBox.innerHTML = `<span style="color:#22c55e; font-size:1.2rem;">🎉 Отлично! Вы ответили на все вопросы верно!</span><br><br>Секретная метка активирована на карте. Найдите её!`;
     window.isSecretUnlocked = true;
-    applyFilters(); // Перерисовываем карту, чтобы показать скрытую метку
+    applyFilters();
   } else {
     resultBox.innerHTML = `<span style="color:#ef4444; font-size:1.2rem;">Вы ответили верно на ${score} из ${QUIZ_QUESTIONS.length}. Попробуйте ещё раз!</span>`;
   }
 });
 
-// --- Инициализация ---
 renderQuiz();
 applyFilters();
 
-// --- Тема ---
+// Тема
 const themeToggle = document.getElementById('themeToggle');
 if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
 if(themeToggle) {
