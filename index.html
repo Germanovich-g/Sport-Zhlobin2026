@@ -18,9 +18,9 @@
       <nav class="nav">
         <a href="#map">Карта</a>
         <a href="#about">О проекте</a>
+        <a href="#students">Учащимся</a>
         <a href="#method">Учителю</a>
         <a href="#quiz">Тесты</a>
-        <a href="#objects">Объекты</a>
       </nav>
       <button class="icon-btn" id="themeToggle">🌙</button>
     </div>
@@ -28,16 +28,18 @@
 
   <!-- Главный экран -->
   <section class="hero" id="top">
-  <div class="container hero-content glass-box">
-    <span class="hero__pill">🔥 Твой спортивный навигатор</span>
-    <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
-    <p class="hero__lead">Интерактивная карта для уроков физической культуры, подготовки к олимпиадам и изучения спортивного наследия Беларуси.</p>
-    <div class="hero__actions">
-      <a href="#map" class="btn">🚀 Открыть карту</a>
-      <a href="#quiz" class="btn btn--ghost">🏆 Пройти тест</a>
+    <div class="container">
+      <div class="glass-box">
+        <span class="hero__pill">🔥 Твой спортивный навигатор</span>
+        <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
+        <p class="hero__lead">Интерактивный образовательный ресурс для уроков физической культуры и краеведения. Изучайте спортивные объекты, биографии олимпийских чемпионов и историю крупных турниров на одной карте.</p>
+        <div class="hero__actions">
+          <a href="#map" class="btn">🚀 Открыть карту</a>
+          <a href="#quiz" class="btn btn--ghost">🏆 Пройти тест</a>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Карта -->
   <section class="section" id="map">
@@ -60,7 +62,7 @@
     </div>
   </section>
 
-  <!-- О проекте (Цели и задачи) -->
+  <!-- О проекте -->
   <section class="section section--alt" id="about">
     <div class="container">
       <h2 class="section__title">О проекте</h2>
@@ -89,8 +91,80 @@
     </div>
   </section>
 
-  <!-- Методическая копилка -->
-  <section class="section" id="method">
+  <!-- Учащимся (Теория) -->
+  <section class="section" id="students">
+    <div class="container">
+      <h2 class="section__title">Учащимся: Теория и практика</h2>
+      <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted); font-size: 1.1rem;">
+        Изучи правила, технику безопасности и подводящие упражнения из школьной программы.
+      </p>
+
+      <div class="theory-grid">
+        <!-- Гимнастика -->
+        <details class="theory-card">
+          <summary>🤸‍♂️ Гимнастика и акробатика</summary>
+          <div class="theory-content">
+            <h4>Основные понятия:</h4>
+            <p>Строевые упражнения, акробатика (кувырки, стойки, мосты), опорные прыжки. Гимнастика формирует правильную осанку и вестибулярный аппарат.</p>
+            <h4>Подводящие упражнения (5-9 класс):</h4>
+            <ul>
+              <li><strong>Для кувырка вперед:</strong> группировка сидя, перекаты на спине (вперед-назад).</li>
+              <li><strong>Для стойки на лопатках:</strong> поднимание прямых ног из положения лежа, удержание «березки».</li>
+              <li><strong>Для моста:</strong> прогибания лежа на животе, подъем таза из положения лежа.</li>
+            </ul>
+            <p><em>Правило безопасности: страховка и самостраховка обязательны!</em></p>
+          </div>
+        </details>
+
+        <!-- Легкая атлетика -->
+        <details class="theory-card">
+          <summary>🏃‍♂️ Легкая атлетика</summary>
+          <div class="theory-content">
+            <h4>Основные понятия:</h4>
+            <p>Бег (спринт 30/60/100 м, кросс), прыжки (в длину, в высоту), метание. Развивает быстроту, выносливость и силу.</p>
+            <h4>Подводящие упражнения:</h4>
+            <ul>
+              <li><strong>Для спринта:</strong> бег с высоким подниманием бедра, семенящий бег, выбегание с низкого старта.</li>
+              <li><strong>Для прыжка в длину:</strong> отталкивание одной ногой с продвижением вперед, прыжки на одной ноге.</li>
+              <li><strong>Для метания:</strong> имитация замаха, броски набивного мяча (или легкого предмета) из-за головы.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- Спортивные игры -->
+        <details class="theory-card">
+          <summary>🏐 Спортивные игры</summary>
+          <div class="theory-content">
+            <h4>Основные понятия:</h4>
+            <p>Баскетбол, волейбол, футбол. Развивают тактическое мышление и командный дух.</p>
+            <h4>Подводящие упражнения:</h4>
+            <ul>
+              <li><strong>Баскетбол:</strong> стойка баскетболиста, передачи мяча в парах на месте и в движении, ведение мяча «змейкой».</li>
+              <li><strong>Волейбол:</strong> верхняя и нижняя передача мяча над собой, имитация подачи, броски мяча через сетку.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- Лыжная подготовка -->
+        <details class="theory-card">
+          <summary>🎿 Лыжная подготовка</summary>
+          <div class="theory-content">
+            <h4>Основные понятия:</h4>
+            <p>Попеременный и одновременный ход, спуски, подъемы, торможение. База для развития выносливости зимой.</p>
+            <h4>Подводящие упражнения:</h4>
+            <ul>
+              <li><strong>Для скольжения:</strong> упражнение «самокат» (скольжение на одной лыже, отталкиваясь другой).</li>
+              <li><strong>Для поворотов:</strong> переступание на месте, поворот переступанием вокруг пяток.</li>
+              <li><strong>Для спусков:</strong> основная стойка (ноги полусогнуты, руки с палками впереди).</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Учителю -->
+  <section class="section section--alt" id="method">
     <div class="container">
       <h2 class="section__title">Учителю на заметку</h2>
       <div class="method-steps">
@@ -113,8 +187,8 @@
     </div>
   </section>
 
-  <!-- Интерактивный тест -->
-  <section class="section section--alt" id="quiz">
+  <!-- Тесты -->
+  <section class="section" id="quiz">
     <div class="container">
       <h2 class="section__title">Проверь себя (Теория ФКиЗ)</h2>
       <div class="quiz-container">
@@ -127,7 +201,7 @@
   </section>
 
   <!-- Объекты -->
-  <section class="section" id="objects">
+  <section class="section section--alt" id="objects">
     <div class="container">
       <h2 class="section__title">Спортивные объекты</h2>
       <div class="cards" id="objectsList"></div>
@@ -135,7 +209,7 @@
   </section>
 
   <!-- Легенды -->
-  <section class="section section--alt" id="people">
+  <section class="section" id="people">
     <div class="container">
       <h2 class="section__title">Гордость Жлобина (Легенды)</h2>
       <div class="cards" id="legendsList"></div>
@@ -143,7 +217,7 @@
   </section>
 
   <!-- Молодежь -->
-  <section class="section" id="youth">
+  <section class="section section--alt" id="youth">
     <div class="container">
       <h2 class="section__title">Молодое поколение</h2>
       <div class="cards" id="youthList"></div>
@@ -151,7 +225,7 @@
   </section>
 
   <!-- События -->
-  <section class="section section--alt" id="events">
+  <section class="section" id="events">
     <div class="container">
       <h2 class="section__title">События и история</h2>
       <div class="cards" id="eventsList"></div>
@@ -163,20 +237,6 @@
       <p>© 2026 «Жлобин — кузница спортивных рекордов». Проект для конкурса «Компьютер. Образование. Интернет» (Номинация «Динамическая карта»).</p>
     </div>
   </footer>
-
-  <!-- Модальное окно -->
-  <div class="modal" id="modal">
-    <div class="modal__backdrop" data-close></div>
-    <div class="modal__box">
-      <button class="modal__close" data-close>×</button>
-      <div class="modal__photo" id="modalPhoto"></div>
-      <span class="modal__badge" id="modalBadge"></span>
-      <h3 id="modalTitle"></h3>
-      <p id="modalText"></p>
-      <p class="modal__meta" id="modalMeta"></p>
-      <a href="#" id="modalLink" class="btn" style="display:none; margin-top:15px; width:100%; text-align:center;">Читать биографию</a>
-    </div>
-  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
