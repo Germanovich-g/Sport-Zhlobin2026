@@ -117,6 +117,7 @@ a { text-decoration: none; color: inherit; }
 .theory-grid { display: flex; flex-direction: column; gap: 15px; max-width: 900px; margin: 0 auto; }
 .theory-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
 .theory-card summary { padding: 20px 30px; font-size: 1.2rem; font-weight: 800; color: var(--secondary); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+[data-theme="dark"] .theory-card summary { color: var(--text); }
 .theory-card summary::-webkit-details-marker { display: none; }
 .theory-card summary::after { content: '+'; font-size: 1.5rem; color: var(--primary); }
 .theory-card[open] summary { background: var(--bg-alt); border-bottom: 1px solid var(--border); }
@@ -125,6 +126,15 @@ a { text-decoration: none; color: inherit; }
 .theory-content h4 { color: var(--text); margin: 15px 0 10px; font-size: 1.1rem; }
 .theory-content ul { padding-left: 20px; margin-bottom: 15px; }
 .theory-content li { margin-bottom: 8px; }
+
+/* ============================================================
+   ТАБЛИЦЫ НОРМАТИВОВ (УФП)
+   ============================================================ */
+.ufp-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+.ufp-table th, .ufp-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border); }
+.ufp-table th { background: var(--bg-alt); color: var(--text); font-weight: 800; }
+.ufp-table th:first-child, .ufp-table td:first-child { text-align: left; font-weight: 600; }
+.ufp-table tr:hover td { background: rgba(255, 107, 53, 0.05); }
 
 /* ============================================================
    ТЕСТЫ
@@ -209,17 +219,6 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 [data-theme="dark"] body:has(.sport-hammer) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hammer.jpg') center/cover fixed no-repeat; }
 
 /* ============================================================
-   ИСПРАВЛЕНИЕ ОБРЕЗКИ ЛИЦА НА ГЛАВНОЙ
-   ============================================================ */
-.card__img img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-  object-position: top center; 
-  transition: 0.6s; 
-}
-
-/* ============================================================
    АДАПТИВ
    ============================================================ */
 @media (max-width: 768px) {
@@ -238,4 +237,6 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
   .info-grid, .method-steps { grid-template-columns: 1fr; }
   .profile-header { flex-direction: column; text-align: center; padding: 30px; }
   .profile-header img { width: 180px; height: 180px; }
+  .ufp-table { font-size: 0.8rem; }
+  .ufp-table th, .ufp-table td { padding: 8px 6px; }
 }
