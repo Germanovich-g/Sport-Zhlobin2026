@@ -5,11 +5,12 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const page = link.dataset.pageLink;
-    document.getElementById('page-home').style.display = 'none';
-    document.getElementById('page-students').style.display = 'none';
-    document.getElementById('page-method').style.display = 'none';
-    document.getElementById('page-quiz').style.display = 'none';
-    document.getElementById(`page-${page}`).style.display = 'block';
+    ['home', 'students', 'method', 'quiz'].forEach(p => {
+      const el = document.getElementById(`page-${p}`);
+      if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById(`page-${page}`);
+    if (target) target.style.display = 'block';
     window.scrollTo(0, 0);
   });
 });
@@ -58,18 +59,13 @@ let currentLayer = 'all';
 let currentSearch = '';
 window.isSecretUnlocked = false;
 
-// ============================================================
-// ИНИЦИАЛИЗАЦИЯ КАРТЫ
-// ============================================================
 const mapEl = document.getElementById('mapContainer');
 if (mapEl) {
   map = L.map('mapContainer', {
     center: [52.8928, 30.0272], zoom: 14, minZoom: 12,
     maxBounds: [ [52.8500, 29.9500], [52.9300, 30.1000] ]
   });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap', maxZoom: 19
-  }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 }).addTo(map);
 
   DATA.forEach(item => {
     const icon = L.divIcon({
@@ -86,9 +82,6 @@ if (mapEl) {
   });
 }
 
-// ============================================================
-// ФИЛЬТРЫ И КАРТОЧКИ
-// ============================================================
 function applyFilters() {
   if (!map) return;
   let visible = 0;
@@ -116,9 +109,7 @@ function revealSecretMarker() {
   if (window.isSecretUnlocked) return;
   window.isSecretUnlocked = true;
   const secret = markerMap.get('secret');
-  if (secret && map && !map.hasLayer(secret.marker)) {
-    secret.marker.addTo(map);
-  }
+  if (secret && map && !map.hasLayer(secret.marker)) secret.marker.addTo(map);
   applyFilters();
 }
 
@@ -136,10 +127,7 @@ if (searchInput) {
   let searchTimer = null;
   searchInput.addEventListener('input', (e) => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      currentSearch = e.target.value;
-      applyFilters();
-    }, 200);
+    searchTimer = setTimeout(() => { currentSearch = e.target.value; applyFilters(); }, 200);
   });
 }
 
@@ -149,15 +137,7 @@ function cardHTML(item) {
   const tag = item.link ? 'a' : 'div';
   const href = item.link ? `href="${item.link}"` : '';
   const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
-  return `<${tag} ${href} class="card" style="text-decoration: none; color: inherit;">
-      <div class="${imgClass}">${img}</div>
-      <div class="card-content">
-        <h3>${item.title}</h3>
-        <p>${item.text}</p>
-        <p class="card__meta">📍 ${item.address}</p>
-        ${readMore}
-      </div>
-    </${tag}>`;
+  return `<${tag} ${href} class="card" style="text-decoration: none; color: inherit;"><div class="${imgClass}">${img}</div><div class="card-content"><h3>${item.title}</h3><p>${item.text}</p><p class="card__meta">📍 ${item.address}</p>${readMore}</div></${tag}>`;
 }
 
 function renderCards(layer, containerId) {
@@ -190,7 +170,7 @@ function renderAllCards() {
 
 if (map) applyFilters();
 // ============================================================
-// МЕТОДИЧЕСКАЯ КОПИЛКА ДЛЯ УЧИТЕЛЯ
+// МЕТОДИЧЕСКАЯ КОПИЛКА (УЧИТЕЛЮ)
 // ============================================================
 const METHOD_DATA = {
   gym: {
@@ -199,63 +179,10 @@ const METHOD_DATA = {
       {
         id: 'gym-kulok', title: 'Кувырок вперёд', icon: '🔄',
         content: {
-          'Темы': `
-            <h4>📖 Что такое кувырок вперёд</h4>
-            <p>Кувырок вперёд — базовое акробатическое упражнение, при котором тело перекатывается через голову с последовательным касанием мата затылком, шеей, лопатками, поясницей и тазом.</p>
-            <h4>🎯 Зачем нужен</h4>
-            <ul><li>Развивает вестибулярный аппарат и координацию.</li><li>Укрепляет мышцы шеи и спины.</li><li>Учит группировке и самостраховке при падениях.</li></ul>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Выполняется только на мате.</li><li>Обязательна разминка шеи и запястий.</li><li>Нельзя выполнять без группировки — риск травмы шеи.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Фазы выполнения</h4>
-            <ol>
-              <li><strong>Исходное положение:</strong> упор присев, ладони на мате на ширине плеч, подбородок прижат к груди.</li>
-              <li><strong>Толчок:</strong> отталкиваемся ногами, переносим вес на руки.</li>
-              <li><strong>Перекат:</strong> касаемся мата затылком, шеей, лопатками — не головой!</li>
-              <li><strong>Группировка:</strong> в момент переката колени прижаты к груди, руки обхватывают голени.</li>
-              <li><strong>Выход:</strong> приходим в упор присев, встаём в основную стойку.</li>
-            </ol>
-            <h4>Типичные ошибки</h4>
-            <ul><li>Касание мата головой вместо затылка — опасно!</li><li>Разомкнутая группировка.</li><li>Слишком быстрый темп без контроля.</li></ul>
-          `,
-          'Подводящие упражнения': `
-            <h4>Упражнения перед кувырком</h4>
-            <ol>
-              <li><strong>Группировка сидя:</strong> обхватить колени, прижать голову к груди. Удерживать 3–5 сек.</li>
-              <li><strong>Перекаты на спине:</strong> из положения лёжа на спине подтянуть колени и перекатываться вперёд-назад 5–6 раз.</li>
-              <li><strong>Перекат с группировкой:</strong> из упора присев перекатиться назад и вернуться, не касаясь головой.</li>
-              <li><strong>Кувырок с горки:</strong> на наклонном мате — легче контролировать перекат.</li>
-            </ol>
-          `,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'gym-stoyka', title: 'Стойка на лопатках', icon: '🤸',
-        content: {
-          'Темы': `
-            <h4>📖 Что такое стойка на лопатках</h4>
-            <p>Стойка на лопатках («берёзка») — положение, при котором тело опирается на лопатки, ноги вытянуты вверх, руки поддерживают спину.</p>
-            <h4>🎯 Зачем нужна</h4>
-            <ul><li>Укрепляет мышцы спины и пресса.</li><li>Учит балансу и контролю над телом.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Фазы выполнения</h4>
-            <ol>
-              <li><strong>Исходное положение:</strong> лёжа на спине, руки вдоль тела.</li>
-              <li><strong>Подъём:</strong> согнуть ноги, подтянуть колени к груди, затем выпрямить вверх.</li>
-              <li><strong>Опора:</strong> таз поднимается, лопатки на мате, руки подставляются под спину.</li>
-              <li><strong>Фиксация:</strong> тело вертикально, ноги прямые, носки натянуты.</li>
-            </ol>
-          `,
-          'Подводящие упражнения': `
-            <ol>
-              <li><strong>Поднимание прямых ног:</strong> лёжа на спине, поднять ноги до 90°.</li>
-              <li><strong>«Берёзка» с согнутыми ногами:</strong> поднять таз, колени к груди, удержать 3 сек.</li>
-            </ol>
-          `,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Темы': `<h4>📖 Что такое кувырок вперёд</h4><p>Базовое акробатическое упражнение.</p><h4>⚠️ Безопасность</h4><ul><li>Только на мате.</li><li>Разминка шеи.</li></ul>`,
+          'Как выполнять': `<ol><li><strong>Исходное положение:</strong> упор присев.</li><li><strong>Толчок:</strong> переносим вес на руки.</li><li><strong>Перекат:</strong> касаемся затылком.</li><li><strong>Выход:</strong> встаём в упор присев.</li></ol>`,
+          'Подводящие упражнения': `<ol><li>Группировка сидя.</li><li>Перекаты на спине.</li></ol>`,
+          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
         }
       }
     ]
@@ -266,26 +193,10 @@ const METHOD_DATA = {
       {
         id: 'ath-run30', title: 'Бег 30 метров', icon: '🏃',
         content: {
-          'Темы': `
-            <h4>📖 Бег на 30 метров</h4>
-            <p>Спринтерская дистанция. Проверяет быстроту и технику старта.</p>
-          `,
-          'Как выполнять': `
-            <h4>Фазы бега</h4>
-            <ol>
-              <li><strong>Старт:</strong> низкий для 5–9 классов, высокий — для младших.</li>
-              <li><strong>Стартовый разгон:</strong> наклон вперёд, частые шаги, активная работа рук.</li>
-              <li><strong>Финиш:</strong> не сбавлять темп, пересечь линию грудью.</li>
-            </ol>
-          `,
-          'Подводящие упражнения': `
-            <ol>
-              <li>Бег с высоким подниманием бедра.</li>
-              <li>Бег с захлёстом голени.</li>
-              <li>Выбегание с высокого старта.</li>
-            </ol>
-          `,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Темы': `<h4>📖 Бег на 30 метров</h4><p>Спринтерская дистанция.</p>`,
+          'Как выполнять': `<ol><li><strong>Старт:</strong> низкий.</li><li><strong>Разгон:</strong> наклон вперёд.</li><li><strong>Финиш:</strong> не сбавлять темп.</li></ol>`,
+          'Подводящие упражнения': `<ol><li>Бег с высоким подниманием бедра.</li><li>Выбегание с высокого старта.</li></ol>`,
+          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
         }
       }
     ]
@@ -296,16 +207,10 @@ const METHOD_DATA = {
       {
         id: 'game-basket', title: 'Баскетбол: бросок', icon: '🏀',
         content: {
-          'Темы': `<h4>📖 Бросок одной рукой от плеча</h4><p>Основной бросок в баскетболе. Выполняется с места или в движении.</p>`,
-          'Как выполнять': `
-            <ol>
-              <li><strong>Стойка:</strong> ноги на ширине плеч, колени согнуты.</li>
-              <li><strong>Замах:</strong> мяч поднимается над головой.</li>
-              <li><strong>Бросок:</strong> разгибание руки и кисти.</li>
-            </ol>
-          `,
-          'Подводящие упражнения': `<ol><li>Броски мяча вверх одной рукой.</li><li>Броски в стену с отметкой.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Темы': `<h4>📖 Бросок одной рукой</h4><p>Основной бросок в баскетболе.</p>`,
+          'Как выполнять': `<ol><li><strong>Стойка:</strong> колени согнуты.</li><li><strong>Бросок:</strong> разгибание руки и кисти.</li></ol>`,
+          'Подводящие упражнения': `<ol><li>Броски мяча вверх.</li><li>Броски в стену.</li></ol>`,
+          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
         }
       }
     ]
@@ -316,16 +221,10 @@ const METHOD_DATA = {
       {
         id: 'ski-classic', title: 'Попеременный двухшажный ход', icon: '🎿',
         content: {
-          'Темы': `<h4>📖 Основной классический ход</h4><p>Толчок палками и ногами происходит поочерёдно.</p>`,
-          'Как выполнять': `
-            <ol>
-              <li><strong>Скольжение:</strong> на одной лыже.</li>
-              <li><strong>Толчок:</strong> левой ногой и правой палкой.</li>
-              <li><strong>Смена:</strong> вес переносится на другую ногу.</li>
-            </ol>
-          `,
-          'Подводящие упражнения': `<ol><li>Ступающий шаг без палок.</li><li>Скользящий шаг без палок.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Темы': `<h4>📖 Классический ход</h4><p>Толчок палками и ногами поочерёдно.</p>`,
+          'Как выполнять': `<ol><li><strong>Скольжение:</strong> на одной лыже.</li><li><strong>Толчок:</strong> левой ногой и правой палкой.</li></ol>`,
+          'Подводящие упражнения': `<ol><li>Ступающий шаг без палок.</li></ol>`,
+          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
         }
       }
     ]
@@ -340,17 +239,13 @@ function renderMethodTiles(block) {
   const blockData = METHOD_DATA[block];
   if (!blockData) return;
 
-  methodContainer.innerHTML = `
-    <div class="method-tiles">
-      ${blockData.topics.map(topic => `
-        <div class="method-tile" data-topic="${topic.id}">
-          <div class="method-tile__icon">${topic.icon}</div>
-          <div class="method-tile__title">${topic.title}</div>
-          <div class="method-tile__count">4 подвкладки</div>
-        </div>
-      `).join('')}
+  methodContainer.innerHTML = `<div class="method-tiles">${blockData.topics.map(topic => `
+    <div class="method-tile" data-topic="${topic.id}">
+      <div class="method-tile__icon">${topic.icon}</div>
+      <div class="method-tile__title">${topic.title}</div>
+      <div class="method-tile__count">4 подвкладки</div>
     </div>
-  `;
+  `).join('')}</div>`;
 
   methodContainer.querySelectorAll('.method-tile').forEach(tile => {
     tile.addEventListener('click', () => renderMethodDetail(block, tile.dataset.topic));
@@ -360,7 +255,6 @@ function renderMethodTiles(block) {
 function renderMethodDetail(block, topicId) {
   if (!methodContainer) return;
   const blockData = METHOD_DATA[block];
-  if (!blockData) return;
   const topic = blockData.topics.find(t => t.id === topicId);
   if (!topic) return;
 
@@ -374,26 +268,19 @@ function renderMethodDetail(block, topicId) {
         <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
       </div>
       <div class="method-tabs" id="methodTabs">
-        ${tabs.map((tab, i) => `
-          <button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">
-            ${tabEmoji[tab]} ${tab}
-          </button>
-        `).join('')}
+        ${tabs.map((tab, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">${tabEmoji[tab]} ${tab}</button>`).join('')}
       </div>
-      <div class="method-tab__content" id="methodTabContent">
-        ${topic.content[tabs[0]] || '<p>Материал скоро появится.</p>'}
-      </div>
+      <div class="method-tab__content" id="methodTabContent">${topic.content[tabs[0]]}</div>
     </div>
   `;
 
   document.getElementById('methodBackBtn').addEventListener('click', () => renderMethodTiles(block));
-
   document.getElementById('methodTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.method-tab');
     if (!btn) return;
     document.querySelectorAll('#methodTabs .method-tab').forEach(b => b.classList.remove('is-active'));
     btn.classList.add('is-active');
-    document.getElementById('methodTabContent').innerHTML = topic.content[btn.dataset.tab] || '<p>Материал скоро появится.</p>';
+    document.getElementById('methodTabContent').innerHTML = topic.content[btn.dataset.tab];
   });
 }
 
@@ -409,7 +296,7 @@ if (methodFilters) {
 }
 
 // ============================================================
-// РАЗДЕЛ «УЧАЩИМСЯ» (по учебной программе 1–4 классов)
+// УЧАЩИМСЯ (1-4 классы)
 // ============================================================
 const STUDENT_DATA = {
   '1-4': {
@@ -417,310 +304,127 @@ const STUDENT_DATA = {
       {
         id: 'st-ath', title: 'Лёгкая атлетика', icon: '🏃',
         content: {
-          'Теория': `
-            <h4>📖 Что такое лёгкая атлетика</h4>
-            <p>Это ходьба, бег, прыжки и метания. Они делают нас быстрыми, ловкими и выносливыми.</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Проверяй шнурки перед бегом.</li><li>При метании не стой в секторе.</li><li>Не бегай наперерез друг другу.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Бег</h4>
-            <p>Бег на месте, по разметкам, «змейкой», спиной вперед. Челночный бег 4х9 м.</p>
-            <h4>Прыжки</h4>
-            <p>Прыжки на двух ногах, с разметки, через короткую скакалку. Прыжок в длину с места толчком двумя ногами.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Мяч капитану»:</strong> Игроки передают мяч своему капитану.</li>
-              <li><strong>«Борьба за мяч»:</strong> Две команды пытаются забрать мяч.</li>
-              <li><strong>Эстафеты:</strong> Круговая и линейная эстафеты с мячами и обручами.</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Высокая интенсивность бега (нужно чередовать с ходьбой).</li>
-              <li>Заступ за линию при метании.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Теория': `<h4>📖 Что такое лёгкая атлетика</h4><p>Ходьба, бег, прыжки и метания.</p><h4>⚠️ Безопасность</h4><ul><li>Проверяй шнурки.</li><li>Не стой в секторе.</li></ul>`,
+          'Как выполнять': `<h4>Бег</h4><p>Челночный бег 4х9 м.</p><h4>Прыжки</h4><p>Прыжок в длину с места.</p>`,
+          'Игры / Эстафеты': `<ul><li><strong>«Мяч капитану»</strong>.</li><li><strong>Эстафеты:</strong> с мячами.</li></ul>`,
+          'Ошибки': `<ul><li>Высокая интенсивность бега.</li><li>Заступ за линию.</li></ul>`,
+          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
         }
       },
       {
-        id: 'st-gym', title: 'Гимнастика и акробатика', icon: '🤸',
+        id: 'st-gym', title: 'Гимнастика', icon: '🤸',
         content: {
-          'Теория': `
-            <h4>📖 Что такое гимнастика</h4>
-            <p>Упражнения для развития гибкости, силы и ловкости. Понятие «правильная осанка».</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Выполняй упражнения только на мате.</li><li>Слушай команды учителя («Равняйсь!», «Смирно!»).</li><li>Не толкайся на снарядах.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Строевые упражнения</h4>
-            <p>Расчет на «первый-второй», перестроения, повороты переступанием.</p>
-            <h4>Акробатика</h4>
-            <p>Группировка, кувырок вперед, стойка на лопатках согнув ноги, перекаты.</p>
-            <h4>Лазанье и висы</h4>
-            <p>Лазанье по гимнастической стенке, вис согнув ноги, подтягивание на руках.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Путешествие на корабле»:</strong> Строевые упражнения в игровой форме.</li>
-              <li><strong>«У ребят порядок строгий»:</strong> Игры на построение.</li>
-              <li><strong>«Канатоходец»:</strong> Ходьба по скамейке (равновесие).</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Опора на голову при кувырке.</li>
-              <li>Много спрыгиваний со скамейки (ограничивается нагрузка).</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Теория': `<h4>📖 Гимнастика</h4><p>Развитие гибкости и силы.</p><h4>⚠️ Безопасность</h4><ul><li>Только на мате.</li></ul>`,
+          'Как выполнять': `<h4>Акробатика</h4><p>Кувырок вперед.</p><h4>Висы</h4><p>Вис согнув ноги.</p>`,
+          'Игры / Эстафеты': `<ul><li><strong>«Канатоходец»</strong>.</li></ul>`,
+          'Ошибки': `<ul><li>Опора на голову.</li></ul>`,
+          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
         }
       },
       {
         id: 'st-ski', title: 'Лыжная подготовка', icon: '🎿',
         content: {
-          'Теория': `
-            <h4>📖 Зачем нужны лыжи</h4>
-            <p>Лыжи укрепляют здоровье зимой. Учимся правильно дышать и одеваться.</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Не выезжай на лёд без разрешения.</li><li>Держи дистанцию на лыжне.</li><li>Следи за признаками обморожения.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Передвижение</h4>
-            <p>Ступающий и скользящий шаг без палок; попеременный двухшажный ход.</p>
-            <h4>Повороты и спуски</h4>
-            <p>Повороты переступанием на месте. Спуски в основной стойке.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Шире шаг»:</strong> Игра на длину скользящего шага.</li>
-              <li><strong>«Кто самый быстрый»:</strong> Гонка на короткий отрезок.</li>
-              <li><strong>«К своим флажкам»:</strong> Встречная эстафета.</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Волок лыж по снегу (не переносится вес).</li>
-              <li>Бег на лыжах с высокой интенсивностью.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Теория': `<h4>📖 Лыжи</h4><p>Укрепляют здоровье.</p><h4>⚠️ Безопасность</h4><ul><li>Держи дистанцию.</li></ul>`,
+          'Как выполнять': `<h4>Передвижение</h4><p>Ступающий шаг.</p>`,
+          'Игры / Эстафеты': `<ul><li><strong>«Шире шаг»</strong>.</li></ul>`,
+          'Ошибки': `<ul><li>Волок лыж.</li></ul>`,
+          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
         }
       },
       {
         id: 'st-football', title: 'Футбол', icon: '⚽',
         content: {
-          'Теория': `
-            <h4>📖 Футбол в Беларуси</h4>
-            <p>Правила безопасного поведения. Одежда и обувь футболиста. Турнир «Кожаный мяч».</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Не бейте мяч в область живота и головы.</li><li>Играйте в специальной обуви.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Удары по мячу</h4>
-            <p>Удар серединой подъема, внутренней частью стопы. Жонглирование.</p>
-            <h4>Ведение и остановка</h4>
-            <p>Ведение одной ногой по прямой, «змейкой». Остановка мяча подошвой и внутренней частью стопы.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Лови мяч»</strong> и <strong>«Меткий снайпер»</strong>.</li>
-              <li><strong>Учебная игра:</strong> 2 на 2, 3 на 3, 4 на 4 на небольших площадках.</li>
-              <li><strong>Эстафеты:</strong> с обводкой стоек и ударами по воротам.</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Удар носком вместо внутренней части стопы.</li>
-              <li>Сильные удары в лицо или живот.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-volley', title: 'Волейбол (II–IV кл.)', icon: '🏐',
-        content: {
-          'Теория': `
-            <h4>📖 Что такое волейбол</h4>
-            <p>Правила игры, одежда. Пионербол — упрощенная разновидность волейбола.</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Не заходи за линию при подаче.</li><li>Не толкайтесь под сеткой.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Стойки и перемещения</h4>
-            <p>Высокая, средняя, низкая стойка. Приставные шаги, остановки.</p>
-            <h4>Передачи</h4>
-            <p>Передача двумя руками сверху на месте (над собой, в паре). Нижняя прямая подача в стену и через сетку.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Посадка картошки»</strong> и <strong>«Не сойди с места»</strong>.</li>
-              <li><strong>Пионербол:</strong> Игра по упрощенным правилам.</li>
-              <li><strong>Эстафеты:</strong> с передачами мяча над собой и в движении.</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Приём на ладони (мяч должен касаться пальцев).</li>
-              <li>Слишком низкая стойка.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-basket', title: 'Баскетбол (III–IV кл.)', icon: '🏀',
-        content: {
-          'Теория': `
-            <h4>📖 Что такое баскетбол</h4>
-            <p>История игры. Лучшие баскетболисты Беларуси. Правила и термины.</p>
-            <h4>⚠️ Безопасность</h4>
-            <ul><li>Следи за пальцами при ловле.</li><li>Не бей соперника по рукам.</li></ul>
-          `,
-          'Как выполнять': `
-            <h4>Стойки и остановки</h4>
-            <p>Высокая, средняя, низкая стойка. Остановка шагом и прыжком.</p>
-            <h4>Передачи и ведение</h4>
-            <p>Передача двумя руками от груди, одной от плеча. Ведение с изменением высоты отскока.</p>
-            <h4>Броски</h4>
-            <p>Броски по кольцу двумя руками от груди, одной от плеча.</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>«Передал – садись»</strong> и <strong>«Мяч в корзину»</strong>.</li>
-              <li><strong>Эстафеты:</strong> с ведением мяча, с обводкой стоек, с бросками по кольцу.</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Удар ладонью при ведении.</li>
-              <li>Бросок без замаха.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Теория': `<h4>📖 Футбол</h4><p>Правила игры.</p>`,
+          'Как выполнять': `<h4>Удары</h4><p>Внутренней частью стопы.</p>`,
+          'Игры / Эстафеты': `<ul><li><strong>Учебная игра 2 на 2</strong>.</li></ul>`,
+          'Ошибки': `<ul><li>Удар носком.</li></ul>`,
+          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
         }
       },
       {
         id: 'st-mobile', title: 'Подвижные игры', icon: '🎲',
         content: {
-          'Теория': `
-            <h4>📖 Подвижные игры</h4>
-            <p>Игры на внимание, координацию, с бегом, прыжками и метанием. Учат работать в команде.</p>
-          `,
-          'Как выполнять': `
-            <h4>Игры для внимания</h4>
-            <p>«Класс, смирно!», «Запрещенное движение», «День и ночь».</p>
-            <h4>Игры с бегом</h4>
-            <p>«Два Мороза», «Гуси-лебеди», «Пустое место».</p>
-            <h4>Игры с прыжками</h4>
-            <p>«Волк во рву», «Удочка», «Зайцы в огороде».</p>
-          `,
-          'Игры / Эстафеты': `
-            <ul>
-              <li><strong>С метанием:</strong> «Охотники и зайцы», «Подвижная цель», «Мяч водящему».</li>
-              <li><strong>С лазаньем:</strong> «Перелет птиц», «Пожарные».</li>
-            </ul>
-          `,
-          'Ошибки': `
-            <ul>
-              <li>Высокая интенсивность бега (надо чередовать с ходьбой).</li>
-              <li>Много прыжков подряд.</li>
-            </ul>
-          `,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      }
-    ]
-  },
-  // ДЛЯ 5-9 и 10-11 классов оставляем то, что было (там тоже всё по программе)
-  '5-9': {
-    topics: [
-      {
-        id: 'st-ath-5', title: 'Лёгкая атлетика', icon: '🏃',
-        content: {
-          'Теория': `<h4>📖 5–9 классы</h4><p>Спринт, кросс, прыжки в высоту и метание гранаты.</p>`,
-          'Как выполнять': `<h4>Бег на 30 метров</h4><ol><li><strong>Старт:</strong> низкий или высокий.</li><li><strong>Разгон:</strong> наклон вперёд, работа рук.</li><li><strong>Финиш:</strong> не сбавляй темп.</li></ol>`,
-          'Ошибки': `<ul><li>Раннее выпрямление после старта.</li><li>Зажатые плечи.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-gym-5', title: 'Гимнастика и акробатика', icon: '🤸',
-        content: {
-          'Теория': `<h4>📖 5–9 классы</h4><p>Опорные прыжки, упражнения на перекладине и брусьях.</p>`,
-          'Как выполнять': `<h4>Стойка на лопатках</h4><ol><li><strong>Старт:</strong> лёжа на спине.</li><li><strong>Подъём:</strong> выпрями ноги вверх.</li><li><strong>Опора:</strong> локти ближе друг к другу.</li></ol>`,
-          'Ошибки': `<ul><li>Опора на шею.</li><li>Согнутые ноги.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-ski-5', title: 'Лыжная подготовка', icon: '🎿',
-        content: {
-          'Теория': `<h4>📖 5–9 классы</h4><p>Попеременный двухшажный ход, подъёмы, торможение «плугом».</p>`,
-          'Как выполнять': `<h4>Попеременный ход</h4><ol><li><strong>Скольжение:</strong> на одной лыже.</li><li><strong>Толчок:</strong> левой ногой и правой палкой.</li><li><strong>Смена:</strong> переноси вес.</li></ol>`,
-          'Ошибки': `<ul><li>Толчок одноимёнными рукой и ногой.</li><li>Скованные движения.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-game-5', title: 'Спортивные игры', icon: '🏐',
-        content: {
-          'Теория': `<h4>📖 5–9 классы</h4><p>Баскетбол, волейбол, футбол.</p>`,
-          'Как выполнять': `<h4>Передача сверху (волейбол)</h4><ol><li><strong>Стойка:</strong> ноги на ширине плеч.</li><li><strong>Руки:</strong> согнуты над головой.</li><li><strong>Приём:</strong> на пальцы.</li></ol>`,
-          'Ошибки': `<ul><li>Приём на ладони.</li><li>Низкая стойка.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      }
-    ]
-  },
-  '10-11': {
-    topics: [
-      {
-        id: 'st-ath-10', title: 'Лёгкая атлетика', icon: '🏃',
-        content: {
-          'Теория': `<h4>📖 10–11 классы</h4><p>Спринт 100 м, эстафетный бег, прыжки в высоту.</p>`,
-          'Как выполнять': `<h4>Эстафетный бег</h4><ol><li><strong>Приём:</strong> не оглядывайся.</li><li><strong>Передача:</strong> отдай палочку точно в руку.</li></ol>`,
-          'Ошибки': `<ul><li>Потеря палочки.</li><li>Замедление перед финишем.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-gym-10', title: 'Гимнастика', icon: '🏋️',
-        content: {
-          'Теория': `<h4>📖 10–11 классы</h4><p>Аэробика (девушки), атлетическая гимнастика (юноши).</p>`,
-          'Как выполнять': `<h4>С отягощениями</h4><ol><li><strong>Спина:</strong> держи прямой.</li><li><strong>Дыхание:</strong> выдох на усилии.</li></ol>`,
-          'Ошибки': `<ul><li>Круглая спина.</li><li>Задержка дыхания.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-ski-10', title: 'Лыжная подготовка', icon: '🎿',
-        content: {
-          'Теория': `<h4>📖 10–11 классы</h4><p>Коньковый ход, дистанция на время.</p>`,
-          'Как выполнять': `<h4>Коньковый ход</h4><ol><li><strong>Вес:</strong> на опорную ногу.</li><li><strong>Толчок:</strong> ребром лыжи в сторону.</li></ol>`,
-          'Ошибки': `<ul><li>Отсутствие переноса веса.</li><li>Резкие движения.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
-        }
-      },
-      {
-        id: 'st-game-10', title: 'Спортивные игры', icon: '🏐',
-        content: {
-          'Теория': `<h4>📖 10–11 классы</h4><p>Углублённая тактика, судейство.</p>`,
-          'Как выполнять': `<h4>Судейство</h4><ol><li><strong>Жесты:</strong> знай сигналы.</li><li><strong>Правила:</strong> 3 сек (баскет), 8 сек (волейбол).</li></ol>`,
-          'Ошибки': `<ul><li>Спор с судьёй.</li><li>Незнание правил.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Ссылки на видео и схемы скоро появятся.</p>`
+          'Теория': `<h4>📖 Подвижные игры</h4><p>Учат работать в команде.</p>`,
+          'Как выполнять': `<h4>Игры с бегом</h4><p>«Два Мороза», «Гуси-лебеди».</p>`,
+          'Игры / Эстафеты': `<ul><li><strong>С метанием:</strong> «Охотники и зайцы».</li></ul>`,
+          'Ошибки': `<ul><li>Много прыжков подряд.</li></ul>`,
+          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
         }
       }
     ]
   }
 };
-// ============================================================
-// РАЗДЕЛ «ТЕСТЫ» (Плитки разделов -> Список тестов -> Прохождение)
-// ============================================================
 
+const studentContainer = document.getElementById('studentContainer');
+const studentLevelsEl = document.getElementById('studentLevels');
+
+function renderStudentTiles(grade) {
+  if (!studentContainer) return;
+  const gradeData = STUDENT_DATA[grade];
+  if (!gradeData) {
+    studentContainer.innerHTML = '<p style="text-align:center; padding: 40px; font-size: 1.2rem; color: var(--text-muted);">Материалы для этого класса скоро появятся!</p>';
+    return;
+  }
+
+  studentContainer.innerHTML = `<div class="method-tiles">${gradeData.topics.map(topic => `
+    <div class="method-tile" data-topic="${topic.id}">
+      <div class="method-tile__icon">${topic.icon}</div>
+      <div class="method-tile__title">${topic.title}</div>
+      <div class="method-tile__count">5 подвкладок</div>
+    </div>
+  `).join('')}</div>`;
+
+  studentContainer.querySelectorAll('.method-tile').forEach(tile => {
+    tile.addEventListener('click', () => renderStudentDetail(grade, tile.dataset.topic));
+  });
+}
+
+function renderStudentDetail(grade, topicId) {
+  if (!studentContainer) return;
+  const gradeData = STUDENT_DATA[grade];
+  const topic = gradeData.topics.find(t => t.id === topicId);
+  if (!topic) return;
+
+  const tabs = ['Теория', 'Как выполнять', 'Игры / Эстафеты', 'Ошибки', 'Видео / схемы'];
+  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Игры / Эстафеты': '🏆', 'Ошибки': '⚠️', 'Видео / схемы': '🎬' };
+
+  studentContainer.innerHTML = `
+    <div class="method-detail">
+      <div class="method-detail__header">
+        <button class="method-detail__back" id="studentBackBtn">← Назад к темам</button>
+        <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
+      </div>
+      <div class="method-tabs" id="studentTabs">
+        ${tabs.map((tab, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">${tabEmoji[tab]} ${tab}</button>`).join('')}
+      </div>
+      <div class="method-tab__content" id="studentTabContent">${topic.content[tabs[0]]}</div>
+    </div>
+  `;
+
+  document.getElementById('studentBackBtn').addEventListener('click', () => renderStudentTiles(grade));
+  document.getElementById('studentTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.method-tab');
+    if (!btn) return;
+    document.querySelectorAll('#studentTabs .method-tab').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    document.getElementById('studentTabContent').innerHTML = topic.content[btn.dataset.tab];
+  });
+}
+
+if (studentLevelsEl) {
+  studentLevelsEl.addEventListener('click', (e) => {
+    const button = e.target.closest('[data-level]');
+    if (!button) return;
+    studentLevelsEl.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
+    button.classList.add('is-active');
+    renderStudentTiles(button.dataset.level);
+  });
+  renderStudentTiles('1-4');
+}
+
+// ============================================================
+// ТЕСТЫ
+// ============================================================
 const QUIZ_DATA = {
   rules: {
     title: 'Правила спорта', icon: '📚',
@@ -729,25 +433,14 @@ const QUIZ_DATA = {
         id: 'rules-basket', title: 'Баскетбол',
         questions: [
           { q: "Сколько игроков одной команды на площадке в баскетболе?", a: ["5", "6", "7", "11"], correct: 0 },
-          { q: "Сколько очков дают за штрафной бросок?", a: ["1", "2", "3", "4"], correct: 0 },
-          { q: "Сколько времени дается на атаку в баскетболе?", a: ["10 сек", "24 сек", "30 сек", "45 сек"], correct: 1 },
-          { q: "Какая высота кольца от пола?", a: ["2.50 м", "3.05 м", "3.50 м", "4.00 м"], correct: 1 }
+          { q: "Сколько времени дается на атаку в баскетболе?", a: ["10 сек", "24 сек", "30 сек", "45 сек"], correct: 1 }
         ]
       },
       {
         id: 'rules-volley', title: 'Волейбол',
         questions: [
-          { q: "До скольких очков играют в партии (обычно)?", a: ["15", "21", "25", "30"], correct: 2 },
-          { q: "Сколько касаний мяча разрешено на одной стороне?", a: ["1", "2", "3", "4"], correct: 2 },
-          { q: "Сколько игроков в команде на площадке?", a: ["5", "6", "7", "11"], correct: 1 }
-        ]
-      },
-      {
-        id: 'rules-football', title: 'Футбол',
-        questions: [
-          { q: "Сколько игроков одной команды на поле?", a: ["5", "7", "11", "15"], correct: 2 },
-          { q: "С какого расстояния пробивают пенальти?", a: ["9 м", "10 м", "11 м", "12 м"], correct: 2 },
-          { q: "Какая продолжительность матча?", a: ["60 мин", "80 мин", "90 мин", "120 мин"], correct: 2 }
+          { q: "До скольких очков играют в партии?", a: ["15", "21", "25", "30"], correct: 2 },
+          { q: "Сколько касаний мяча разрешено на одной стороне?", a: ["1", "2", "3", "4"], correct: 2 }
         ]
       }
     ]
@@ -759,16 +452,7 @@ const QUIZ_DATA = {
         id: 'safety-gym', title: 'В спортивном зале',
         questions: [
           { q: "Что нужно сделать перед началом занятий?", a: ["Сделать разминку", "Съесть шоколад", "Попить воды", "Сесть на шпагат"], correct: 0 },
-          { q: "Можно ли оставлять инвентарь (гантели, скакалки) на полу в проходе?", a: ["Да, если быстро", "Нет, это опасно", "Только гантели", "Только в конце урока"], correct: 1 },
-          { q: "Зачем нужен магнезий (порошок) в гимнастике?", a: ["Для красоты", "Чтобы руки не скользили", "Для запаха", "Для веса"], correct: 1 }
-        ]
-      },
-      {
-        id: 'safety-outdoor', title: 'На улице и на лыжах',
-        questions: [
-          { q: "Что делать, если во время игры на улице пошел сильный ливень с грозой?", a: ["Спрятаться под деревом", "Бежать домой", "Прекратить игру и уйти в здание", "Продолжать играть"], correct: 2 },
-          { q: "Можно ли кататься на лыжах без головного убора при сильном морозе?", a: ["Да, если быстро", "Нет, можно застудить голову", "Только взрослым", "Да, если есть капюшон"], correct: 1 },
-          { q: "Что нужно сделать перед метанием мяча?", a: ["Убедиться, что сектор свободен", "Бросить как можно сильнее", "Закрыть глаза", "Отвернуться"], correct: 0 }
+          { q: "Можно ли оставлять инвентарь на полу в проходе?", a: ["Да, если быстро", "Нет, это опасно", "Только гантели", "Только в конце урока"], correct: 1 }
         ]
       }
     ]
@@ -780,30 +464,7 @@ const QUIZ_DATA = {
         id: 'history-olymp', title: 'Олимпийские игры',
         questions: [
           { q: "В какой стране зародились Олимпийские игры?", a: ["Рим", "Греция", "Египет", "Россия"], correct: 1 },
-          { q: "Как часто проводятся современные Олимпийские игры?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 },
-          { q: "Какой символ есть на Олимпийском флаге?", a: ["Звезда", "Кольца", "Меч", "Лавровый венок"], correct: 1 },
-          { q: "В каком году прошли первые современные Олимпийские игры?", a: ["1896", "1900", "1924", "1980"], correct: 0 }
-        ]
-      },
-      {
-        id: 'history-belarus', title: 'Спортсмены Беларуси',
-        questions: [
-          { q: "Кто из белорусов носит титул 'Легенда спорта' в нашем проекте?", a: ["Дарья Домрачева", "Виктория Азаренко", "Андрей Арямнов", "Все перечисленные"], correct: 3 },
-          { q: "В каком городе родился олимпийский чемпион по метанию молота Василий Руденков?", a: ["Минск", "Гомель", "Жлобин", "Витебск"], correct: 2 },
-          { q: "Какой вид спорта прославил Жлобин благодаря ХК «Металлург»?", a: ["Футбол", "Хоккей", "Баскетбол", "Волейбол"], correct: 1 }
-        ]
-      }
-    ]
-  },
-  ufp: {
-    title: 'Мои нормативы', icon: '📊',
-    topics: [
-      {
-        id: 'ufp-test', title: 'Общие знания УФП',
-        questions: [
-          { q: "Что такое 'челночный бег'?", a: ["Бег по кругу", "Бег с ускорением", "Бег между двумя точками с разворотом", "Бег спиной вперед"], correct: 2 },
-          { q: "В чем измеряется гибкость при наклоне вперед?", a: ["В секундах", "В килограммах", "В сантиметрах", "В градусах"], correct: 2 },
-          { q: "Какой норматив проверяет скоростно-силовые качества ног?", a: ["Пресс за 1 мин", "Прыжок в длину с места", "Вис на перекладине", "Бег 1000м"], correct: 1 }
+          { q: "Как часто проводятся современные Олимпийские игры?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 }
         ]
       }
     ]
@@ -812,22 +473,14 @@ const QUIZ_DATA = {
 
 let currentQuizQuestions = [];
 let currentAnswers = [];
-
 const quizContainer = document.getElementById('quizContainer');
 
 function renderQuizTiles() {
   if (!quizContainer) return;
-  
   let html = '<div class="method-tiles">';
   for (const key in QUIZ_DATA) {
     const block = QUIZ_DATA[key];
-    html += `
-      <div class="method-tile" onclick="renderQuizList('${key}')">
-        <div class="method-tile__icon">${block.icon}</div>
-        <div class="method-tile__title">${block.title}</div>
-        <div class="method-tile__count">${block.topics.length} теста</div>
-      </div>
-    `;
+    html += `<div class="method-tile" onclick="renderQuizList('${key}')"><div class="method-tile__icon">${block.icon}</div><div class="method-tile__title">${block.title}</div><div class="method-tile__count">${block.topics.length} теста</div></div>`;
   }
   html += '</div>';
   quizContainer.innerHTML = html;
@@ -836,25 +489,10 @@ function renderQuizTiles() {
 function renderQuizList(blockKey) {
   if (!quizContainer) return;
   const block = QUIZ_DATA[blockKey];
-  
-  let html = `
-    <div class="method-detail">
-      <div class="method-detail__header">
-        <button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button>
-        <h3 class="method-detail__title">${block.icon} ${block.title}</h3>
-      </div>
-      <div class="method-tab__content" style="padding: 0;">
-  `;
-  
+  let html = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button><h3 class="method-detail__title">${block.icon} ${block.title}</h3></div><div class="method-tab__content" style="padding: 0;">`;
   block.topics.forEach(topic => {
-    html += `
-      <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${topic.title}</div>
-        <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="startQuiz('${topic.id}')">Начать тест</button>
-      </div>
-    `;
+    html += `<div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${topic.title}</div><button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="startQuiz('${topic.id}')">Начать тест</button></div>`;
   });
-  
   html += `</div></div>`;
   quizContainer.innerHTML = html;
 }
@@ -866,42 +504,14 @@ function startQuiz(topicId) {
     if (found) { topicData = found; break; }
   }
   if (!topicData) return;
-
   currentQuizQuestions = topicData.questions;
   currentAnswers = [];
-
-  let html = `
-    <div class="method-detail">
-      <div class="method-detail__header">
-        <button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button>
-        <h3 class="method-detail__title">📝 ${topicData.title}</h3>
-      </div>
-      <div class="method-tab__content" id="quiz-content">
-  `;
-
+  let html = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button><h3 class="method-detail__title">📝 ${topicData.title}</h3></div><div class="method-tab__content" id="quiz-content">`;
   currentQuizQuestions.forEach((item, index) => {
-    const optionsHtml = item.a.map((opt, i) => `
-      <label class="quiz-option" onclick="selectAnswer(event, ${index}, ${i})">
-        <input type="radio" name="q${index}" style="display:none;"> ${opt}
-      </label>
-    `).join('');
-    
-    html += `
-      <div class="quiz-question">
-        <h4>${index + 1}. ${item.q}</h4>
-        ${optionsHtml}
-      </div>
-    `;
+    const optionsHtml = item.a.map((opt, i) => `<label class="quiz-option" onclick="selectAnswer(event, ${index}, ${i})"><input type="radio" name="q${index}" style="display:none;"> ${opt}</label>`).join('');
+    html += `<div class="quiz-question"><h4>${index + 1}. ${item.q}</h4>${optionsHtml}</div>`;
   });
-
-  html += `
-      </div>
-      <div style="padding: 20px 30px; text-align: right;">
-        <button class="btn" onclick="checkQuiz(event)" style="width: 100%;">Проверить ответы</button>
-      </div>
-    </div>
-  `;
-
+  html += `</div><div style="padding: 20px 30px; text-align: right;"><button class="btn" onclick="checkQuiz(event)" style="width: 100%;">Проверить ответы</button></div></div>`;
   quizContainer.innerHTML = html;
 }
 
@@ -916,11 +526,9 @@ function checkQuiz(event) {
     alert('Ответь на все вопросы!');
     return;
   }
-
   let score = 0;
   const questionsDiv = document.getElementById('quiz-content');
   const questionBoxes = questionsDiv.querySelectorAll('.quiz-question');
-
   currentQuizQuestions.forEach((q, i) => {
     const labels = questionBoxes[i].querySelectorAll('.quiz-option');
     labels.forEach((label, idx) => {
@@ -930,27 +538,26 @@ function checkQuiz(event) {
       label.style.pointerEvents = 'none';
     });
   });
-
   const scoreText = document.createElement('div');
   scoreText.style.cssText = 'margin-top: 30px; font-size: 1.5rem; font-weight: 800; text-align: center; color: var(--text);';
   scoreText.textContent = `Твой результат: ${score} из ${currentQuizQuestions.length}`;
-
   if (score === currentQuizQuestions.length) {
     scoreText.innerHTML += '<br><span style="color: var(--accent);">🎉 Идеально! Секретная точка на карте разблокирована!</span>';
     if (typeof revealSecretMarker === 'function') revealSecretMarker();
   }
-
   questionsDiv.appendChild(scoreText);
   event.currentTarget.style.display = 'none'; 
+}
+
+if (document.getElementById('quizContainer')) {
+  renderQuizTiles();
 }
 
 // ============================================================
 // ТЕМА
 // ============================================================
 const themeToggle = document.getElementById('themeToggle');
-if (localStorage.getItem('theme') === 'dark') {
-  document.documentElement.dataset.theme = 'dark';
-}
+if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
 if (themeToggle) {
   themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙';
   themeToggle.addEventListener('click', () => {
@@ -959,9 +566,4 @@ if (themeToggle) {
     localStorage.setItem('theme', isDark ? 'light' : 'dark');
     themeToggle.textContent = isDark ? '🌙' : '☀️';
   });
-}
-
-// Инициализация тестов при загрузке
-if (document.getElementById('quizContainer')) {
-  renderQuizTiles();
 }
