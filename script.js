@@ -1033,3 +1033,478 @@ if (themeToggle) {
 // ============================================================
 renderQuiz();
 applyFilters();
+// ============================================================
+// РАЗДЕЛ «УЧАЩИМСЯ»
+// Добавлено отдельно: остальной код сайта не меняется
+// ============================================================
+
+const STUDENT_TASKS = [
+  {
+    id: 'student-basketball',
+    category: 'games',
+    categoryName: 'Подвижные игры',
+    icon: '🏀',
+    title: 'Баскетбол: ведение мяча и передачи',
+    technique: [
+      'Мягко контролируй мяч кончиками пальцев — не хлопай по нему ладонью.',
+      'Слегка согни руку и наклони корпус вперёд.',
+      'Старайся смотреть на площадку и замечать партнёров.'
+    ],
+    levels: [
+      'Поиграй в ведение на месте: попробуй несколько раз коснуться мяча, не теряя контроль.',
+      'Веди мяч шагом по прямой, затем выполни передачу партнёру.',
+      'Пройди маршрут с конусами, меняя направление и скорость; после маршрута сделай передачу.'
+    ],
+    errors: [
+      'Удар ладонью вместо контроля пальцами.',
+      'Постоянный взгляд вниз.',
+      'Слишком высокий отскок мяча.'
+    ],
+    challenge: 'Выполни 3 подхода ведения мяча по 30 секунд. Между подходами отдохни.',
+    videoURL: ''
+  },
+  {
+    id: 'student-pioneerball',
+    category: 'games',
+    categoryName: 'Подвижные игры',
+    icon: '🏐',
+    title: 'Пионербол: подача и приём снизу',
+    technique: [
+      'Подбрось мяч для подачи примерно на 30–40 см.',
+      'Направь мяч контролируемым ударом ладони или ребра кисти.',
+      'Для приёма согни ноги, выпрями руки и направь предплечья к мячу.'
+    ],
+    levels: [
+      'Подбрасывай мяч невысоко и лови его двумя руками.',
+      'Передавай мяч партнёру с удобного расстояния, стараясь попасть ему в руки.',
+      'Чередуй подачу и приём с партнёром, меняя направление передачи.'
+    ],
+    errors: [
+      'Согнутые руки во время приёма.',
+      'Удар без контроля направления.',
+      'Выпрямленные ноги при приёме.'
+    ],
+    challenge: 'Сделай 10 точных передач партнёру подряд.',
+    videoURL: ''
+  },
+  {
+    id: 'student-minifootball',
+    category: 'games',
+    categoryName: 'Подвижные игры',
+    icon: '⚽',
+    title: 'Мини-футбол: удар внутренней стороной стопы',
+    technique: [
+      'Поставь опорную ногу рядом с мячом.',
+      'Разверни бьющую стопу наружу, чтобы использовать её внутреннюю сторону.',
+      'Ударь по мячу контролируемо, слегка наклонив корпус вперёд.'
+    ],
+    levels: [
+      'Прокати мяч между ногами и останови его подошвой.',
+      'Передавай мяч партнёру на небольшом расстоянии.',
+      'Выполни точные передачи в обозначенную цель с постепенным увеличением расстояния.'
+    ],
+    errors: [
+      'Опорная нога стоит слишком далеко от мяча.',
+      'Удар носком вместо внутренней стороны стопы.',
+      'Корпус сильно отклонён назад.'
+    ],
+    challenge: 'Попади в выбранную цель 5 раз из 10 попыток.',
+    videoURL: ''
+  },
+  {
+    id: 'student-sprint',
+    category: 'athletics',
+    categoryName: 'Лёгкая атлетика',
+    icon: '🏃',
+    title: 'Бег на скорость: старт и финиш',
+    technique: [
+      'Прими устойчивое стартовое положение по команде учителя.',
+      'На старте сделай первые шаги энергично, сохраняя контроль движений.',
+      'Беги через линию финиша, не замедляясь заранее.'
+    ],
+    levels: [
+      'Игровые старты по сигналу учителя на коротком отрезке.',
+      'Выполни беговые упражнения и несколько ускорений на 10–20 метров.',
+      'Отработай старт, разгон и финиш; следи за техникой, отдыхай между попытками.'
+    ],
+    errors: [
+      'Резкое выпрямление корпуса сразу после старта.',
+      'Зажатые плечи и скованные руки.',
+      'Замедление перед линией финиша.'
+    ],
+    challenge: 'Выполни 3 коротких старта по команде учителя. Отметь самый удачный.',
+    videoURL: ''
+  },
+  {
+    id: 'student-long-jump',
+    category: 'athletics',
+    categoryName: 'Лёгкая атлетика',
+    icon: '🦘',
+    title: 'Прыжок в длину: разбег и приземление',
+    technique: [
+      'Выбери контролируемый разбег и ускоряйся постепенно.',
+      'Оттолкнись одной ногой перед линией, помогая себе махом рук.',
+      'При приземлении вынеси ноги вперёд и постарайся сохранить равновесие.'
+    ],
+    levels: [
+      'Выполняй прыжки через линию или прыжки с места в игровой форме.',
+      'Отдельно отработай разбег и отталкивание на подготовленной площадке.',
+      'Соедини разбег, отталкивание и приземление; записывай результаты попыток.'
+    ],
+    errors: [
+      'Заступ за линию отталкивания.',
+      'Потеря равновесия при приземлении.',
+      'Слишком быстрый разбег без контроля.'
+    ],
+    challenge: 'Сделай 3 попытки прыжка и запиши лучший результат.',
+    videoURL: ''
+  },
+  {
+    id: 'student-throw',
+    category: 'athletics',
+    categoryName: 'Лёгкая атлетика',
+    icon: '🎯',
+    title: 'Метание мяча: финальное усилие',
+    technique: [
+      'Удерживай мяч пальцами, не зажимая его в ладони.',
+      'Перед броском отведи руку назад и поверни корпус.',
+      'Направь бросок вперёд и заверши движение рукой.'
+    ],
+    levels: [
+      'Повтори движения метания без мяча по показу учителя.',
+      'Бросай лёгкий мяч в большую цель с небольшого расстояния.',
+      'Отработай разбег и бросок только по команде, в свободном секторе.'
+    ],
+    errors: [
+      'Бросок без поворота корпуса.',
+      'Отсутствие контроля направления.',
+      'Выход в сектор до разрешения учителя.'
+    ],
+    challenge: 'Сделай 5 бросков в обозначенную цель по команде учителя.',
+    videoURL: ''
+  },
+  {
+    id: 'student-flexibility',
+    category: 'gymnastics',
+    categoryName: 'Гимнастика',
+    icon: '🤸',
+    title: 'Гибкость: шпагат и мостик',
+    technique: [
+      'Перед упражнениями обязательно выполни разминку.',
+      'При растяжке держи движения плавными и не сгибай колени без необходимости.',
+      'Мостик выполняй только на мате, после разминки и со страховкой учителя.'
+    ],
+    levels: [
+      'Выполняй мягкие наклоны и махи ногами у устойчивой опоры.',
+      'Добавь наклоны к прямой ноге и упражнения на подвижность спины.',
+      'Постепенно увеличивай амплитуду только под контролем учителя; не работай через боль.'
+    ],
+    errors: [
+      'Рывки и давление через боль.',
+      'Задержка дыхания.',
+      'Мостик без разминки, мата и страховки.'
+    ],
+    challenge: 'После разминки удерживай удобное положение растяжки 10 секунд. Не продолжай, если появится боль.',
+    videoURL: ''
+  },
+  {
+    id: 'student-acrobatics',
+    category: 'gymnastics',
+    categoryName: 'Гимнастика',
+    icon: '🤸‍♀️',
+    title: 'Акробатика: группировка и перекат',
+    technique: [
+      'Для группировки присядь и аккуратно прижми подбородок к груди.',
+      'Перекат выполняй по мату через плечи и лопатки — не опирайся на голову и шею.',
+      'Сложные элементы выполняй только после показа и со страховкой учителя.'
+    ],
+    levels: [
+      'Потренируй положение группировки сидя на мате.',
+      'Выполни контролируемые покачивания в группировке на мате.',
+      'Переходи к упражнению целиком только с разрешения и страховкой учителя.'
+    ],
+    errors: [
+      'Недостаточная группировка.',
+      'Опора на голову или шею.',
+      'Выполнение без мата и страховки.'
+    ],
+    challenge: 'Покажи учителю правильную группировку и безопасный перекат на мате.',
+    videoURL: ''
+  },
+  {
+    id: 'student-bar',
+    category: 'gymnastics',
+    categoryName: 'Гимнастика',
+    icon: '💪',
+    title: 'Упражнения на перекладине',
+    technique: [
+      'Перед началом проверь с учителем, что перекладина и место вокруг безопасны.',
+      'В висе сохраняй контроль над корпусом и не раскачивайся резко.',
+      'Подтягивания и спуски выполняй без рывков, используя помощь учителя при необходимости.'
+    ],
+    levels: [
+      'Познакомься с упражнением на низкой перекладине под присмотром.',
+      'Попробуй облегчённый вариант с резинкой или помощью учителя.',
+      'Отрабатывай подтягивание и контролируемый спуск только после инструктажа.'
+    ],
+    errors: [
+      'Резкие рывки и раскачивание.',
+      'Небезопасный хват.',
+      'Занятия без присмотра и страховки.'
+    ],
+    challenge: 'Выполни безопасный вис под присмотром учителя и отметь задание.',
+    videoURL: ''
+  },
+  {
+    id: 'student-classic-ski',
+    category: 'ski',
+    categoryName: 'Лыжная подготовка',
+    icon: '🎿',
+    title: 'Классический лыжный ход',
+    technique: [
+      'Скользи на одной лыже и переноси на неё вес тела.',
+      'Чередуй толчок ногой и противоположной рукой с палкой.',
+      'Сохраняй равновесие и удобный ритм.'
+    ],
+    levels: [
+      'Потренируй попеременные шаги без лыж на ровной площадке.',
+      'Отработай скользящий шаг без палок на подготовленной трассе.',
+      'Соедини скольжение и работу палками, двигаясь по безопасной трассе.'
+    ],
+    errors: [
+      'Потеря равновесия из-за спешки.',
+      'Одновременный толчок одноимёнными рукой и ногой.',
+      'Напряжённые, скованные движения.'
+    ],
+    challenge: 'Проедь короткий участок, сохраняя попеременный ритм.',
+    videoURL: ''
+  },
+  {
+    id: 'student-skate-ski',
+    category: 'ski',
+    categoryName: 'Лыжная подготовка',
+    icon: '⛷️',
+    title: 'Коньковый ход',
+    technique: [
+      'Переноси вес на опорную ногу.',
+      'Отталкивайся ребром другой лыжи в сторону.',
+      'Сохраняй небольшой наклон корпуса вперёд и устойчивый ритм.'
+    ],
+    levels: [
+      'Имитируй боковые шаги без лыж на ровной площадке.',
+      'Потренируй перенос веса и боковое отталкивание на месте.',
+      'Отрабатывай скользящий шаг на подготовленной трассе под наблюдением учителя.'
+    ],
+    errors: [
+      'Отсутствие переноса веса.',
+      'Отталкивание без контроля положения лыжи.',
+      'Слишком резкие движения.'
+    ],
+    challenge: 'Выполни несколько контролируемых отталкиваний в обе стороны.',
+    videoURL: ''
+  },
+  {
+    id: 'student-ski-braking',
+    category: 'ski',
+    categoryName: 'Лыжная подготовка',
+    icon: '🛑',
+    title: 'Торможение и повороты на лыжах',
+    technique: [
+      'Торможение «плугом» изучай сначала на ровном месте.',
+      'Постепенно сведи носки лыж и разведи пятки.',
+      'Поворот выполняй плавным переносом веса и переступанием.'
+    ],
+    levels: [
+      'На ровной площадке потренируй положение лыж «плугом» без спуска.',
+      'Отработай переступание и поворот на ровном безопасном участке.',
+      'Переходи к торможению на пологом склоне только с разрешения учителя.'
+    ],
+    errors: [
+      'Попытка тормозить на неподходящем склоне.',
+      'Резкий перенос веса.',
+      'Начало упражнения без инструктажа.'
+    ],
+    challenge: 'На ровной площадке покажи учителю правильное положение лыж «плугом».',
+    videoURL: ''
+  }
+];
+
+const studentCardsEl = document.getElementById('studentCards');
+const studentProgressEl = document.getElementById('studentProgress');
+const studentLevelsEl = document.getElementById('studentLevels');
+const studentCategoriesEl = document.getElementById('studentCategories');
+
+let studentLevel = 0;
+let studentCategory = 'all';
+const STUDENT_PROGRESS_KEY = 'zhlobin-sport-student-progress';
+
+function getStudentProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STUDENT_PROGRESS_KEY) || '{}');
+  } catch (error) {
+    return {};
+  }
+}
+
+function makeStudentVideoHTML(task) {
+  if (!task.videoURL) {
+    return `
+      <p class="student-video-note">
+        Видео и QR-код появятся после добавления ссылки в поле videoURL этого упражнения в script.js.
+      </p>
+    `;
+  }
+
+  const encodedURL = encodeURIComponent(task.videoURL);
+  const qrURL =
+    `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodedURL}`;
+
+  return `
+    <div class="student-media">
+      <a class="student-video" href="${task.videoURL}" target="_blank" rel="noopener noreferrer">
+        ▶ Показать видео
+      </a>
+      <div class="student-qr-wrap">
+        <img class="student-qr" src="${qrURL}" alt="QR-код для видео: ${task.title}">
+        <span>Открой камерой телефона</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderStudentSection() {
+  if (!studentCardsEl || !studentProgressEl) return;
+
+  const completed = getStudentProgress();
+
+  const visibleTasks = STUDENT_TASKS.filter(task =>
+    studentCategory === 'all' || task.category === studentCategory
+  );
+
+  studentCardsEl.innerHTML = visibleTasks.map(task => {
+    const isDone = Boolean(completed[task.id]);
+
+    return `
+      <article class="student-card">
+        <div class="student-card__heading">
+          <span class="student-card__icon">${task.icon}</span>
+          <div>
+            <span class="student-card__category">${task.categoryName}</span>
+            <h3>${task.title}</h3>
+          </div>
+        </div>
+
+        <div class="student-card__body">
+          <h4>Техника</h4>
+          <ol>
+            ${task.technique.map(step => `<li>${step}</li>`).join('')}
+          </ol>
+
+          <h4>Попробуй — ${['начальный', 'средний', 'продвинутый'][studentLevel]} уровень</h4>
+          <p>${task.levels[studentLevel]}</p>
+
+          <h4>Не делай так</h4>
+          <ul>
+            ${task.errors.map(error => `<li>${error}</li>`).join('')}
+          </ul>
+
+          <div class="student-challenge">
+            <strong>🎯 Мини-челлендж</strong>
+            <p>${task.challenge}</p>
+            <label class="student-check">
+              <input
+                type="checkbox"
+                data-student-task="${task.id}"
+                ${isDone ? 'checked' : ''}
+              >
+              <span>Задание выполнено</span>
+            </label>
+          </div>
+
+          ${makeStudentVideoHTML(task)}
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  const categories = [
+    ['games', 'Подвижные игры'],
+    ['athletics', 'Лёгкая атлетика'],
+    ['gymnastics', 'Гимнастика'],
+    ['ski', 'Лыжная подготовка']
+  ];
+
+  studentProgressEl.innerHTML = categories.map(([category, title]) => {
+    const tasks = STUDENT_TASKS.filter(task => task.category === category);
+    const doneCount = tasks.filter(task => completed[task.id]).length;
+    const percent = tasks.length
+      ? Math.round((doneCount / tasks.length) * 100)
+      : 0;
+
+    return `
+      <div class="student-progress__item">
+        <div class="student-progress__label">
+          <strong>${title}</strong>
+          <span>${percent}% выполнено</span>
+        </div>
+        <div
+          class="student-progress__track"
+          role="progressbar"
+          aria-label="Прогресс: ${title}"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="${percent}"
+        >
+          <div class="student-progress__fill" style="width: ${percent}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  studentCardsEl.querySelectorAll('[data-student-task]').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const progress = getStudentProgress();
+      progress[checkbox.dataset.studentTask] = checkbox.checked;
+
+      try {
+        localStorage.setItem(STUDENT_PROGRESS_KEY, JSON.stringify(progress));
+      } catch (error) {
+        console.warn('Не удалось сохранить прогресс в этом браузере.', error);
+      }
+
+      renderStudentSection();
+    });
+  });
+}
+
+if (studentLevelsEl) {
+  studentLevelsEl.addEventListener('click', event => {
+    const button = event.target.closest('[data-level]');
+    if (!button) return;
+
+    studentLevelsEl.querySelectorAll('[data-level]').forEach(chip => {
+      chip.classList.remove('is-active');
+    });
+
+    button.classList.add('is-active');
+    studentLevel = Number(button.dataset.level);
+    renderStudentSection();
+  });
+}
+
+if (studentCategoriesEl) {
+  studentCategoriesEl.addEventListener('click', event => {
+    const button = event.target.closest('[data-category]');
+    if (!button) return;
+
+    studentCategoriesEl.querySelectorAll('[data-category]').forEach(chip => {
+      chip.classList.remove('is-active');
+    });
+
+    button.classList.add('is-active');
+    studentCategory = button.dataset.category;
+    renderStudentSection();
+  });
+}
+
+renderStudentSection();
