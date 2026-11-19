@@ -1454,3 +1454,195 @@ if (studentCategoriesEl) {
 }
 
 renderStudentSection();
+/* ============================================================
+   РАЗДЕЛ «УЧАЩИМСЯ»
+   ============================================================ */
+.students-intro {
+  max-width: 760px;
+  margin: -25px auto 35px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.students-filter-title {
+  margin: 24px 0 12px;
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+#studentLevels,
+#studentCategories {
+  margin-bottom: 18px;
+}
+
+.student-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 28px 0;
+}
+
+.student-progress__item {
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.student-progress__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.student-progress__label span {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.student-progress__track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--bg-alt);
+}
+
+.student-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient-blue);
+  transition: width 0.3s ease;
+}
+
+.student-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.student-card {
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-bottom: 5px solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.student-card__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px;
+  background: var(--bg-alt);
+}
+
+.student-card__icon {
+  font-size: 2.3rem;
+}
+
+.student-card__category {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.student-card h3 {
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.student-card__body {
+  padding: 22px;
+  color: var(--text-muted);
+}
+
+.student-card__body h4 {
+  margin: 18px 0 8px;
+  color: var(--text);
+}
+
+.student-card__body h4:first-child {
+  margin-top: 0;
+}
+
+.student-card__body ol,
+.student-card__body ul {
+  padding-left: 22px;
+}
+
+.student-card__body li {
+  margin-bottom: 7px;
+}
+
+.student-challenge {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-alt);
+}
+
+.student-challenge strong {
+  color: var(--text);
+}
+
+.student-challenge p {
+  margin: 8px 0 12px;
+}
+
+.student-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.student-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.student-video {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+}
+
+.student-qr {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.student-video-note {
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .student-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .student-progress__label {
+    font-size: 0.82rem;
+  }
+}
