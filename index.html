@@ -131,7 +131,7 @@
     </div>
   </section>
 
-  <!-- РАЗДЕЛ ТЕСТОВ (Выбор темы) -->
+  <!-- РАЗДЕЛ ТЕСТОВ (единственный, дубль удалён) -->
   <section id="quiz" class="section section--alt">
     <div class="container">
       <h2 class="section__title">Пройти тест</h2>
@@ -165,7 +165,7 @@
       <!-- Само окно теста (скрыто до выбора темы) -->
       <div id="quiz-box" class="quiz-container" style="display: none;">
         <div id="quiz-content"></div>
-        <button class="btn" onclick="checkQuiz()" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
+        <button class="btn" onclick="checkQuiz(event)" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
       </div>
     </div>
   </section>
@@ -183,21 +183,6 @@
         <button class="chip" data-block="ski">🎿 Лыжи</button>
       </div>
       <div id="methodContainer"></div>
-    </div>
-  </section>
-
-  <section class="section" id="quiz">
-    <div class="container">
-      <h2 class="section__title">Проверь себя (Теория ФКиЗ)</h2>
-      <div class="quiz-container">
-        <p style="text-align:center; margin-bottom:30px; font-size:1.1rem;">
-          Ответь на вопросы о спортивном наследии Жлобина и Беларуси. После прохождения получишь
-          доступ к скрытой метке на карте!
-        </p>
-        <div id="quizBox"></div>
-        <button class="btn" id="quizSubmit" style="margin-top:30px; width:100%;">Проверить ответы</button>
-        <div id="quizResult" style="margin-top:25px; text-align:center; font-weight:bold; font-size:1.1rem;"></div>
-      </div>
     </div>
   </section>
 
