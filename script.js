@@ -16,7 +16,7 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
 });
 
 // ============================================================
-// ДАННЫЕ КАРТЫ
+// КАРТА И КАРТОЧКИ
 // ============================================================
 const DATA = [
   { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'' },
@@ -49,7 +49,7 @@ const DATA = [
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023 / 2026', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'' },
   { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'Студенческие соревнования', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'' },
-  { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию! Жлобинские спортсмены всегда славились силой духа.', lat:52.8928, lng:30.0272, photo:'', hidden: true }
+  { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию!', lat:52.8928, lng:30.0272, photo:'', hidden: true }
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
@@ -61,18 +61,11 @@ window.isSecretUnlocked = false;
 
 const mapEl = document.getElementById('mapContainer');
 if (mapEl) {
-  map = L.map('mapContainer', {
-    center: [52.8928, 30.0272], zoom: 14, minZoom: 12,
-    maxBounds: [ [52.8500, 29.9500], [52.9300, 30.1000] ]
-  });
+  map = L.map('mapContainer', { center: [52.8928, 30.0272], zoom: 14, minZoom: 12, maxBounds: [ [52.8500, 29.9500], [52.9300, 30.1000] ] });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 }).addTo(map);
 
   DATA.forEach(item => {
-    const icon = L.divIcon({
-      className: '',
-      html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`,
-      iconSize: [38, 38], iconAnchor: [19, 38], popupAnchor: [0, -38]
-    });
+    const icon = L.divIcon({ className: '', html: `<div class="pin-marker pin-marker--${item.layer}"><span>${LAYER_EMOJI[item.layer]}</span></div>`, iconSize: [38, 38], iconAnchor: [19, 38], popupAnchor: [0, -38] });
     const linkHTML = (item.link && !item.hidden) ? `<a href="${item.link}" style="display:block; margin-top:10px; background:#f97316; color:#fff; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold;">Читать биографию</a>` : '';
     const photoHTML = item.photo ? `<img src="${item.photo}" style="width:100%; border-radius:8px; margin-bottom:8px;" onerror="this.style.display='none'">` : '';
     const popupHTML = `<div style="min-width:200px;">${photoHTML}<strong>${item.title}</strong><br><small>${item.address}</small><p style="margin-top:5px; font-size:0.9rem;">${item.text}</p>${linkHTML}</div>`;
@@ -169,66 +162,15 @@ function renderAllCards() {
 }
 
 if (map) applyFilters();
+
 // ============================================================
-// МЕТОДИЧЕСКАЯ КОПИЛКА (УЧИТЕЛЮ)
+// МЕТОДИЧКА (УЧИТЕЛЮ)
 // ============================================================
 const METHOD_DATA = {
-  gym: {
-    icon: '🤸', title: 'Гимнастика',
-    topics: [
-      {
-        id: 'gym-kulok', title: 'Кувырок вперёд', icon: '🔄',
-        content: {
-          'Темы': `<h4>📖 Что такое кувырок вперёд</h4><p>Базовое акробатическое упражнение.</p><h4>⚠️ Безопасность</h4><ul><li>Только на мате.</li><li>Разминка шеи.</li></ul>`,
-          'Как выполнять': `<ol><li><strong>Исходное положение:</strong> упор присев.</li><li><strong>Толчок:</strong> переносим вес на руки.</li><li><strong>Перекат:</strong> касаемся затылком.</li><li><strong>Выход:</strong> встаём в упор присев.</li></ol>`,
-          'Подводящие упражнения': `<ol><li>Группировка сидя.</li><li>Перекаты на спине.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
-        }
-      }
-    ]
-  },
-  athletics: {
-    icon: '🏃', title: 'Лёгкая атлетика',
-    topics: [
-      {
-        id: 'ath-run30', title: 'Бег 30 метров', icon: '🏃',
-        content: {
-          'Темы': `<h4>📖 Бег на 30 метров</h4><p>Спринтерская дистанция.</p>`,
-          'Как выполнять': `<ol><li><strong>Старт:</strong> низкий.</li><li><strong>Разгон:</strong> наклон вперёд.</li><li><strong>Финиш:</strong> не сбавлять темп.</li></ol>`,
-          'Подводящие упражнения': `<ol><li>Бег с высоким подниманием бедра.</li><li>Выбегание с высокого старта.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
-        }
-      }
-    ]
-  },
-  games: {
-    icon: '🏐', title: 'Спортивные игры',
-    topics: [
-      {
-        id: 'game-basket', title: 'Баскетбол: бросок', icon: '🏀',
-        content: {
-          'Темы': `<h4>📖 Бросок одной рукой</h4><p>Основной бросок в баскетболе.</p>`,
-          'Как выполнять': `<ol><li><strong>Стойка:</strong> колени согнуты.</li><li><strong>Бросок:</strong> разгибание руки и кисти.</li></ol>`,
-          'Подводящие упражнения': `<ol><li>Броски мяча вверх.</li><li>Броски в стену.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
-        }
-      }
-    ]
-  },
-  ski: {
-    icon: '🎿', title: 'Лыжи',
-    topics: [
-      {
-        id: 'ski-classic', title: 'Попеременный двухшажный ход', icon: '🎿',
-        content: {
-          'Темы': `<h4>📖 Классический ход</h4><p>Толчок палками и ногами поочерёдно.</p>`,
-          'Как выполнять': `<ol><li><strong>Скольжение:</strong> на одной лыже.</li><li><strong>Толчок:</strong> левой ногой и правой палкой.</li></ol>`,
-          'Подводящие упражнения': `<ol><li>Ступающий шаг без палок.</li></ol>`,
-          'Видео / картинки / схемы': `<p class="student-video-note">Ссылки на видео скоро появятся.</p>`
-        }
-      }
-    ]
-  }
+  gym: { icon: '🤸', title: 'Гимнастика', topics: [ { id: 'gym-kulok', title: 'Кувырок вперёд', icon: '🔄', content: { 'Темы': `<p>Базовое акробатическое упражнение.</p>`, 'Как выполнять': `<ol><li>Упор присев.</li><li>Толчок.</li><li>Перекат.</li></ol>`, 'Подводящие упражнения': `<ul><li>Группировка.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
+  athletics: { icon: '🏃', title: 'Лёгкая атлетика', topics: [ { id: 'ath-run30', title: 'Бег 30 метров', icon: '🏃', content: { 'Темы': `<p>Спринт.</p>`, 'Как выполнять': `<ol><li>Старт.</li><li>Финиш.</li></ol>`, 'Подводящие упражнения': `<ul><li>Бег с высоким подниманием бедра.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
+  games: { icon: '🏐', title: 'Спорт. игры', topics: [ { id: 'game-basket', title: 'Баскетбол', icon: '🏀', content: { 'Темы': `<p>Бросок.</p>`, 'Как выполнять': `<ol><li>Стойка.</li><li>Бросок.</li></ol>`, 'Подводящие упражнения': `<ul><li>Броски в стену.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
+  ski: { icon: '🎿', title: 'Лыжи', topics: [ { id: 'ski-classic', title: 'Классический ход', icon: '🎿', content: { 'Темы': `<p>Двухшажный ход.</p>`, 'Как выполнять': `<ol><li>Скольжение.</li><li>Толчок.</li></ol>`, 'Подводящие упражнения': `<ul><li>Ступающий шаг.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] }
 };
 
 const methodContainer = document.getElementById('methodContainer');
@@ -237,45 +179,18 @@ const methodFilters = document.getElementById('methodFilters');
 function renderMethodTiles(block) {
   if (!methodContainer) return;
   const blockData = METHOD_DATA[block];
-  if (!blockData) return;
-
   methodContainer.innerHTML = `<div class="method-tiles">${blockData.topics.map(topic => `
-    <div class="method-tile" data-topic="${topic.id}">
-      <div class="method-tile__icon">${topic.icon}</div>
-      <div class="method-tile__title">${topic.title}</div>
-      <div class="method-tile__count">4 подвкладки</div>
-    </div>
+    <div class="method-tile" data-topic="${topic.id}"><div class="method-tile__icon">${topic.icon}</div><div class="method-tile__title">${topic.title}</div><div class="method-tile__count">4 подвкладки</div></div>
   `).join('')}</div>`;
-
-  methodContainer.querySelectorAll('.method-tile').forEach(tile => {
-    tile.addEventListener('click', () => renderMethodDetail(block, tile.dataset.topic));
-  });
+  methodContainer.querySelectorAll('.method-tile').forEach(tile => tile.addEventListener('click', () => renderMethodDetail(block, tile.dataset.topic)));
 }
 
 function renderMethodDetail(block, topicId) {
-  if (!methodContainer) return;
   const blockData = METHOD_DATA[block];
   const topic = blockData.topics.find(t => t.id === topicId);
-  if (!topic) return;
-
   const tabs = ['Темы', 'Как выполнять', 'Подводящие упражнения', 'Видео / картинки / схемы'];
-  const tabEmoji = { 'Темы': '📖', 'Как выполнять': '📝', 'Подводящие упражнения': '🔄', 'Видео / картинки / схемы': '🎬' };
-
-  methodContainer.innerHTML = `
-    <div class="method-detail">
-      <div class="method-detail__header">
-        <button class="method-detail__back" id="methodBackBtn">← Назад к темам</button>
-        <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
-      </div>
-      <div class="method-tabs" id="methodTabs">
-        ${tabs.map((tab, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">${tabEmoji[tab]} ${tab}</button>`).join('')}
-      </div>
-      <div class="method-tab__content" id="methodTabContent">${topic.content[tabs[0]]}</div>
-    </div>
-  `;
-
-  document.getElementById('methodBackBtn').addEventListener('click', () => renderMethodTiles(block));
-  document.getElementById('methodTabs').addEventListener('click', (e) => {
+  methodContainer.innerHTML = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderMethodTiles('${block}')">← Назад</button><h3 class="method-detail__title">${topic.icon} ${topic.title}</h3></div><div class="method-tabs" id="methodTabs">${tabs.map((t, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${t}">${t}</button>`).join('')}</div><div class="method-tab__content" id="methodTabContent">${topic.content[tabs[0]]}</div></div>`;
+  document.getElementById('methodTabs').addEventListener('click', e => {
     const btn = e.target.closest('.method-tab');
     if (!btn) return;
     document.querySelectorAll('#methodTabs .method-tab').forEach(b => b.classList.remove('is-active'));
@@ -296,61 +211,29 @@ if (methodFilters) {
 }
 
 // ============================================================
-// УЧАЩИМСЯ (1-4 классы)
+// УЧАЩИМСЯ (1-4 классы) - НОВАЯ СТРУКТУРА
 // ============================================================
 const STUDENT_DATA = {
   '1-4': {
     topics: [
-      {
-        id: 'st-ath', title: 'Лёгкая атлетика', icon: '🏃',
-        content: {
-          'Теория': `<h4>📖 Что такое лёгкая атлетика</h4><p>Ходьба, бег, прыжки и метания.</p><h4>⚠️ Безопасность</h4><ul><li>Проверяй шнурки.</li><li>Не стой в секторе.</li></ul>`,
-          'Как выполнять': `<h4>Бег</h4><p>Челночный бег 4х9 м.</p><h4>Прыжки</h4><p>Прыжок в длину с места.</p>`,
-          'Игры / Эстафеты': `<ul><li><strong>«Мяч капитану»</strong>.</li><li><strong>Эстафеты:</strong> с мячами.</li></ul>`,
-          'Ошибки': `<ul><li>Высокая интенсивность бега.</li><li>Заступ за линию.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
-        }
-      },
-      {
-        id: 'st-gym', title: 'Гимнастика', icon: '🤸',
-        content: {
-          'Теория': `<h4>📖 Гимнастика</h4><p>Развитие гибкости и силы.</p><h4>⚠️ Безопасность</h4><ul><li>Только на мате.</li></ul>`,
-          'Как выполнять': `<h4>Акробатика</h4><p>Кувырок вперед.</p><h4>Висы</h4><p>Вис согнув ноги.</p>`,
-          'Игры / Эстафеты': `<ul><li><strong>«Канатоходец»</strong>.</li></ul>`,
-          'Ошибки': `<ul><li>Опора на голову.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
-        }
-      },
-      {
-        id: 'st-ski', title: 'Лыжная подготовка', icon: '🎿',
-        content: {
-          'Теория': `<h4>📖 Лыжи</h4><p>Укрепляют здоровье.</p><h4>⚠️ Безопасность</h4><ul><li>Держи дистанцию.</li></ul>`,
-          'Как выполнять': `<h4>Передвижение</h4><p>Ступающий шаг.</p>`,
-          'Игры / Эстафеты': `<ul><li><strong>«Шире шаг»</strong>.</li></ul>`,
-          'Ошибки': `<ul><li>Волок лыж.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
-        }
-      },
-      {
-        id: 'st-football', title: 'Футбол', icon: '⚽',
-        content: {
-          'Теория': `<h4>📖 Футбол</h4><p>Правила игры.</p>`,
-          'Как выполнять': `<h4>Удары</h4><p>Внутренней частью стопы.</p>`,
-          'Игры / Эстафеты': `<ul><li><strong>Учебная игра 2 на 2</strong>.</li></ul>`,
-          'Ошибки': `<ul><li>Удар носком.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
-        }
-      },
-      {
-        id: 'st-mobile', title: 'Подвижные игры', icon: '🎲',
-        content: {
-          'Теория': `<h4>📖 Подвижные игры</h4><p>Учат работать в команде.</p>`,
-          'Как выполнять': `<h4>Игры с бегом</h4><p>«Два Мороза», «Гуси-лебеди».</p>`,
-          'Игры / Эстафеты': `<ul><li><strong>С метанием:</strong> «Охотники и зайцы».</li></ul>`,
-          'Ошибки': `<ul><li>Много прыжков подряд.</li></ul>`,
-          'Видео / схемы': `<p class="student-video-note">Скоро появится.</p>`
-        }
-      }
+      { id: 'st-ath', title: 'Лёгкая атлетика', icon: '🏃', subtopics: [
+        { id: 'sub-run30', title: 'Бег на 30 метров', content: { 'Теория': `<p>Спринт.</p>`, 'Как выполнять': `<p>Старт, разгон, финиш.</p>`, 'Ошибки': `<p>Ранний подъём корпуса.</p>`, 'Видео': `<p>Скоро.</p>` } },
+        { id: 'sub-shuttle', title: 'Челночный бег 4х9 м', content: { 'Теория': `<p>С разворотом.</p>`, 'Как выполнять': `<p>Бег туда-обратно.</p>`, 'Ошибки': `<p>Потеря равновесия.</p>`, 'Видео': `<p>Скоро.</p>` } },
+        { id: 'sub-long', title: 'Бег на длинные дистанции', content: { 'Теория': `<p>Выносливость.</p>`, 'Как выполнять': `<p>Дыхание 2-3 шага.</p>`, 'Ошибки': `<p>Быстрый старт.</p>`, 'Видео': `<p>Скоро.</p>` } }
+      ] },
+      { id: 'st-gym', title: 'Гимнастика', icon: '🤸', subtopics: [
+        { id: 'sub-acro', title: 'Акробатика', content: { 'Теория': `<p>Кувырки.</p>`, 'Как выполнять': `<p>Кувырок вперёд.</p>`, 'Ошибки': `<p>Опора на голову.</p>`, 'Видео': `<p>Скоро.</p>` } },
+        { id: 'sub-visy', title: 'Висы и лазанье', content: { 'Теория': `<p>Сила рук.</p>`, 'Как выполнять': `<p>Вис на перекладине.</p>`, 'Ошибки': `<p>Резкие рывки.</p>`, 'Видео': `<p>Скоро.</p>` } }
+      ] },
+      { id: 'st-ski', title: 'Лыжи', icon: '🎿', subtopics: [
+        { id: 'sub-step', title: 'Ступающий шаг', content: { 'Теория': `<p>Без скольжения.</p>`, 'Как выполнять': `<p>Идти как пешком.</p>`, 'Ошибки': `<p>Волок лыж.</p>`, 'Видео': `<p>Скоро.</p>` } }
+      ] },
+      { id: 'st-football', title: 'Футбол', icon: '⚽', subtopics: [
+        { id: 'sub-kick', title: 'Удары по мячу', content: { 'Теория': `<p>Внутренней стороной.</p>`, 'Как выполнять': `<p>Постановка опорной ноги.</p>`, 'Ошибки': `<p>Удар носком.</p>`, 'Видео': `<p>Скоро.</p>` } }
+      ] },
+      { id: 'st-game', title: 'Подвижные игры', icon: '🎲', subtopics: [
+        { id: 'sub-tag', title: 'Игры с бегом', content: { 'Теория': `<p>«Два Мороза».</p>`, 'Как выполнять': `<p>Убегать от водящего.</p>`, 'Ошибки': `<p>Толкание.</p>`, 'Видео': `<p>Скоро.</p>` } }
+      ] }
     ]
   }
 };
@@ -362,54 +245,76 @@ function renderStudentTiles(grade) {
   if (!studentContainer) return;
   const gradeData = STUDENT_DATA[grade];
   if (!gradeData) {
-    studentContainer.innerHTML = '<p style="text-align:center; padding: 40px; font-size: 1.2rem; color: var(--text-muted);">Материалы для этого класса скоро появятся!</p>';
+    studentContainer.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-muted);">Материалы для этого класса скоро появятся!</p>';
     return;
   }
 
   studentContainer.innerHTML = `<div class="method-tiles">${gradeData.topics.map(topic => `
-    <div class="method-tile" data-topic="${topic.id}">
+    <div class="method-tile" onclick="renderStudentSubtopics('${grade}', '${topic.id}')">
       <div class="method-tile__icon">${topic.icon}</div>
       <div class="method-tile__title">${topic.title}</div>
-      <div class="method-tile__count">5 подвкладок</div>
+      <div class="method-tile__count">${topic.subtopics.length} тем</div>
     </div>
   `).join('')}</div>`;
-
-  studentContainer.querySelectorAll('.method-tile').forEach(tile => {
-    tile.addEventListener('click', () => renderStudentDetail(grade, tile.dataset.topic));
-  });
 }
 
-function renderStudentDetail(grade, topicId) {
-  if (!studentContainer) return;
+window.renderStudentSubtopics = function(grade, topicId) {
   const gradeData = STUDENT_DATA[grade];
   const topic = gradeData.topics.find(t => t.id === topicId);
   if (!topic) return;
 
-  const tabs = ['Теория', 'Как выполнять', 'Игры / Эстафеты', 'Ошибки', 'Видео / схемы'];
-  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Игры / Эстафеты': '🏆', 'Ошибки': '⚠️', 'Видео / схемы': '🎬' };
+  let html = `
+    <div class="method-detail">
+      <div class="method-detail__header">
+        <button class="method-detail__back" onclick="renderStudentTiles('${grade}')">← Назад к разделам</button>
+        <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
+      </div>
+      <div class="method-tab__content" style="padding: 0;">
+  `;
+
+  topic.subtopics.forEach(sub => {
+    html += `
+      <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${sub.title}</div>
+        <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="renderStudentSubDetail('${grade}', '${topicId}', '${sub.id}')">Открыть</button>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+  studentContainer.innerHTML = html;
+};
+
+window.renderStudentSubDetail = function(grade, topicId, subId) {
+  const gradeData = STUDENT_DATA[grade];
+  const topic = gradeData.topics.find(t => t.id === topicId);
+  const sub = topic.subtopics.find(s => s.id === subId);
+  if (!sub) return;
+
+  const tabs = ['Теория', 'Как выполнять', 'Ошибки', 'Видео'];
+  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Ошибки': '⚠️', 'Видео': '🎬' };
 
   studentContainer.innerHTML = `
     <div class="method-detail">
       <div class="method-detail__header">
-        <button class="method-detail__back" id="studentBackBtn">← Назад к темам</button>
-        <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
+        <button class="method-detail__back" onclick="renderStudentSubtopics('${grade}', '${topicId}')">← Назад к темам</button>
+        <h3 class="method-detail__title">${sub.title}</h3>
       </div>
       <div class="method-tabs" id="studentTabs">
         ${tabs.map((tab, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">${tabEmoji[tab]} ${tab}</button>`).join('')}
       </div>
-      <div class="method-tab__content" id="studentTabContent">${topic.content[tabs[0]]}</div>
+      <div class="method-tab__content" id="studentTabContent">${sub.content[tabs[0]]}</div>
     </div>
   `;
 
-  document.getElementById('studentBackBtn').addEventListener('click', () => renderStudentTiles(grade));
   document.getElementById('studentTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.method-tab');
     if (!btn) return;
     document.querySelectorAll('#studentTabs .method-tab').forEach(b => b.classList.remove('is-active'));
     btn.classList.add('is-active');
-    document.getElementById('studentTabContent').innerHTML = topic.content[btn.dataset.tab];
+    document.getElementById('studentTabContent').innerHTML = sub.content[btn.dataset.tab] || '<p>Материал скоро появится.</p>';
   });
-}
+};
 
 if (studentLevelsEl) {
   studentLevelsEl.addEventListener('click', (e) => {
@@ -426,49 +331,15 @@ if (studentLevelsEl) {
 // ТЕСТЫ
 // ============================================================
 const QUIZ_DATA = {
-  rules: {
-    title: 'Правила спорта', icon: '📚',
-    topics: [
-      {
-        id: 'rules-basket', title: 'Баскетбол',
-        questions: [
-          { q: "Сколько игроков одной команды на площадке в баскетболе?", a: ["5", "6", "7", "11"], correct: 0 },
-          { q: "Сколько времени дается на атаку в баскетболе?", a: ["10 сек", "24 сек", "30 сек", "45 сек"], correct: 1 }
-        ]
-      },
-      {
-        id: 'rules-volley', title: 'Волейбол',
-        questions: [
-          { q: "До скольких очков играют в партии?", a: ["15", "21", "25", "30"], correct: 2 },
-          { q: "Сколько касаний мяча разрешено на одной стороне?", a: ["1", "2", "3", "4"], correct: 2 }
-        ]
-      }
-    ]
-  },
-  safety: {
-    title: 'Техника безопасности', icon: '🛡️',
-    topics: [
-      {
-        id: 'safety-gym', title: 'В спортивном зале',
-        questions: [
-          { q: "Что нужно сделать перед началом занятий?", a: ["Сделать разминку", "Съесть шоколад", "Попить воды", "Сесть на шпагат"], correct: 0 },
-          { q: "Можно ли оставлять инвентарь на полу в проходе?", a: ["Да, если быстро", "Нет, это опасно", "Только гантели", "Только в конце урока"], correct: 1 }
-        ]
-      }
-    ]
-  },
-  history: {
-    title: 'История спорта', icon: '🏆',
-    topics: [
-      {
-        id: 'history-olymp', title: 'Олимпийские игры',
-        questions: [
-          { q: "В какой стране зародились Олимпийские игры?", a: ["Рим", "Греция", "Египет", "Россия"], correct: 1 },
-          { q: "Как часто проводятся современные Олимпийские игры?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 }
-        ]
-      }
-    ]
-  }
+  rules: { title: 'Правила спорта', icon: '📚', topics: [
+    { id: 'rules-basket', title: 'Баскетбол', questions: [ { q: "Сколько игроков в баскетболе?", a: ["5", "6", "7"], correct: 0 }, { q: "Сколько времени на атаку?", a: ["10", "24", "30"], correct: 1 } ] }
+  ] },
+  safety: { title: 'Безопасность', icon: '🛡️', topics: [
+    { id: 'safety-gym', title: 'В зале', questions: [ { q: "Что перед занятием?", a: ["Разминка", "Шоколад"], correct: 0 } ] }
+  ] },
+  history: { title: 'История', icon: '🏆', topics: [
+    { id: 'history-olymp', title: 'Олимпиада', questions: [ { q: "Где зародились?", a: ["Рим", "Греция"], correct: 1 } ] }
+  ] }
 };
 
 let currentQuizQuestions = [];
@@ -486,8 +357,7 @@ function renderQuizTiles() {
   quizContainer.innerHTML = html;
 }
 
-function renderQuizList(blockKey) {
-  if (!quizContainer) return;
+window.renderQuizList = function(blockKey) {
   const block = QUIZ_DATA[blockKey];
   let html = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button><h3 class="method-detail__title">${block.icon} ${block.title}</h3></div><div class="method-tab__content" style="padding: 0;">`;
   block.topics.forEach(topic => {
@@ -495,9 +365,9 @@ function renderQuizList(blockKey) {
   });
   html += `</div></div>`;
   quizContainer.innerHTML = html;
-}
+};
 
-function startQuiz(topicId) {
+window.startQuiz = function(topicId) {
   let topicData = null;
   for (const key in QUIZ_DATA) {
     const found = QUIZ_DATA[key].topics.find(t => t.id === topicId);
@@ -513,15 +383,15 @@ function startQuiz(topicId) {
   });
   html += `</div><div style="padding: 20px 30px; text-align: right;"><button class="btn" onclick="checkQuiz(event)" style="width: 100%;">Проверить ответы</button></div></div>`;
   quizContainer.innerHTML = html;
-}
+};
 
-function selectAnswer(event, qIndex, aIndex) {
+window.selectAnswer = function(event, qIndex, aIndex) {
   currentAnswers[qIndex] = aIndex;
   document.querySelectorAll(`[name="q${qIndex}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-}
+};
 
-function checkQuiz(event) {
+window.checkQuiz = function(event) {
   if (currentAnswers.length !== currentQuizQuestions.length) {
     alert('Ответь на все вопросы!');
     return;
@@ -547,11 +417,9 @@ function checkQuiz(event) {
   }
   questionsDiv.appendChild(scoreText);
   event.currentTarget.style.display = 'none'; 
-}
+};
 
-if (document.getElementById('quizContainer')) {
-  renderQuizTiles();
-}
+if (document.getElementById('quizContainer')) renderQuizTiles();
 
 // ============================================================
 // ТЕМА
