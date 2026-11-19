@@ -921,49 +921,137 @@ if (methodFilters) {
   renderMethodTiles('gym');
 }
 
-/* ==================== НОВЫЕ ТЕСТЫ ПО ТЕМАМ ==================== */
+// ============================================================
+// РАЗДЕЛ «ТЕСТЫ» (Плитки разделов -> Список тестов -> Прохождение)
+// ============================================================
 
 const QUIZ_DATA = {
-  rules: [
-    { q: "Сколько игроков из одной команды находится на площадке в баскетболе?", a: ["5", "6", "7", "11"], correct: 0 },
-    { q: "До скольких очков играют в один сет в волейболе (в обычной партии)?", a: ["15", "21", "25", "30"], correct: 2 },
-    { q: "Что означает поднятая рука судьи в борьбе?", a: ["Стоп", "Предупреждение", "Победа", "Повтор"], correct: 1 },
-    { q: "Сколько попыток дается в тройном прыжке?", a: ["1", "2", "3", "4"], correct: 2 }
-  ],
-  safety: [
-    { q: "Что нужно сделать перед началом бега на дорожке?", a: ["Сделать разминку", "Съесть шоколад", "Сесть на шпагат", "Громко крикнуть"], correct: 0 },
-    { q: "Можно ли оставлять инвентарь (гантели, скакалки) на полу в проходе?", a: ["Да, если быстро", "Нет, это опасно", "Только гантели", "Только в конце урока"], correct: 1 },
-    { q: "Зачем нужен магнезий (порошок) в спортивной гимнастике?", a: ["Для красоты", "Чтобы руки не скользили", "Для запаха", "Для веса"], correct: 1 },
-    { q: "Что делать, если во время игры на улице пошел сильный ливень с грозой?", a: ["Спрятаться под деревом", "Бежать домой", "Прекратить игру и уйти в здание", "Продолжать играть"], correct: 2 }
-  ],
-  history: [
-    { q: "В какой стране зародились Олимпийские игры?", a: ["Рим", "Греция", "Египет", "Россия"], correct: 1 },
-    { q: "Как часто проводятся Олимпийские игры?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 },
-    { q: "Какой снаряд используют в художественной гимнастике, который нельзя бросать?", a: ["Мяч", "Лента", "Скакалка", "Обруч"], correct: 1 },
-    { q: "Кто из белорусов носит титул 'Легенда спорта' в вашем проекте?", a: ["Дарья Домрачева", "Виктория Азаренко", "Андрей Арямнов", "Все перечисленные"], correct: 3 }
-  ],
-  ufp: [
-    { q: "Что такое 'челночный бег'?", a: ["Бег по кругу", "Бег с ускорением", "Бег между двумя точками с разворотом", "Бег спиной вперед"], correct: 2 },
-    { q: "В чем измеряется гибкость при наклоне вперед?", a: ["В секундах", "В килограммах", "В сантиметрах", "В градусах"], correct: 2 },
-    { q: "Сколько подтягиваний должен сделать мальчик (оценка '5') в 7 классе?", a: ["3", "5", "7", "10"], correct: 3 },
-    { q: "Какой норматив проверяет скоростно-силовые качества ног?", a: ["Пресс за 1 мин", "Прыжок в длину с места", "Вис на перекладине", "Бег 1000м"], correct: 1 }
-  ]
+  rules: {
+    title: 'Правила спорта', icon: '📚',
+    topics: [
+      {
+        id: 'rules-basket', title: 'Баскетбол',
+        questions: [
+          { q: "Сколько игроков одной команды на площадке?", a: ["5", "6", "7", "11"], correct: 0 },
+          { q: "Сколько очков дают за штрафной бросок?", a: ["1", "2", "3", "4"], correct: 0 },
+          { q: "Сколько времени дается на атаку?", a: ["10 сек", "24 сек", "30 сек", "45 сек"], correct: 1 }
+        ]
+      },
+      {
+        id: 'rules-volley', title: 'Волейбол',
+        questions: [
+          { q: "До скольких очков играют в партии?", a: ["15", "21", "25", "30"], correct: 2 },
+          { q: "Сколько касаний мяча разрешено на одной стороне?", a: ["1", "2", "3", "4"], correct: 2 }
+        ]
+      }
+    ]
+  },
+  safety: {
+    title: 'Техника безопасности', icon: '🛡️',
+    topics: [
+      {
+        id: 'safety-gym', title: 'В спортивном зале',
+        questions: [
+          { q: "Что нужно сделать перед началом занятий?", a: ["Разминку", "Съесть шоколад", "Попить воды", "Сесть на шпагат"], correct: 0 },
+          { q: "Можно ли оставлять инвентарь на полу?", a: ["Да", "Нет, это опасно", "Только гантели", "Только в конце"], correct: 1 }
+        ]
+      }
+    ]
+  },
+  history: {
+    title: 'История спорта', icon: '🏆',
+    topics: [
+      {
+        id: 'history-olymp', title: 'Олимпийские игры',
+        questions: [
+          { q: "В какой стране зародились Олимпийские игры?", a: ["Рим", "Греция", "Египет", "Россия"], correct: 1 },
+          { q: "Как часто проходят современные Олимпиады?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 }
+        ]
+      }
+    ]
+  },
+  ufp: {
+    title: 'Мои нормативы', icon: '📊',
+    topics: [
+      {
+        id: 'ufp-test', title: 'Общие знания УФП',
+        questions: [
+          { q: "Что такое 'челночный бег'?", a: ["Бег по кругу", "Бег с ускорением", "Бег с разворотом", "Бег спиной"], correct: 2 },
+          { q: "В чем измеряется гибкость при наклоне?", a: ["В секундах", "В килограммах", "В сантиметрах", "В градусах"], correct: 2 }
+        ]
+      }
+    ]
+  }
 };
 
 let currentQuizQuestions = [];
 let currentAnswers = [];
 
-function startQuiz(category) {
-  const quizBox = document.getElementById('quiz-box');
-  const contentDiv = document.getElementById('quiz-content');
-  const tiles = document.querySelector('#quiz .method-tiles');
-  
-  contentDiv.innerHTML = '';
-  tiles.style.display = 'none';
-  quizBox.style.display = 'block';
+const quizContainer = document.getElementById('quizContainer');
 
-  currentQuizQuestions = QUIZ_DATA[category];
+function renderQuizTiles() {
+  if (!quizContainer) return;
+  
+  let html = '<div class="method-tiles">';
+  for (const key in QUIZ_DATA) {
+    const block = QUIZ_DATA[key];
+    html += `
+      <div class="method-tile" onclick="renderQuizList('${key}')">
+        <div class="method-tile__icon">${block.icon}</div>
+        <div class="method-tile__title">${block.title}</div>
+        <div class="method-tile__count">${block.topics.length} теста</div>
+      </div>
+    `;
+  }
+  html += '</div>';
+  quizContainer.innerHTML = html;
+}
+
+function renderQuizList(blockKey) {
+  if (!quizContainer) return;
+  const block = QUIZ_DATA[blockKey];
+  
+  let html = `
+    <div class="method-detail">
+      <div class="method-detail__header">
+        <button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button>
+        <h3 class="method-detail__title">${block.icon} ${block.title}</h3>
+      </div>
+      <div class="method-tab__content" style="padding: 0;">
+  `;
+  
+  block.topics.forEach(topic => {
+    html += `
+      <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${topic.title}</div>
+        <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="startQuiz('${topic.id}')">Начать тест</button>
+      </div>
+    `;
+  });
+  
+  html += `</div></div>`;
+  quizContainer.innerHTML = html;
+}
+
+function startQuiz(topicId) {
+  let topicData = null;
+  for (const key in QUIZ_DATA) {
+    const found = QUIZ_DATA[key].topics.find(t => t.id === topicId);
+    if (found) { topicData = found; break; }
+  }
+  if (!topicData) return;
+
+  currentQuizQuestions = topicData.questions;
   currentAnswers = [];
+
+  let html = `
+    <div class="method-detail">
+      <div class="method-detail__header">
+        <button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button>
+        <h3 class="method-detail__title">📝 ${topicData.title}</h3>
+      </div>
+      <div class="method-tab__content" id="quiz-content">
+  `;
 
   currentQuizQuestions.forEach((item, index) => {
     const optionsHtml = item.a.map((opt, i) => `
@@ -972,13 +1060,23 @@ function startQuiz(category) {
       </label>
     `).join('');
     
-    contentDiv.innerHTML += `
+    html += `
       <div class="quiz-question">
         <h4>${index + 1}. ${item.q}</h4>
         ${optionsHtml}
       </div>
     `;
   });
+
+  html += `
+      </div>
+      <div style="padding: 20px 30px; text-align: right;">
+        <button class="btn" onclick="checkQuiz(event)" style="width: 100%;">Проверить ответы</button>
+      </div>
+    </div>
+  `;
+
+  quizContainer.innerHTML = html;
 }
 
 function selectAnswer(event, qIndex, aIndex) {
@@ -1000,38 +1098,29 @@ function checkQuiz(event) {
   currentQuizQuestions.forEach((q, i) => {
     const labels = questionBoxes[i].querySelectorAll('.quiz-option');
     labels.forEach((label, idx) => {
-      if (idx === q.correct) {
-        label.classList.add('correct');
-      }
-      if (currentAnswers[i] === idx && idx !== q.correct) {
-        label.classList.add('incorrect');
-      }
-      if (currentAnswers[i] === idx && idx === q.correct) {
-        score++;
-      }
+      if (idx === q.correct) label.classList.add('correct');
+      if (currentAnswers[i] === idx && idx !== q.correct) label.classList.add('incorrect');
+      if (currentAnswers[i] === idx && idx === q.correct) score++;
       label.style.pointerEvents = 'none';
     });
   });
 
   const scoreText = document.createElement('div');
-  scoreText.style.cssText = 'margin-top: 30px; font-size: 1.5rem; font-weight: 800; text-align: center;';
+  scoreText.style.cssText = 'margin-top: 30px; font-size: 1.5rem; font-weight: 800; text-align: center; color: var(--text);';
   scoreText.textContent = `Твой результат: ${score} из ${currentQuizQuestions.length}`;
 
   if (score === currentQuizQuestions.length) {
     scoreText.innerHTML += '<br><span style="color: var(--accent);">🎉 Идеально! Секретная точка на карте разблокирована!</span>';
-    revealSecretMarker();
+    if (typeof revealSecretMarker === 'function') revealSecretMarker();
   }
 
   questionsDiv.appendChild(scoreText);
-  event.currentTarget.remove();
+  event.currentTarget.style.display = 'none'; // Скрываем кнопку после проверки
 }
 
-function openAccordion(id) {
-  const acc = document.getElementById(id);
-  if (acc) {
-    acc.setAttribute('open', 'open');
-    acc.scrollIntoView({ behavior: 'smooth' });
-  }
+// Инициализация тестов при загрузке
+if (document.getElementById('quizContainer')) {
+  renderQuizTiles();
 }
 
 // ============================================================
