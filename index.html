@@ -12,168 +12,151 @@
 <body>
   <header class="header">
     <div class="container header__inner">
-      <a href="#" class="logo">
+      <a href="#" class="logo" data-page-link="home">
         <span class="logo__badge">🏅</span>
         <span>Жлобин<b>·</b>Спорт</span>
       </a>
       <nav class="nav">
-        <a href="#map">Карта</a>
-        <a href="#about">О проекте</a>
-        <a href="#students">Учащимся</a>
-        <a href="#method">Учителю</a>
-        <a href="#quiz">Тесты</a>
+        <a href="#" data-page-link="home">Главная</a>
+        <a href="#" data-page-link="students">Учащимся</a>
+        <a href="#" data-page-link="method">Учителю</a>
+        <a href="#" data-page-link="quiz">Тесты</a>
       </nav>
       <button class="icon-btn" id="themeToggle">🌙</button>
     </div>
   </header>
 
-  <section class="hero" id="top">
-    <div class="container">
-      <div class="glass-box">
-        <span class="hero__pill">🔥 Твой спортивный навигатор</span>
-        <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
-        <p class="hero__lead">
-          Интерактивный образовательный ресурс для уроков физической культуры и краеведения.
-          Изучайте спортивные объекты, биографии олимпийских чемпионов и историю крупных турниров
-          на одной карте.
-        </p>
-        <div class="hero__actions">
-          <a href="#map" class="btn">🚀 Открыть карту</a>
-          <a href="#quiz" class="btn btn--ghost">🏆 Пройти тест</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="map">
-    <div class="container">
-      <h2 class="section__title">Динамическая карта города</h2>
-      <div class="map-toolbar">
-        <div class="search">
-          <input type="search" id="searchInput" placeholder="🔍 Поиск объекта или спортсмена...">
-        </div>
-        <div class="filters">
-          <button class="chip is-active" data-layer="all">✨ Все</button>
-          <button class="chip" data-layer="objects">🏟️ Объекты</button>
-          <button class="chip chip--legends" data-layer="legends">🏆 Легенды</button>
-          <button class="chip chip--youth" data-layer="youth">⭐ Молодежь</button>
-          <button class="chip" data-layer="events">🎉 События</button>
-        </div>
-      </div>
-      <div id="mapContainer" class="map-container"></div>
-      <p class="map__hint" id="resultHint">Показано точек: <strong>0</strong></p>
-    </div>
-  </section>
-
-  <section class="section section--alt" id="about">
-    <div class="container">
-      <h2 class="section__title">О проекте</h2>
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>🎯 Цель проекта</h3>
-          <p>
-            Формирование у учащихся устойчивого интереса к физической культуре и здоровому образу
-            жизни через изучение спортивного наследия родного края с использованием современных
-            интерактивных технологий (динамической карты).
+  <!-- ================= ГЛАВНАЯ СТРАНИЦА ================= -->
+  <div id="page-home">
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="glass-box">
+          <span class="hero__pill">🔥 Твой спортивный навигатор</span>
+          <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
+          <p class="hero__lead">
+            Интерактивный образовательный ресурс для уроков физической культуры и краеведения.
+            Изучайте спортивные объекты, биографии олимпийских чемпионов и историю крупных турниров
+            на одной карте.
           </p>
-        </div>
-        <div class="info-card">
-          <h3>📋 Задачи</h3>
-          <ul>
-            <li>Систематизировать знания о спортивных объектах и выдающихся спортсменах Жлобинщины.</li>
-            <li>Реализовать межпредметные связи (физкультура, история, география, информатика).</li>
-            <li>Разработать интерактивные задания и тесты для проверки теоретических знаний по физкультуре.</li>
-            <li>Подготовить методические рекомендации для педагогов.</li>
-            <li>Обеспечить возможность интеграции с ЕИОР (eior.by).</li>
-          </ul>
-        </div>
-        <div class="info-card">
-          <h3>👥 Для кого (Аудитория)</h3>
-          <p>
-            <strong>Ученикам:</strong> для подготовки к олимпиадам, уроков теории физкультуры,
-            расширения кругозора.<br><br>
-            <strong>Учителям:</strong> как наглядное пособие для уроков и внеклассных мероприятий.<br><br>
-            <strong>Гостям города:</strong> как интерактивный спортивный путеводитель.
-          </p>
+          <div class="hero__actions">
+            <a href="#map" class="btn">🚀 Открыть карту</a>
+            <a href="#" class="btn btn--ghost" data-page-link="quiz">🏆 Пройти тест</a>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- РАЗДЕЛ УЧАЩИМСЯ -->
-  <section id="students" class="section">
+    <section class="section" id="map">
+      <div class="container">
+        <h2 class="section__title">Динамическая карта города</h2>
+        <div class="map-toolbar">
+          <div class="search">
+            <input type="search" id="searchInput" placeholder="🔍 Поиск объекта или спортсмена...">
+          </div>
+          <div class="filters">
+            <button class="chip is-active" data-layer="all">✨ Все</button>
+            <button class="chip" data-layer="objects">🏟️ Объекты</button>
+            <button class="chip chip--legends" data-layer="legends">🏆 Легенды</button>
+            <button class="chip chip--youth" data-layer="youth">⭐ Молодежь</button>
+            <button class="chip" data-layer="events">🎉 События</button>
+          </div>
+        </div>
+        <div id="mapContainer" class="map-container"></div>
+        <p class="map__hint" id="resultHint">Показано точек: <strong>0</strong></p>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="about">
+      <div class="container">
+        <h2 class="section__title">О проекте</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>🎯 Цель проекта</h3>
+            <p>
+              Формирование у учащихся устойчивого интереса к физической культуре и здоровому образу
+              жизни через изучение спортивного наследия родного края с использованием современных
+              интерактивных технологий (динамической карты).
+            </p>
+          </div>
+          <div class="info-card">
+            <h3>📋 Задачи</h3>
+            <ul>
+              <li>Систематизировать знания о спортивных объектах и выдающихся спортсменах Жлобинщины.</li>
+              <li>Реализовать межпредметные связи (физкультура, история, география, информатика).</li>
+              <li>Разработать интерактивные задания и тесты для проверки теоретических знаний по физкультуре.</li>
+              <li>Подготовить методические рекомендации для педагогов.</li>
+              <li>Обеспечить возможность интеграции с ЕИОР (eior.by).</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3>👥 Для кого (Аудитория)</h3>
+            <p>
+              <strong>Ученикам:</strong> для подготовки к олимпиадам, уроков теории физкультуры,
+              расширения кругозора.<br><br>
+              <strong>Учителям:</strong> как наглядное пособие для уроков и внеклассных мероприятий.<br><br>
+              <strong>Гостям города:</strong> как интерактивный спортивный путеводитель.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="objects">
+      <div class="container">
+        <h2 class="section__title">Спортивные объекты</h2>
+        <div class="cards" id="objectsList"></div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="people">
+      <div class="container">
+        <h2 class="section__title">Гордость Жлобина (Легенды)</h2>
+        <div class="cards" id="legendsList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="youth">
+      <div class="container">
+        <h2 class="section__title">Молодое поколение</h2>
+        <div class="cards" id="youthList"></div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="events">
+      <div class="container">
+        <h2 class="section__title">События и история</h2>
+        <div class="cards" id="eventsList"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= СТРАНИЦА: УЧАЩИМСЯ ================= -->
+  <div id="page-students" style="display: none; padding: 120px 0 60px;">
     <div class="container">
+      <a href="#" class="btn btn--ghost" data-page-link="home" style="margin-bottom: 30px; border-color: var(--border); color: var(--text);">← На главную</a>
       <h2 class="section__title">Учащимся</h2>
-
       <p class="students-intro">
-        Выбери класс и спортивный раздел. Изучай технику, выполняй задания своего уровня
+        Выбери класс и направление. Изучай технику по школьной программе, выполняй задания 
         и отмечай прогресс. Упражнения выполняй после разминки и с разрешения учителя.
       </p>
 
       <h3 class="students-filter-title">Выбери класс</h3>
       <div class="filters student-filters" id="studentLevels">
-        <button class="chip is-active" type="button" data-level="0">1–4 классы</button>
-        <button class="chip" type="button" data-level="1">5–9 классы</button>
-        <button class="chip" type="button" data-level="2">10–11 классы</button>
+        <button class="chip is-active" type="button" data-level="1-4">1–4 классы</button>
+        <button class="chip" type="button" data-level="5-9">5–9 классы</button>
+        <button class="chip" type="button" data-level="10-11">10–11 классы</button>
       </div>
 
-      <h3 class="students-filter-title">Выбери раздел</h3>
-      <div class="filters student-filters" id="studentCategories">
-        <button class="chip is-active" type="button" data-category="all">Все разделы</button>
-        <button class="chip" type="button" data-category="games">🏀 Подвижные игры</button>
-        <button class="chip" type="button" data-category="athletics">🏃 Лёгкая атлетика</button>
-        <button class="chip" type="button" data-category="gymnastics">🤸 Гимнастика</button>
-        <button class="chip" type="button" data-category="ski">🎿 Лыжная подготовка</button>
-      </div>
-
-      <div class="student-progress" id="studentProgress"></div>
-      <div class="student-cards" id="studentCards"></div>
+      <div id="studentContainer" style="margin-top: 40px;"></div>
     </div>
-  </section>
+  </div>
 
-  <!-- РАЗДЕЛ ТЕСТОВ (единственный, дубль удалён) -->
-  <section id="quiz" class="section section--alt">
+  <!-- ================= СТРАНИЦА: УЧИТЕЛЮ ================= -->
+  <div id="page-method" style="display: none; padding: 120px 0 60px;">
     <div class="container">
-      <h2 class="section__title">Пройти тест</h2>
-      <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
-        Проверь свои знания по разным темам. Выбери категорию, которая тебе интересна.
-      </p>
-
-      <div class="method-tiles">
-        <div class="method-tile" onclick="startQuiz('rules')">
-          <div class="method-tile__icon">📚</div>
-          <div class="method-tile__title">Правила спорта</div>
-          <div class="method-tile__count">Баскетбол, волейбол</div>
-        </div>
-        <div class="method-tile" onclick="startQuiz('safety')">
-          <div class="method-tile__icon">🛡️</div>
-          <div class="method-tile__title">Техника безопасности</div>
-          <div class="method-tile__count">В зале и на улице</div>
-        </div>
-        <div class="method-tile" onclick="startQuiz('history')">
-          <div class="method-tile__icon">🏆</div>
-          <div class="method-tile__title">История спорта</div>
-          <div class="method-tile__count">Олимпиады и рекорды</div>
-        </div>
-        <div class="method-tile" onclick="startQuiz('ufp')">
-          <div class="method-tile__icon">📊</div>
-          <div class="method-tile__title">Мои нормативы</div>
-          <div class="method-tile__count">Знаешь ли ты УФП?</div>
-        </div>
-      </div>
-
-      <!-- Само окно теста (скрыто до выбора темы) -->
-      <div id="quiz-box" class="quiz-container" style="display: none;">
-        <div id="quiz-content"></div>
-        <button class="btn" onclick="checkQuiz(event)" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--alt" id="method">
-    <div class="container">
+      <a href="#" class="btn btn--ghost" data-page-link="home" style="margin-bottom: 30px; border-color: var(--border); color: var(--text);">← На главную</a>
       <h2 class="section__title">Учителю: Методическая копилка</h2>
-      <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">
+      <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted); font-size: 1.1rem;">
         Выберите раздел программы — откроются темы с методикой, подводящими упражнениями и медиа.
       </p>
       <div class="filters" style="justify-content: center; margin-bottom: 40px;" id="methodFilters">
@@ -184,35 +167,19 @@
       </div>
       <div id="methodContainer"></div>
     </div>
-  </section>
+  </div>
 
-  <section class="section section--alt" id="objects">
+  <!-- ================= СТРАНИЦА: ТЕСТЫ ================= -->
+  <div id="page-quiz" style="display: none; padding: 120px 0 60px;">
     <div class="container">
-      <h2 class="section__title">Спортивные объекты</h2>
-      <div class="cards" id="objectsList"></div>
+      <a href="#" class="btn btn--ghost" data-page-link="home" style="margin-bottom: 30px; border-color: var(--border); color: var(--text);">← На главную</a>
+      <h2 class="section__title">Пройти тест</h2>
+      <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted); font-size: 1.1rem;">
+        Проверь свои знания по разным темам. Выбери раздел, затем тему.
+      </p>
+      <div id="quizContainer"></div>
     </div>
-  </section>
-
-  <section class="section" id="people">
-    <div class="container">
-      <h2 class="section__title">Гордость Жлобина (Легенды)</h2>
-      <div class="cards" id="legendsList"></div>
-    </div>
-  </section>
-
-  <section class="section section--alt" id="youth">
-    <div class="container">
-      <h2 class="section__title">Молодое поколение</h2>
-      <div class="cards" id="youthList"></div>
-    </div>
-  </section>
-
-  <section class="section" id="events">
-    <div class="container">
-      <h2 class="section__title">События и история</h2>
-      <div class="cards" id="eventsList"></div>
-    </div>
-  </section>
+  </div>
 
   <footer class="footer">
     <div class="container">
