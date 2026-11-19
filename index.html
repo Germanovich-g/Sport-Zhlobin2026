@@ -90,40 +90,32 @@
   </section>
 
   <!-- РАЗДЕЛ УЧАЩИМСЯ (Плитки для детей) -->
-<section id="students" class="section">
+<section class="section section--alt" id="students">
   <div class="container">
     <h2 class="section__title">Учащимся</h2>
-    <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
-      Выбери, что хочешь подтянуть. Здесь собраны правила, техника выполнения и нормативы школьной программы. Вся информация — в удобных карточках с картинками.
+    <p class="students-intro">
+      Выбери класс и спортивный раздел. Изучай технику, пробуй упражнения
+      по уровням и отмечай выполненные задания.
     </p>
 
-    <div class="method-tiles">
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-1')">
-        <div class="method-tile__icon">🏃‍♂️</div>
-        <div class="method-tile__title">Бег на скорость</div>
-        <div class="method-tile__count">Техника старта и финиша</div>
-      </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-2')">
-        <div class="method-tile__icon">🏐</div>
-        <div class="method-tile__title">Прыжки в длину</div>
-        <div class="method-tile__count">Разбег и приземление</div>
-      </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-3')">
-        <div class="method-tile__icon">🤸‍♀️</div>
-        <div class="method-tile__title">Гибкость</div>
-        <div class="method-tile__count">Шпагат и мостик</div>
-      </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-4')">
-        <div class="method-tile__icon">💪</div>
-        <div class="method-tile__title">Силовая подготовка</div>
-        <div class="method-tile__count">Подтягивания и пресс</div>
-      </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-5')">
-        <div class="method-tile__icon">🏀</div>
-        <div class="method-tile__title">Спортивные игры</div>
-        <div class="method-tile__count">Правила баскетбола</div>
-      </div>
+    <h3 class="students-filter-title">Выбери класс</h3>
+    <div class="filters" id="studentLevels">
+      <button class="chip is-active" data-level="0">1–4 классы</button>
+      <button class="chip" data-level="1">5–9 классы</button>
+      <button class="chip" data-level="2">10–11 классы</button>
     </div>
+
+    <h3 class="students-filter-title">Выбери раздел</h3>
+    <div class="filters" id="studentCategories">
+      <button class="chip is-active" data-category="all">Все разделы</button>
+      <button class="chip" data-category="games">🏀 Подвижные игры</button>
+      <button class="chip" data-category="athletics">🏃 Лёгкая атлетика</button>
+      <button class="chip" data-category="gymnastics">🤸 Гимнастика</button>
+      <button class="chip" data-category="ski">🎿 Лыжная подготовка</button>
+    </div>
+
+    <div class="student-progress" id="studentProgress"></div>
+    <div class="student-cards" id="studentCards"></div>
   </div>
 </section>
 
