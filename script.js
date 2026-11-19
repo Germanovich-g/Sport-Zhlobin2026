@@ -898,78 +898,119 @@ if (methodFilters) {
   renderMethodTiles('gym');
 }
 
-// ============================================================
-// КВИЗ (без изменений)
-// ============================================================
-const FULL_QUIZ_QUESTIONS = [
-  { q: 'Кто из уроженцев Жлобина стал олимпийским чемпионом 1960 года по метанию молота?', options: ['Василий Руденков', 'Владимир Ловецкий', 'Николай Киров'], correct: 0 },
-  { q: 'В каком году Артём Левшунов был выбран под 2-м номером на драфте НХЛ?', options: ['2022', '2023', '2024'], correct: 2 },
-  { q: 'Какой вид спорта прославил Шоту Нарманию?', options: ['Греко-римская борьба', 'Лёгкая атлетика', 'Хоккей'], correct: 0 },
-  { q: 'Сколько метров в длину имеют дорожки в плавательном бассейне Жлобина?', options: ['25 метров', '50 метров', '100 метров'], correct: 1 },
-  { q: 'Какое крупное событие принимал Жлобин в 2023 году?', options: ['Олимпийские игры', 'II Игры стран СНГ', 'Чемпионат мира по футболу'], correct: 1 },
-  { q: 'Что является основной формой физического воспитания в школе?', options: ['Урок физической культуры', 'Утренняя зарядка', 'Спортивная секция'], correct: 0 },
-  { q: 'Какой из перечисленных видов спорта относится к циклическим?', options: ['Лёгкая атлетика (бег)', 'Прыжки в длину', 'Метание молота'], correct: 0 },
-  { q: 'Как называется способ передвижения на лыжах, где толчок происходит поочерёдно каждой ногой?', options: ['Попеременный ход', 'Одновременный ход', 'Коньковый ход'], correct: 0 },
-  { q: 'Какое упражнение относится к подводящим для кувырка вперёд?', options: ['Группировка', 'Стойка на руках', 'Подтягивание'], correct: 0 },
-  { q: 'Сколько раз в неделю проходят уроки физической культуры в 5–9 классах по новой программе?', options: ['1 раз', '2 раза', '3 раза'], correct: 2 }
-];
+/* ==================== НОВЫЕ ТЕСТЫ ПО ТЕМАМ ==================== */
 
-let activeQuestions = [];
+const QUIZ_DATA = {
+  rules: [
+    { q: "Сколько игроков из одной команды находится на площадке в баскетболе?", a: ["5", "6", "7", "11"], correct: 0 },
+    { q: "До скольких очков играют в один сет в волейболе (в обычной партии)?", a: ["15", "21", "25", "30"], correct: 2 },
+    { q: "Что означает поднятая рука судьи в борьбе?", a: ["Стоп", "Предупреждение", "Победа", "Повтор"], correct: 1 },
+    { q: "Сколько попыток дается в тройном прыжке?", a: ["1", "2", "3", "4"], correct: 2 }
+  ],
+  safety: [
+    { q: "Что нужно сделать перед началом бега на дорожке?", a: ["Сделать разминку", "Съесть шоколад", "Сесть на шпагат", "Громко крикнуть"], correct: 0 },
+    { q: "Можно ли оставлять инвентарь (гантели, скакалки) на полу в проходе?", a: ["Да, если быстро", "Нет, это опасно", "Только гантели", "Только в конце урока"], correct: 1 },
+    { q: "Зачем нужен магнезий (порошок) в спортивной гимнастике?", a: ["Для красоты", "Чтобы руки не скользили", "Для запаха", "Для веса"], correct: 1 },
+    { q: "Что делать, если во время игры на улице пошел сильный ливень с грозой?", a: ["Спрятаться под деревом", "Бежать домой", "Прекратить игру и уйти в здание", "Продолжать играть"], correct: 2 }
+  ],
+  history: [
+    { q: "В какой стране зародились Олимпийские игры?", a: ["Рим", "Греция", "Египет", "Россия"], correct: 1 },
+    { q: "Как часто проводятся Олимпийские игры?", a: ["Каждый год", "Раз в 2 года", "Раз в 4 года", "Раз в 10 лет"], correct: 2 },
+    { q: "Какой снаряд используют в художественной гимнастике, который нельзя бросать?", a: ["Мяч", "Лента", "Скакалка", "Обруч"], correct: 1 },
+    { q: "Кто из белорусов носит титул 'Легенда спорта' в вашем проекте?", a: ["Дарья Домрачева", "Виктория Азаренко", "Андрей Арямнов", "Все перечисленные"], correct: 3 }
+  ],
+  ufp: [
+    { q: "Что такое 'челночный бег'?", a: ["Бег по кругу", "Бег с ускорением", "Бег между двумя точками с разворотом", "Бег спиной вперед"], correct: 2 },
+    { q: "В чем измеряется гибкость при наклоне вперед?", a: ["В секундах", "В килограммах", "В сантиметрах", "В градусах"], correct: 2 },
+    { q: "Сколько подтягиваний должен сделать мальчик (оценка '5') в 7 классе?", a: ["3", "5", "7", "10"], correct: 3 },
+    { q: "Какой норматив проверяет скоростно-силовые качества ног?", a: ["Пресс за 1 мин", "Прыжок в длину с места", "Вис на перекладине", "Бег 1000м"], correct: 1 }
+  ]
+};
 
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
+let currentQuizQuestions = [];
+let currentAnswers = [];
 
-function renderQuiz() {
-  const box = document.getElementById('quizBox');
-  if (!box) return;
-  activeQuestions = shuffleArray(FULL_QUIZ_QUESTIONS).slice(0, 5);
-  box.innerHTML = activeQuestions.map((q, i) => `
-    <div class="quiz-question">
-      <h4>${i + 1}. ${q.q}</h4>
-      ${q.options.map((opt, j) => `
-        <label class="quiz-option">
-          <input type="radio" name="q${i}" value="${j}">
-          ${opt}
-        </label>
-      `).join('')}
-    </div>
-  `).join('');
-}
+function startQuiz(category) {
+  const quizBox = document.getElementById('quiz-box');
+  const contentDiv = document.getElementById('quiz-content');
+  const tiles = document.querySelector('#quiz .method-tiles');
+  
+  contentDiv.innerHTML = '';
+  tiles.style.display = 'none';
+  quizBox.style.display = 'block';
 
-const quizSubmit = document.getElementById('quizSubmit');
-if (quizSubmit) {
-  quizSubmit.addEventListener('click', () => {
-    let score = 0;
-    activeQuestions.forEach((q, i) => {
-      const selected = document.querySelector(`input[name="q${i}"]:checked`);
-      document.querySelectorAll(`input[name="q${i}"]`).forEach(input => {
-        const label = input.parentElement;
-        label.classList.remove('correct', 'incorrect');
-        if (Number(input.value) === q.correct) label.classList.add('correct');
-      });
-      if (selected && Number(selected.value) === q.correct) {
-        score++;
-      } else if (selected) {
-        selected.parentElement.classList.add('incorrect');
-      }
-    });
-    const resultBox = document.getElementById('quizResult');
-    if (score === activeQuestions.length) {
-      resultBox.innerHTML = `<span style="color:#22c55e; font-size:1.2rem;">🎉 Отлично! Вы ответили на все вопросы верно!</span><br><br>Секретная метка активирована на карте. Найдите её!`;
-      window.isSecretUnlocked = true;
-      applyFilters();
-    } else {
-      resultBox.innerHTML = `<span style="color:#ef4444; font-size:1.2rem;">Вы ответили верно на ${score} из ${activeQuestions.length}. Попробуйте ещё раз!</span>`;
-    }
+  currentQuizQuestions = QUIZ_DATA[category];
+  currentAnswers = [];
+
+  currentQuizQuestions.forEach((item, index) => {
+    const optionsHtml = item.a.map((opt, i) => `
+      <label class="quiz-option" onclick="selectAnswer(${index}, ${i})">
+        <input type="radio" name="q${index}" style="display:none;"> ${opt}
+      </label>
+    `).join('');
+    
+    contentDiv.innerHTML += `
+      <div class="quiz-question">
+        <h4>${index + 1}. ${item.q}</h4>
+        ${optionsHtml}
+      </div>
+    `;
   });
 }
 
+function selectAnswer(qIndex, aIndex) {
+  currentAnswers[qIndex] = aIndex;
+  const labels = document.querySelectorAll(`[name="q${qIndex}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+function checkQuiz() {
+  if (currentAnswers.length !== currentQuizQuestions.length) {
+    alert('Ответь на все вопросы!');
+    return;
+  }
+
+  let score = 0;
+  const questionsDiv = document.getElementById('quiz-content');
+  const questionBoxes = questionsDiv.querySelectorAll('.quiz-question');
+
+  currentQuizQuestions.forEach((q, i) => {
+    const labels = questionBoxes[i].querySelectorAll('.quiz-option');
+    labels.forEach((label, idx) => {
+      if (idx === q.correct) {
+        label.classList.add('correct');
+      }
+      if (currentAnswers[i] === idx && idx !== q.correct) {
+        label.classList.add('incorrect');
+      }
+      if (currentAnswers[i] === idx && idx === q.correct) {
+        score++;
+      }
+      label.style.pointerEvents = 'none'; // Блокируем выбор после проверки
+    });
+  });
+
+  const scoreText = document.createElement('div');
+  scoreText.style.cssText = 'margin-top: 30px; font-size: 1.5rem; font-weight: 800; text-align: center;';
+  scoreText.textContent = `Твой результат: ${score} из ${currentQuizQuestions.length}`;
+
+  if (score === currentQuizQuestions.length) {
+    scoreText.innerHTML += '<br><span style="color: var(--accent);">🎉 Идеально! Секретная точка на карте разблокирована!</span>';
+    // revealSecretMarker(); // Раскомментируйте, если у вас есть эта функция
+  }
+
+  questionsDiv.appendChild(scoreText);
+  event.target.remove();
+}
+
+/* Если в вашем скрипте еще нет этой функции для открытия аккордеонов теории, добавьте ее: */
+function openAccordion(id) {
+  const acc = document.getElementById(id);
+  if (acc) {
+    acc.setAttribute('open', 'open');
+    acc.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 // ============================================================
 // ТЕМА
 // ============================================================
