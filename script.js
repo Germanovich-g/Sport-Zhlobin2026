@@ -99,6 +99,17 @@ function applyFilters() {
   renderAllCards();
 }
 
+// Разблокировка скрытой точки после прохождения теста на 100%
+function revealSecretMarker() {
+  if (window.isSecretUnlocked) return;
+  window.isSecretUnlocked = true;
+  const secret = markerMap.get('secret');
+  if (secret && map && !map.hasLayer(secret.marker)) {
+    secret.marker.addTo(map);
+  }
+  applyFilters();
+}
+
 document.querySelectorAll('.chip[data-layer]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.chip[data-layer]').forEach(b => b.classList.remove('is-active'));
@@ -167,9 +178,8 @@ function renderAllCards() {
   renderCards('youth', 'youthList');
   renderCards('events', 'eventsList');
 }
-
 // ============================================================
-// ТЕОРИЯ ДЛЯ УЧАЩИХСЯ (без изменений)
+// ТЕОРИЯ ДЛЯ УЧАЩИХСЯ
 // ============================================================
 const THEORY_DATA = {
   '1-4': [
@@ -341,7 +351,7 @@ if (gradeFilters) {
 }
 
 // ============================================================
-// МЕТОДИЧЕСКАЯ КОПИЛКА ДЛЯ УЧИТЕЛЯ (Вариант B: плитки тем → карточка)
+// МЕТОДИЧЕСКАЯ КОПИЛКА ДЛЯ УЧИТЕЛЯ
 // ============================================================
 const METHOD_DATA = {
   gym: {
@@ -465,7 +475,6 @@ const METHOD_DATA = {
       }
     ]
   },
-
   athletics: {
     icon: '🏃', title: 'Лёгкая атлетика',
     topics: [
@@ -606,7 +615,6 @@ const METHOD_DATA = {
       }
     ]
   },
-
   games: {
     icon: '🏐', title: 'Спортивные игры',
     topics: [
@@ -703,7 +711,6 @@ const METHOD_DATA = {
       }
     ]
   },
-
   ski: {
     icon: '🎿', title: 'Лыжи',
     topics: [
@@ -808,7 +815,6 @@ const methodContainer = document.getElementById('methodContainer');
 const methodFilters = document.getElementById('methodFilters');
 let currentMethodBlock = 'gym';
 
-// --- Отрисовка плиток тем (Вариант B) ---
 function renderMethodTiles(block) {
   if (!methodContainer) return;
   currentMethodBlock = block;
@@ -834,7 +840,6 @@ function renderMethodTiles(block) {
   });
 }
 
-// --- Отрисовка карточки темы с 4 подвкладками ---
 function renderMethodDetail(block, topicId) {
   if (!methodContainer) return;
   const blockData = METHOD_DATA[block];
@@ -869,12 +874,10 @@ function renderMethodDetail(block, topicId) {
     </div>
   `;
 
-  // Кнопка «Назад»
   document.getElementById('methodBackBtn').addEventListener('click', () => {
     renderMethodTiles(block);
   });
 
-  // Переключение подвкладок
   document.getElementById('methodTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.method-tab');
     if (!btn) return;
@@ -886,7 +889,6 @@ function renderMethodDetail(block, topicId) {
   });
 }
 
-// --- Обработчик фильтров блоков ---
 if (methodFilters) {
   methodFilters.addEventListener('click', (e) => {
     if (e.target.classList.contains('chip')) {
@@ -944,7 +946,7 @@ function startQuiz(category) {
 
   currentQuizQuestions.forEach((item, index) => {
     const optionsHtml = item.a.map((opt, i) => `
-      <label class="quiz-option" onclick="selectAnswer(${index}, ${i})">
+      <label class="quiz-option" onclick="selectAnswer(event, ${index}, ${i})">
         <input type="radio" name="q${index}" style="display:none;"> ${opt}
       </label>
     `).join('');
@@ -958,13 +960,13 @@ function startQuiz(category) {
   });
 }
 
-function selectAnswer(qIndex, aIndex) {
+function selectAnswer(event, qIndex, aIndex) {
   currentAnswers[qIndex] = aIndex;
-  const labels = document.querySelectorAll(`[name="q${qIndex}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
-  event.target.classList.add('selected');
+  document.querySelectorAll(`[name="q${qIndex}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
 }
 
-function checkQuiz() {
+function checkQuiz(event) {
   if (currentAnswers.length !== currentQuizQuestions.length) {
     alert('Ответь на все вопросы!');
     return;
@@ -986,7 +988,7 @@ function checkQuiz() {
       if (currentAnswers[i] === idx && idx === q.correct) {
         score++;
       }
-      label.style.pointerEvents = 'none'; // Блокируем выбор после проверки
+      label.style.pointerEvents = 'none';
     });
   });
 
@@ -996,14 +998,13 @@ function checkQuiz() {
 
   if (score === currentQuizQuestions.length) {
     scoreText.innerHTML += '<br><span style="color: var(--accent);">🎉 Идеально! Секретная точка на карте разблокирована!</span>';
-    // revealSecretMarker(); // Раскомментируйте, если у вас есть эта функция
+    revealSecretMarker();
   }
 
   questionsDiv.appendChild(scoreText);
-  event.target.remove();
+  event.currentTarget.remove();
 }
 
-/* Если в вашем скрипте еще нет этой функции для открытия аккордеонов теории, добавьте ее: */
 function openAccordion(id) {
   const acc = document.getElementById(id);
   if (acc) {
@@ -1011,6 +1012,7 @@ function openAccordion(id) {
     acc.scrollIntoView({ behavior: 'smooth' });
   }
 }
+
 // ============================================================
 // ТЕМА
 // ============================================================
@@ -1031,13 +1033,11 @@ if (themeToggle) {
 // ============================================================
 // ИНИЦИАЛИЗАЦИЯ
 // ============================================================
-renderQuiz();
 applyFilters();
+
 // ============================================================
 // РАЗДЕЛ «УЧАЩИМСЯ»
-// Добавлено отдельно: остальной код сайта не меняется
 // ============================================================
-
 const STUDENT_TASKS = [
   {
     id: 'student-basketball',
