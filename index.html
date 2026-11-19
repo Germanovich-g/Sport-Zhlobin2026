@@ -6,7 +6,7 @@
   <title>Жлобин — кузница спортивных рекордов | Физкультура и здоровье</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,7 +32,11 @@
       <div class="glass-box">
         <span class="hero__pill">🔥 Твой спортивный навигатор</span>
         <h1 class="hero__title">Жлобин —<br><span>кузница рекордов</span></h1>
-        <p class="hero__lead">Интерактивный образовательный ресурс для уроков физической культуры и краеведения. Изучайте спортивные объекты, биографии олимпийских чемпионов и историю крупных турниров на одной карте.</p>
+        <p class="hero__lead">
+          Интерактивный образовательный ресурс для уроков физической культуры и краеведения.
+          Изучайте спортивные объекты, биографии олимпийских чемпионов и историю крупных турниров
+          на одной карте.
+        </p>
         <div class="hero__actions">
           <a href="#map" class="btn">🚀 Открыть карту</a>
           <a href="#quiz" class="btn btn--ghost">🏆 Пройти тест</a>
@@ -67,7 +71,11 @@
       <div class="info-grid">
         <div class="info-card">
           <h3>🎯 Цель проекта</h3>
-          <p>Формирование у учащихся устойчивого интереса к физической культуре и здоровому образу жизни через изучение спортивного наследия родного края с использованием современных интерактивных технологий (динамической карты).</p>
+          <p>
+            Формирование у учащихся устойчивого интереса к физической культуре и здоровому образу
+            жизни через изучение спортивного наследия родного края с использованием современных
+            интерактивных технологий (динамической карты).
+          </p>
         </div>
         <div class="info-card">
           <h3>📋 Задачи</h3>
@@ -81,90 +89,86 @@
         </div>
         <div class="info-card">
           <h3>👥 Для кого (Аудитория)</h3>
-          <p><strong>Ученикам:</strong> для подготовки к олимпиадам, уроков теории физкультуры, расширения кругозора.<br><br>
-          <strong>Учителям:</strong> как наглядное пособие для уроков и внеклассных мероприятий.<br><br>
-          <strong>Гостям города:</strong> как интерактивный спортивный путеводитель.</p>
+          <p>
+            <strong>Ученикам:</strong> для подготовки к олимпиадам, уроков теории физкультуры,
+            расширения кругозора.<br><br>
+            <strong>Учителям:</strong> как наглядное пособие для уроков и внеклассных мероприятий.<br><br>
+            <strong>Гостям города:</strong> как интерактивный спортивный путеводитель.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- РАЗДЕЛ УЧАЩИМСЯ (Плитки для детей) -->
-<section id="students" class="section">
-  <div class="container">
-    <h2 class="section__title">Учащимся</h2>
-    <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
-      Выбери, что хочешь подтянуть. Здесь собраны правила, техника выполнения и нормативы школьной программы. Вся информация — в удобных карточках с картинками.
-    </p>
+  <!-- РАЗДЕЛ УЧАЩИМСЯ -->
+  <section id="students" class="section">
+    <div class="container">
+      <h2 class="section__title">Учащимся</h2>
 
-    <div class="method-tiles">
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-1')">
-        <div class="method-tile__icon">🏃‍♂️</div>
-        <div class="method-tile__title">Бег на скорость</div>
-        <div class="method-tile__count">Техника старта и финиша</div>
+      <p class="students-intro">
+        Выбери класс и спортивный раздел. Изучай технику, выполняй задания своего уровня
+        и отмечай прогресс. Упражнения выполняй после разминки и с разрешения учителя.
+      </p>
+
+      <h3 class="students-filter-title">Выбери класс</h3>
+      <div class="filters student-filters" id="studentLevels">
+        <button class="chip is-active" type="button" data-level="0">1–4 классы</button>
+        <button class="chip" type="button" data-level="1">5–9 классы</button>
+        <button class="chip" type="button" data-level="2">10–11 классы</button>
       </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-2')">
-        <div class="method-tile__icon">🏐</div>
-        <div class="method-tile__title">Прыжки в длину</div>
-        <div class="method-tile__count">Разбег и приземление</div>
+
+      <h3 class="students-filter-title">Выбери раздел</h3>
+      <div class="filters student-filters" id="studentCategories">
+        <button class="chip is-active" type="button" data-category="all">Все разделы</button>
+        <button class="chip" type="button" data-category="games">🏀 Подвижные игры</button>
+        <button class="chip" type="button" data-category="athletics">🏃 Лёгкая атлетика</button>
+        <button class="chip" type="button" data-category="gymnastics">🤸 Гимнастика</button>
+        <button class="chip" type="button" data-category="ski">🎿 Лыжная подготовка</button>
       </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-3')">
-        <div class="method-tile__icon">🤸‍♀️</div>
-        <div class="method-tile__title">Гибкость</div>
-        <div class="method-tile__count">Шпагат и мостик</div>
+
+      <div class="student-progress" id="studentProgress"></div>
+      <div class="student-cards" id="studentCards"></div>
+    </div>
+  </section>
+
+  <!-- РАЗДЕЛ ТЕСТОВ (Выбор темы) -->
+  <section id="quiz" class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">Пройти тест</h2>
+      <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
+        Проверь свои знания по разным темам. Выбери категорию, которая тебе интересна.
+      </p>
+
+      <div class="method-tiles">
+        <div class="method-tile" onclick="startQuiz('rules')">
+          <div class="method-tile__icon">📚</div>
+          <div class="method-tile__title">Правила спорта</div>
+          <div class="method-tile__count">Баскетбол, волейбол</div>
+        </div>
+        <div class="method-tile" onclick="startQuiz('safety')">
+          <div class="method-tile__icon">🛡️</div>
+          <div class="method-tile__title">Техника безопасности</div>
+          <div class="method-tile__count">В зале и на улице</div>
+        </div>
+        <div class="method-tile" onclick="startQuiz('history')">
+          <div class="method-tile__icon">🏆</div>
+          <div class="method-tile__title">История спорта</div>
+          <div class="method-tile__count">Олимпиады и рекорды</div>
+        </div>
+        <div class="method-tile" onclick="startQuiz('ufp')">
+          <div class="method-tile__icon">📊</div>
+          <div class="method-tile__title">Мои нормативы</div>
+          <div class="method-tile__count">Знаешь ли ты УФП?</div>
+        </div>
       </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-4')">
-        <div class="method-tile__icon">💪</div>
-        <div class="method-tile__title">Силовая подготовка</div>
-        <div class="method-tile__count">Подтягивания и пресс</div>
-      </div>
-      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-5')">
-        <div class="method-tile__icon">🏀</div>
-        <div class="method-tile__title">Спортивные игры</div>
-        <div class="method-tile__count">Правила баскетбола</div>
+
+      <!-- Само окно теста (скрыто до выбора темы) -->
+      <div id="quiz-box" class="quiz-container" style="display: none;">
+        <div id="quiz-content"></div>
+        <button class="btn" onclick="checkQuiz()" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- РАЗДЕЛ ТЕСТОВ (Выбор темы) -->
-<section id="quiz" class="section section--alt">
-  <div class="container">
-    <h2 class="section__title">Пройти тест</h2>
-    <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
-      Проверь свои знания по разным темам. Выбери категорию, которая тебе интересна.
-    </p>
-
-    <div class="method-tiles">
-      <div class="method-tile" onclick="startQuiz('rules')">
-        <div class="method-tile__icon">📚</div>
-        <div class="method-tile__title">Правила спорта</div>
-        <div class="method-tile__count">Баскетбол, волейбол</div>
-      </div>
-      <div class="method-tile" onclick="startQuiz('safety')">
-        <div class="method-tile__icon">🛡️</div>
-        <div class="method-tile__title">Техника безопасности</div>
-        <div class="method-tile__count">В зале и на улице</div>
-      </div>
-      <div class="method-tile" onclick="startQuiz('history')">
-        <div class="method-tile__icon">🏆</div>
-        <div class="method-tile__title">История спорта</div>
-        <div class="method-tile__count">Олимпиады и рекорды</div>
-      </div>
-      <div class="method-tile" onclick="startQuiz('ufp')">
-        <div class="method-tile__icon">📊</div>
-        <div class="method-tile__title">Мои нормативы</div>
-        <div class="method-tile__count">Знаешь ли ты УФП?</div>
-      </div>
-    </div>
-
-    <!-- Само окно теста (скрыто до выбора темы) -->
-    <div id="quiz-box" class="quiz-container" style="display: none;">
-      <div id="quiz-content"></div>
-      <button class="btn" onclick="checkQuiz()" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
-    </div>
-  </div>
-</section>
+  </section>
 
   <section class="section section--alt" id="method">
     <div class="container">
@@ -186,7 +190,10 @@
     <div class="container">
       <h2 class="section__title">Проверь себя (Теория ФКиЗ)</h2>
       <div class="quiz-container">
-        <p style="text-align:center; margin-bottom:30px; font-size:1.1rem;">Ответь на вопросы о спортивном наследии Жлобина и Беларуси. После прохождения получишь доступ к скрытой метке на карте!</p>
+        <p style="text-align:center; margin-bottom:30px; font-size:1.1rem;">
+          Ответь на вопросы о спортивном наследии Жлобина и Беларуси. После прохождения получишь
+          доступ к скрытой метке на карте!
+        </p>
         <div id="quizBox"></div>
         <button class="btn" id="quizSubmit" style="margin-top:30px; width:100%;">Проверить ответы</button>
         <div id="quizResult" style="margin-top:25px; text-align:center; font-weight:bold; font-size:1.1rem;"></div>
@@ -224,7 +231,10 @@
 
   <footer class="footer">
     <div class="container">
-      <p>© 2026 «Жлобин — кузница спортивных рекордов». Проект для конкурса «Компьютер. Образование. Интернет» (Номинация «Динамическая карта»).</p>
+      <p>
+        © 2026 «Жлобин — кузница спортивных рекордов». Проект для конкурса
+        «Компьютер. Образование. Интернет» (Номинация «Динамическая карта»).
+      </p>
     </div>
   </footer>
 
