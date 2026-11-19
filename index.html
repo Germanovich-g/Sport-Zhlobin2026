@@ -89,20 +89,82 @@
     </div>
   </section>
 
-  <section class="section" id="students">
-    <div class="container">
-      <h2 class="section__title">Учащимся: Теория и практика</h2>
-      <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted); font-size: 1.1rem;">
-        Материалы разработаны на основе учебной программы «Физическая культура и здоровье» (Постановление МО РБ № 137 от 01.08.2025).
-      </p>
-      <div class="filters" style="justify-content: center; margin-bottom: 40px;" id="gradeFilters">
-        <button class="chip is-active" data-grade="1-4">1–4 классы</button>
-        <button class="chip" data-grade="5-9">5–9 классы</button>
-        <button class="chip" data-grade="10-11">10–11 классы</button>
+  <!-- РАЗДЕЛ УЧАЩИМСЯ (Плитки для детей) -->
+<section id="students" class="section">
+  <div class="container">
+    <h2 class="section__title">Учащимся</h2>
+    <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
+      Выбери, что хочешь подтянуть. Здесь собраны правила, техника выполнения и нормативы школьной программы. Вся информация — в удобных карточках с картинками.
+    </p>
+
+    <div class="method-tiles">
+      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-1')">
+        <div class="method-tile__icon">🏃‍♂️</div>
+        <div class="method-tile__title">Бег на скорость</div>
+        <div class="method-tile__count">Техника старта и финиша</div>
       </div>
-      <div class="theory-grid" id="theoryContainer"></div>
+      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-2')">
+        <div class="method-tile__icon">🏐</div>
+        <div class="method-tile__title">Прыжки в длину</div>
+        <div class="method-tile__count">Разбег и приземление</div>
+      </div>
+      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-3')">
+        <div class="method-tile__icon">🤸‍♀️</div>
+        <div class="method-tile__title">Гибкость</div>
+        <div class="method-tile__count">Шпагат и мостик</div>
+      </div>
+      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-4')">
+        <div class="method-tile__icon">💪</div>
+        <div class="method-tile__title">Силовая подготовка</div>
+        <div class="method-tile__count">Подтягивания и пресс</div>
+      </div>
+      <div class="method-tile" onclick="location.hash='#theory'; openAccordion('acc-theory-5')">
+        <div class="method-tile__icon">🏀</div>
+        <div class="method-tile__title">Спортивные игры</div>
+        <div class="method-tile__count">Правила баскетбола</div>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- РАЗДЕЛ ТЕСТОВ (Выбор темы) -->
+<section id="quiz" class="section section--alt">
+  <div class="container">
+    <h2 class="section__title">Пройти тест</h2>
+    <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-muted); font-size: 1.1rem;">
+      Проверь свои знания по разным темам. Выбери категорию, которая тебе интересна.
+    </p>
+
+    <div class="method-tiles">
+      <div class="method-tile" onclick="startQuiz('rules')">
+        <div class="method-tile__icon">📚</div>
+        <div class="method-tile__title">Правила спорта</div>
+        <div class="method-tile__count">Баскетбол, волейбол</div>
+      </div>
+      <div class="method-tile" onclick="startQuiz('safety')">
+        <div class="method-tile__icon">🛡️</div>
+        <div class="method-tile__title">Техника безопасности</div>
+        <div class="method-tile__count">В зале и на улице</div>
+      </div>
+      <div class="method-tile" onclick="startQuiz('history')">
+        <div class="method-tile__icon">🏆</div>
+        <div class="method-tile__title">История спорта</div>
+        <div class="method-tile__count">Олимпиады и рекорды</div>
+      </div>
+      <div class="method-tile" onclick="startQuiz('ufp')">
+        <div class="method-tile__icon">📊</div>
+        <div class="method-tile__title">Мои нормативы</div>
+        <div class="method-tile__count">Знаешь ли ты УФП?</div>
+      </div>
+    </div>
+
+    <!-- Само окно теста (скрыто до выбора темы) -->
+    <div id="quiz-box" class="quiz-container" style="display: none;">
+      <div id="quiz-content"></div>
+      <button class="btn" onclick="checkQuiz()" style="width: 100%; margin-top: 30px;">Проверить ответы</button>
+    </div>
+  </div>
+</section>
 
   <section class="section section--alt" id="method">
     <div class="container">
