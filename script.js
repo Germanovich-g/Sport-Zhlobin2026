@@ -1,4 +1,25 @@
 // ============================================================
+// НАВИГАЦИЯ ПО СТРАНИЦАМ
+// ============================================================
+document.querySelectorAll('[data-page-link]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const page = link.dataset.pageLink;
+    
+    // Скрываем все страницы
+    document.getElementById('page-home').style.display = 'none';
+    document.getElementById('page-students').style.display = 'none';
+    document.getElementById('page-method').style.display = 'none';
+    document.getElementById('page-quiz').style.display = 'none';
+    
+    // Показываем нужную
+    document.getElementById(`page-${page}`).style.display = 'block';
+    
+    // Скролл вверх
+    window.scrollTo(0, 0);
+  });
+});
+/ ============================================================
 // ДАННЫЕ КАРТЫ
 // ============================================================
 const DATA = [
