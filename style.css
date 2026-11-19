@@ -405,3 +405,8 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
   .method-detail__header { padding: 20px 15px; }
   .method-detail__title { font-size: 1.3rem; }
 }
+/* Выбранный вариант ответа в тесте */
+.quiz-option.selected {
+  border-color: var(--primary) !important;
+  background: rgba(255, 107, 53, 0.08) !important;
+}
