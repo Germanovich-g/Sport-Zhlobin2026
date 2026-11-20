@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <!-- ================= СТРАНИЦА: УЧИТЕЛЮ ================= -->
+    <!-- ================= СТРАНИЦА: УЧИТЕЛЮ ================= -->
   <div id="page-method" style="display: none; padding: 120px 0 60px;">
     <div class="container">
       <a href="#" class="btn btn--ghost" data-page-link="home" style="margin-bottom: 30px; border-color: var(--border); color: var(--text);">← На главную</a>
@@ -154,15 +154,19 @@
       <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted); font-size: 1.1rem;">
         Выберите раздел программы — откроются темы с методикой, подводящими упражнениями и медиа.
       </p>
-     <div class="filters" style="justify-content: center; margin-bottom: 40px; flex-wrap: wrap;" id="methodFilters">
-  <button class="chip is-active" data-block="gym">🤸 Гимнастика</button>
-  <button class="chip" data-block="athletics">🏃 Лёгкая атлетика</button>
-  <button class="chip" data-block="ski">🎿 Лыжная подготовка</button>
-  <button class="chip" data-block="football">⚽ Футбол</button>
-  <button class="chip" data-block="games">🏐 Волейбол</button>
-  <button class="chip" data-block="basket">🏀 Баскетбол</button>
-  <button class="chip" data-block="handball">🤾 Гандбол</button>
-</div>
+      <div class="filters" style="justify-content: center; margin-bottom: 40px; flex-wrap: wrap;" id="methodFilters">
+        <button class="chip is-active" data-block="gym">🤸 Гимнастика</button>
+        <button class="chip" data-block="athletics">🏃 Лёгкая атлетика</button>
+        <button class="chip" data-block="ski">🎿 Лыжная подготовка</button>
+        <button class="chip" data-block="football">⚽ Футбол</button>
+        <button class="chip" data-block="games">🏐 Волейбол</button>
+        <button class="chip" data-block="basket">🏀 Баскетбол</button>
+        <button class="chip" data-block="handball">🤾 Гандбол</button>
+      </div>
+      <!-- ВОТ ЭТОГО НЕ ХВАТАЛО: контейнер для плиток -->
+      <div id="methodContainer"></div>
+    </div>
+  </div>
 
   <!-- ================= СТРАНИЦА: ТЕСТЫ ================= -->
   <div id="page-quiz" style="display: none; padding: 120px 0 60px;">
