@@ -12,11 +12,21 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
     const target = document.getElementById(`page-${page}`);
     if (target) target.style.display = 'block';
     window.scrollTo(0, 0);
+
     // Закрываем мобильное меню после перехода
     const nav = document.querySelector('.nav');
     const burger = document.getElementById('navToggle');
     if (nav) nav.classList.remove('is-open');
     if (burger) burger.classList.remove('is-active');
+
+    // Если открыли страницу "Учителю" — запускаем отрисовку
+    if (page === 'method') {
+      setTimeout(() => {
+        if (typeof renderMethodTiles === 'function') {
+          renderMethodTiles('gym');
+        }
+      }, 50);
+    }
   });
 });
 
