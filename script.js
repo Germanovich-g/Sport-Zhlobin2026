@@ -2217,9 +2217,16 @@ const methodContainer = document.getElementById('methodContainer');
 const methodFilters = document.getElementById('methodFilters');
 
 window.renderMethodTiles = function(block) {
-  if (!methodContainer) return;
+  console.log("Пытаюсь отрисовать блок:", block);
+  if (!methodContainer) {
+    console.log("Ошибка: methodContainer не найден!");
+    return;
+  }
   const blockData = METHOD_DATA[block];
-  if (!blockData) return;
+  if (!blockData) {
+    console.log("Ошибка: нет данных для блока", block);
+    return;
+  }
   const topicTabs = ['Темы', 'Как выполнять', 'Подводящие упражнения', 'Типичные ошибки и исправления', 'Видео, картинки'];
   methodContainer.innerHTML = `<div class="method-tiles">${blockData.topics.map(topic => `
     <div class="method-tile" data-topic="${topic.id}" onclick="renderMethodDetail('${block}', '${topic.id}')">
