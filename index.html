@@ -11,20 +11,21 @@
 </head>
 <body>
   <header class="header">
-    <div class="container header__inner">
-      <a href="#" class="logo" data-page-link="home">
-        <span class="logo__badge">🏅</span>
-        <span>Жлобин<b>·</b>Спорт</span>
-      </a>
-      <nav class="nav">
-        <a href="#" data-page-link="home">Главная</a>
-        <a href="#" data-page-link="students">Учащимся</a>
-        <a href="#" data-page-link="method">Учителю</a>
-        <a href="#" data-page-link="quiz">Тесты</a>
-      </nav>
-      <button class="icon-btn" id="themeToggle">🌙</button>
-    </div>
-  </header>
+  <div class="container header__inner">
+    <a href="#" class="logo" data-page-link="home">
+      <span class="logo__badge">🏅</span>
+      <span>Жлобин<b>·</b>Спорт</span>
+    </a>
+    <button class="icon-btn nav-toggle" id="navToggle" aria-label="Меню">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="#" data-page-link="home">Главная</a>
+      <a href="#" data-page-link="students">Учащимся</a>
+      <a href="#" data-page-link="method">Учителю</a>
+      <a href="#" data-page-link="quiz">Тесты</a>
+    </nav>
+    <button class="icon-btn" id="themeToggle">🌙</button>
+  </div>
+</header>
 
   <!-- ================= ГЛАВНАЯ СТРАНИЦА ================= -->
   <div id="page-home">
