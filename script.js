@@ -2290,96 +2290,89 @@ if (methodFilters) {
   renderMethodTiles('gym');
   }
 // ============================================================
-// ТЕСТЫ
+// ТЕСТЫ (РАСШИРЕННАЯ ВЕРСИЯ)
 // ============================================================
 const QUIZ_DATA = {
-  rules: { title: 'Правила спорта', icon: '📚', topics: [
-    { id: 'rules-basket', title: 'Баскетбол', questions: [ { q: "Сколько игроков в баскетболе?", a: ["5", "6", "7"], correct: 0 }, { q: "Сколько времени на атаку?", a: ["10", "24", "30"], correct: 1 } ] },
-    { id: 'rules-volley', title: 'Волейбол', questions: [ { q: "До скольких очков в партии?", a: ["15", "21", "25"], correct: 2 } ] }
-  ] },
-  safety: { title: 'Безопасность', icon: '🛡️', topics: [
-    { id: 'safety-gym', title: 'В зале', questions: [ { q: "Что перед занятием?", a: ["Разминка", "Шоколад"], correct: 0 } ] }
-  ] },
-  history: { title: 'История', icon: '🏆', topics: [
-    { id: 'history-olymp', title: 'Олимпиада', questions: [ { q: "Где зародились?", a: ["Рим", "Греция"], correct: 1 } ] }
-  ] }
-};
-
-let currentQuizQuestions = [];
-let currentAnswers = [];
-const quizContainer = document.getElementById('quizContainer');
-
-function renderQuizTiles() {
-  if (!quizContainer) return;
-  let html = '<div class="method-tiles">';
-  for (const key in QUIZ_DATA) {
-    const block = QUIZ_DATA[key];
-    html += `<div class="method-tile" onclick="renderQuizList('${key}')"><div class="method-tile__icon">${block.icon}</div><div class="method-tile__title">${block.title}</div><div class="method-tile__count">${block.topics.length} теста</div></div>`;
+  athletics: { 
+    title: 'Лёгкая атлетика', icon: '🏃', 
+    topics: [
+      { id: 'q-ath-start', title: 'Старты и бег', questions: [
+        { q: "Какой старт используется на короткие дистанции?", a: ["Высокий", "Низкий", "Оба"], correct: 1 },
+        { q: "Сколько фаз в спринтерском беге?", a: ["2", "3", "4"], correct: 2 },
+        { q: "Что делают по команде «Внимание!» при низком старте?", a: ["Поднимают таз", "Бегут", "Ложатся"], correct: 0 }
+      ]},
+      { id: 'q-ath-jump', title: 'Прыжки и метания', questions: [
+        { q: "Сколько попыток даётся в прыжках в длину?", a: ["3", "5", "6"], correct: 0 },
+        { q: "Какой вес малого мяча для метания?", a: ["100 г", "150 г", "200 г"], correct: 1 }
+      ]}
+    ]
+  },
+  gym: { 
+    title: 'Гимнастика', icon: '🤸', 
+    topics: [
+      { id: 'q-gym-roll', title: 'Кувырки и стойки', questions: [
+        { q: "Что является основой безопасности при падениях?", a: ["Группировка", "Растяжка", "Прыжок"], correct: 0 },
+        { q: "Как называется стойка на лопатках?", a: ["Берёзка", "Свечка", "Мост"], correct: 0 },
+        { q: "С чего начинается кувырок вперёд?", a: ["С упора присев", "С прыжка", "С разбега"], correct: 0 }
+      ]}
+    ]
+  },
+  ski: { 
+    title: 'Лыжная подготовка', icon: '🎿', 
+    topics: [
+      { id: 'q-ski-move', title: 'Ходы и спуски', questions: [
+        { q: "Какой ход самый распространённый?", a: ["Попеременный двухшажный", "Коньковый", "Бесшажный"], correct: 0 },
+        { q: "Как тормозить на лыжах?", a: ["Плугом", "Прыжком", "Кувырком"], correct: 0 }
+      ]}
+    ]
+  },
+  football: { 
+    title: 'Футбол', icon: '⚽', 
+    topics: [
+      { id: 'q-foot-kick', title: 'Удары и остановки', questions: [
+        { q: "Какой частью стопы бьют на точность?", a: ["Внутренней", "Носком", "Пяткой"], correct: 0 },
+        { q: "Сколько игроков в футбольной команде?", a: ["10", "11", "12"], correct: 1 }
+      ]}
+    ]
+  },
+  volley: { 
+    title: 'Волейбол', icon: '🏐', 
+    topics: [
+      { id: 'q-volley-pass', title: 'Передачи и подачи', questions: [
+        { q: "До скольких очков играют в партии?", a: ["15", "21", "25"], correct: 2 },
+        { q: "Как называется передача сверху?", a: ["Ковшик", "Плуг", "Блок"], correct: 0 }
+      ]}
+    ]
+  },
+  basket: { 
+    title: 'Баскетбол', icon: '🏀', 
+    topics: [
+      { id: 'q-basket-base', title: 'Основы игры', questions: [
+        { q: "Сколько игроков в баскетболе?", a: ["5", "6", "7"], correct: 0 },
+        { q: "Сколько времени на атаку?", a: ["10 сек", "24 сек", "30 сек"], correct: 1 },
+        { q: "Как называется ведение мяча?", a: ["Дриблинг", "Пас", "Бросок"], correct: 0 }
+      ]}
+    ]
+  },
+  handball: { 
+    title: 'Гандбол', icon: '🤾', 
+    topics: [
+      { id: 'q-hand-shot', title: 'Броски и ведение', questions: [
+        { q: "Сколько игроков в гандболе?", a: ["5", "6", "7"], correct: 2 },
+        { q: "Чем выполняют ведение в гандболе?", a: ["Ногой", "Рукой", "Головой"], correct: 1 }
+      ]}
+    ]
   }
-  html += '</div>';
-  quizContainer.innerHTML = html;
+};
+// ============================================================
+// МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
+// ============================================================
+const navToggle = document.getElementById('navToggle');
+const mainNav = document.getElementById('mainNav');
+
+if (navToggle && mainNav) {
+  navToggle.addEventListener('click', () => {
+    mainNav.classList.toggle('is-open');
+    navToggle.classList.toggle('is-active');
+  });
 }
-
-window.renderQuizList = function(blockKey) {
-  const block = QUIZ_DATA[blockKey];
-  let html = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button><h3 class="method-detail__title">${block.icon} ${block.title}</h3></div><div class="method-tab__content" style="padding: 0;">`;
-  block.topics.forEach(topic => {
-    html += `<div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${topic.title}</div><button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="startQuiz('${topic.id}')">Начать тест</button></div>`;
-  });
-  html += `</div></div>`;
-  quizContainer.innerHTML = html;
-};
-
-window.startQuiz = function(topicId) {
-  let topicData = null;
-  for (const key in QUIZ_DATA) {
-    const found = QUIZ_DATA[key].topics.find(t => t.id === topicId);
-    if (found) { topicData = found; break; }
-  }
-  if (!topicData) return;
-  currentQuizQuestions = topicData.questions;
-  currentAnswers = [];
-  let html = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button><h3 class="method-detail__title">📝 ${topicData.title}</h3></div><div class="method-tab__content" id="quiz-content">`;
-  currentQuizQuestions.forEach((item, index) => {
-    const optionsHtml = item.a.map((opt, i) => `<label class="quiz-option" onclick="selectAnswer(event, ${index}, ${i})"><input type="radio" name="q${index}" style="display:none;"> ${opt}</label>`).join('');
-    html += `<div class="quiz-question"><h4>${index + 1}. ${item.q}</h4>${optionsHtml}</div>`;
-  });
-  html += `</div><div style="padding: 20px 30px; text-align: right;"><button class="btn" onclick="checkQuiz(event)" style="width: 100%;">Проверить ответы</button></div></div>`;
-  quizContainer.innerHTML = html;
-};
-
-window.selectAnswer = function(event, qIndex, aIndex) {
-  currentAnswers[qIndex] = aIndex;
-  document.querySelectorAll(`[name="q${qIndex}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-};
-
-window.checkQuiz = function(event) {
-  if (currentAnswers.length !== currentQuizQuestions.length) {
-    alert('Ответь на все вопросы!');
-    return;
-  }
-  let score = 0;
-  const questionsDiv = document.getElementById('quiz-content');
-  const questionBoxes = questionsDiv.querySelectorAll('.quiz-question');
-  currentQuizQuestions.forEach((q, i) => {
-    const labels = questionBoxes[i].querySelectorAll('.quiz-option');
-    labels.forEach((label, idx) => {
-      if (idx === q.correct) label.classList.add('correct');
-      if (currentAnswers[i] === idx && idx !== q.correct) label.classList.add('incorrect');
-      if (currentAnswers[i] === idx && idx === q.correct) score++;
-      label.style.pointerEvents = 'none';
-    });
-  });
-  const scoreText = document.createElement('div');
-  scoreText.style.cssText = 'margin-top: 30px; font-size: 1.5rem; font-weight: 800; text-align: center; color: var(--text);';
-  scoreText.textContent = `Твой результат: ${score} из ${currentQuizQuestions.length}`;
-  if (score === currentQuizQuestions.length) {
-    scoreText.innerHTML += '<br><span style="color: var(--accent);">🎉 Идеально! Секретный объект на карте разблокирован!</span>';
-    if (typeof revealSecretMarker === 'function') revealSecretMarker();
-  }
-  questionsDiv.appendChild(scoreText);
-  event.currentTarget.style.display = 'none';
-};
-
-if (document.getElementById('quizContainer')) renderQuizTiles();
