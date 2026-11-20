@@ -12,6 +12,11 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
     const target = document.getElementById(`page-${page}`);
     if (target) target.style.display = 'block';
     window.scrollTo(0, 0);
+    // Закрываем мобильное меню после перехода
+    const nav = document.querySelector('.nav');
+    const burger = document.getElementById('navToggle');
+    if (nav) nav.classList.remove('is-open');
+    if (burger) burger.classList.remove('is-active');
   });
 });
 
@@ -162,336 +167,1208 @@ function renderAllCards() {
 }
 
 if (map) applyFilters();
-
 // ============================================================
-// МЕТОДИЧЕСКАЯ КОПИЛКА (УЧИТЕЛЮ)
+// SVG-СХЕМЫ ДЛЯ ВСЕХ НАПРАВЛЕНИЙ
 // ============================================================
-const METHOD_DATA = {
-  gym: { icon: '🤸', title: 'Гимнастика', topics: [ { id: 'gym-kulok', title: 'Кувырок вперёд', icon: '🔄', content: { 'Темы': `<p>Базовое акробатическое упражнение.</p>`, 'Как выполнять': `<ol><li>Упор присев.</li><li>Толчок.</li><li>Перекат.</li></ol>`, 'Подводящие упражнения': `<ul><li>Группировка.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
-  athletics: { icon: '🏃', title: 'Лёгкая атлетика', topics: [ { id: 'ath-run30', title: 'Бег 30 метров', icon: '🏃', content: { 'Темы': `<p>Спринт.</p>`, 'Как выполнять': `<ol><li>Старт.</li><li>Финиш.</li></ol>`, 'Подводящие упражнения': `<ul><li>Бег с высоким подниманием бедра.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
-  games: { icon: '🏐', title: 'Спорт. игры', topics: [ { id: 'game-basket', title: 'Баскетбол', icon: '🏀', content: { 'Темы': `<p>Бросок.</p>`, 'Как выполнять': `<ol><li>Стойка.</li><li>Бросок.</li></ol>`, 'Подводящие упражнения': `<ul><li>Броски в стену.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] },
-  ski: { icon: '🎿', title: 'Лыжи', topics: [ { id: 'ski-classic', title: 'Классический ход', icon: '🎿', content: { 'Темы': `<p>Двухшажный ход.</p>`, 'Как выполнять': `<ol><li>Скольжение.</li><li>Толчок.</li></ol>`, 'Подводящие упражнения': `<ul><li>Ступающий шаг.</li></ul>`, 'Видео / картинки / схемы': `<p class="student-video-note">Скоро.</p>` } } ] }
-};
-
-const methodContainer = document.getElementById('methodContainer');
-const methodFilters = document.getElementById('methodFilters');
-
-window.renderMethodTiles = function(block) {
-  if (!methodContainer) return;
-  const blockData = METHOD_DATA[block];
-  methodContainer.innerHTML = `<div class="method-tiles">${blockData.topics.map(topic => `
-    <div class="method-tile" data-topic="${topic.id}" onclick="renderMethodDetail('${block}', '${topic.id}')"><div class="method-tile__icon">${topic.icon}</div><div class="method-tile__title">${topic.title}</div><div class="method-tile__count">4 подвкладки</div></div>
-  `).join('')}</div>`;
-};
-
-window.renderMethodDetail = function(block, topicId) {
-  const blockData = METHOD_DATA[block];
-  const topic = blockData.topics.find(t => t.id === topicId);
-  const tabs = ['Темы', 'Как выполнять', 'Подводящие упражнения', 'Видео / картинки / схемы'];
-  methodContainer.innerHTML = `<div class="method-detail"><div class="method-detail__header"><button class="method-detail__back" onclick="renderMethodTiles('${block}')">← Назад</button><h3 class="method-detail__title">${topic.icon} ${topic.title}</h3></div><div class="method-tabs" id="methodTabs">${tabs.map((t, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${t}">${t}</button>`).join('')}</div><div class="method-tab__content" id="methodTabContent">${topic.content[tabs[0]]}</div></div>`;
-  document.getElementById('methodTabs').addEventListener('click', e => {
-    const btn = e.target.closest('.method-tab');
-    if (!btn) return;
-    document.querySelectorAll('#methodTabs .method-tab').forEach(b => b.classList.remove('is-active'));
-    btn.classList.add('is-active');
-    document.getElementById('methodTabContent').innerHTML = topic.content[btn.dataset.tab];
-  });
-};
-
-if (methodFilters) {
-  methodFilters.addEventListener('click', (e) => {
-    if (e.target.classList.contains('chip')) {
-      methodFilters.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
-      e.target.classList.add('is-active');
-      renderMethodTiles(e.target.dataset.block);
-    }
-  });
-  renderMethodTiles('gym');
-}
-
-// ============================================================
-// УЧАЩИМСЯ: ВСЕ 7 РАЗДЕЛОВ + КРАСОЧНЫЕ СХЕМЫ
-// ============================================================
-const studentContainer = document.getElementById('studentContainer');
-
-// --- Вспомогательные функции для QR ---
-function getQRCodeHTML(topicTitle) {
-  const searchQuery = encodeURIComponent(`${topicTitle} техника выполнения`);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://www.youtube.com/results?search_query=${searchQuery}`;
-  return `
-    <div class="student-qr-wrap" style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 15px;">
-      <img src="${qrUrl}" alt="QR-код на видео" class="student-qr" style="width: 120px; height: 120px; border-radius: 8px; border: 1px solid var(--border);">
-      <span style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Наведи камеру на QR, чтобы найти видео по теме «${topicTitle}»</span>
-    </div>
-  `;
-}
-
-// --- КРАСОЧНЫЕ СХЕМЫ (SVG) ---
 const SVG_SCHEMES = {
-  'ath-high': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <!-- Дорожка -->
+  // ----------------------------------------------------------
+  // ЛЁГКАЯ АТЛЕТИКА
+  // ----------------------------------------------------------
+  'ath-uniform': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
-    <line x1="40" y1="126" x2="280" y2="126" stroke="#b0c4de" stroke-width="2" stroke-dasharray="10,10"/>
-    
-    <!-- Человек -->
-    <circle cx="100" cy="50" r="14" fill="#ff6b35"/> <!-- Голова -->
-    <line x1="100" y1="64" x2="90" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Тело -->
-    <line x1="90" y1="95" x2="70" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Левая нога -->
-    <line x1="90" y1="95" x2="110" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Правая нога -->
-    <line x1="100" y1="75" x2="70" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Левая рука -->
-    <line x1="100" y1="75" x2="130" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Правая рука -->
-    
-    <!-- Стрелка вперед -->
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="95" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="95" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="95" y1="95" x2="110" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="75" y2="88" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="125" y2="88" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <path d="M 140 60 Q 180 40 220 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
     <polygon points="220,60 212,52 212,68" fill="#16b8a6"/>
-    
-    <!-- Подпись -->
-    <text x="160" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Наклон вперёд</text>
+    <text x="150" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ровный темп</text>
+    <text x="150" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Вдох носом — выдох ртом</text>
+  </svg>`,
+
+  'ath-high': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <line x1="40" y1="126" x2="280" y2="126" stroke="#b0c4de" stroke-width="2" stroke-dasharray="10,10"/>
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="90" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="90" y1="95" x2="70" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="90" y1="95" x2="110" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 60 Q 180 40 220 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="220,60 212,52 212,68" fill="#16b8a6"/>
+    <text x="150" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Наклон вперёд</text>
   </svg>`,
 
   'ath-low': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
-    
-    <!-- Колодки -->
     <rect x="60" y="110" width="25" height="10" fill="#16b8a6" rx="3" transform="rotate(-15, 60, 110)"/>
     <rect x="85" y="115" width="25" height="10" fill="#16b8a6" rx="3" transform="rotate(-15, 85, 115)"/>
-    
-    <!-- Человек -->
     <circle cx="80" cy="85" r="14" fill="#ff6b35"/>
-    <line x1="94" y1="85" x2="140" y2="105" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Тело -->
-    <line x1="140" y1="105" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Нога -->
-    <line x1="140" y1="105" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Нога -->
-    <line x1="80" y1="100" x2="60" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Рука -->
-    <line x1="80" y1="100" x2="100" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Рука -->
-    
-    <!-- Стрелка -->
+    <line x1="94" y1="85" x2="140" y2="105" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="140" y1="105" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="140" y1="105" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="100" x2="60" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="100" x2="100" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <path d="M 180 90 Q 220 70 260 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
     <polygon points="260,90 252,82 252,98" fill="#16b8a6"/>
-    
-    <text x="190" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Старт с колодок</text>
-    <text x="190" y="60" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Низкий старт</text>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Старт с колодок</text>
+    <text x="180" y="60" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Низкий старт</text>
+  </svg>`,
+
+  'ath-technique': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="150" cy="45" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="59" x2="150" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="70" x2="120" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="70" x2="180" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 190 60 L 230 40" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-t)"/>
+    <defs><marker id="arrow-t" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="40" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Наклон вперёд</text>
+    <text x="40" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Руки в такт ногам</text>
+  </svg>`,
+
+  'ath-finish': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <line x1="220" y1="20" x2="220" y2="120" stroke="#ff3d71" stroke-width="3" stroke-dasharray="5,5"/>
+    <circle cx="180" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="190" y1="60" x2="210" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="210" y1="90" x2="200" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="210" y1="90" x2="220" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="190" y1="70" x2="170" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="190" y1="70" x2="210" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 230 80 L 270 80" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-f)"/>
+    <defs><marker id="arrow-f" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="40" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Бросок грудью</text>
+  </svg>`,
+
+  'ath-sprint': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="90" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="90" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="90" y1="85" x2="65" y2="75" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="90" y1="85" x2="115" y2="75" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 80 L 260 80" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-s)"/>
+    <defs><marker id="arrow-s" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="40" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Максимальная скорость</text>
+  </svg>`,
+
+  'ath-shuttle': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <line x1="60" y1="40" x2="60" y2="120" stroke="#ff6b35" stroke-width="3"/>
+    <line x1="240" y1="40" x2="240" y2="120" stroke="#ff6b35" stroke-width="3"/>
+    <circle cx="60" cy="90" r="14" fill="#ff6b35"/>
+    <line x1="60" y1="104" x2="80" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="110" x2="70" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 100 90 Q 150 60 200 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="200,90 192,82 192,98" fill="#16b8a6"/>
+    <text x="100" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Резкий разворот</text>
+  </svg>`,
+
+  'ath-relay': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="85" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="115" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="75" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="125" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="130" y="70" width="30" height="6" fill="#ff6b35" rx="3"/>
+    <circle cx="200" cy="50" r="14" fill="#16b8a6"/>
+    <line x1="200" y1="64" x2="200" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="200" y1="95" x2="185" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="200" y1="95" x2="215" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="200" y1="75" x2="175" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="200" y1="75" x2="225" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 160 73 L 175 73" stroke="#ff3d71" stroke-width="3" stroke-dasharray="3,3"/>
+    <text x="120" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Передача палочки</text>
   </svg>`,
 
   'ath-jump': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
-    
-    <!-- Человек -->
     <circle cx="70" cy="70" r="14" fill="#ff6b35"/>
     <line x1="70" y1="84" x2="70" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <line x1="70" y1="95" x2="50" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <line x1="70" y1="95" x2="90" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <line x1="70" y1="110" x2="50" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <line x1="70" y1="110" x2="90" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
-    
-    <!-- Траектория -->
     <path d="M 90 70 Q 150 20 220 70" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
     <circle cx="220" cy="70" r="14" fill="#ff6b35" opacity="0.4"/>
     <polygon points="220,70 212,62 212,78" fill="#16b8a6"/>
-    
     <text x="100" y="45" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Мах руками</text>
     <text x="100" y="65" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Толчок двумя ногами</text>
   </svg>`,
 
+  'ath-jump-run': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <rect x="60" y="115" width="30" height="8" fill="#16b8a6" rx="3"/>
+    <circle cx="80" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="80" y1="84" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="110" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 60 Q 180 20 240 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="240,60 232,52 232,68" fill="#16b8a6"/>
+    <text x="140" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Толчок от бруска</text>
+  </svg>`,
+
+  'ath-throw': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="110" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="95" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="95" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="60" cy="68" r="8" fill="#ff3d71"/>
+    <path d="M 60 60 Q 100 30 160 50" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="160,50 152,42 152,58" fill="#16b8a6"/>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Хлёст кисти</text>
+  </svg>`,
+
+  'ath-grenade': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="110" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="95" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="95" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="65" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="60" cy="63" rx="10" ry="14" fill="#16b8a6"/>
+    <path d="M 50 55 Q 100 20 170 40" stroke="#ff6b35" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="170,40 162,32 162,48" fill="#ff6b35"/>
+    <text x="180" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Дальность</text>
+  </svg>`,
+
+  'ath-multi': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="60" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="60" y1="84" x2="80" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="100" x2="70" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="100" x2="95" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 100 60 Q 150 30 200 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <circle cx="200" cy="60" r="14" fill="#ff6b35" opacity="0.4"/>
+    <path d="M 220 60 Q 250 40 270 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <text x="120" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Прыжки с ноги на ногу</text>
+  </svg>`,
+
+  'ath-medball': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="80" r="20" fill="#16b8a6"/>
+    <path d="M 135 80 Q 150 65 165 80" stroke="#fff" stroke-width="2" fill="none"/>
+    <path d="M 135 80 Q 150 95 165 80" stroke="#fff" stroke-width="2" fill="none"/>
+    <path d="M 150 60 L 150 20" stroke="#ff6b35" stroke-width="3" fill="none" marker-end="url(#arrow-m)"/>
+    <defs><marker id="arrow-m" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b35"/></marker></defs>
+    <text x="180" y="60" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Из-за головы</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // ГИМНАСТИКА
+  // ----------------------------------------------------------
+  'gym-oru': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="75" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="125" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="50" y1="50" x2="150" y2="50" stroke="#16b8a6" stroke-width="4" stroke-linecap="round"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">С палкой</text>
+  </svg>`,
+
   'gym-group': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
-    
-    <!-- Человек в группировке -->
     <circle cx="100" cy="70" r="18" fill="#ff6b35"/>
     <path d="M 100 88 Q 70 110 100 130" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
     <path d="M 100 88 Q 130 110 100 130" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
     <path d="M 85 75 Q 100 90 115 75" stroke="#14213d" stroke-width="4" fill="none"/>
-    
-    <!-- Стрелка -->
     <path d="M 140 80 Q 180 60 220 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
     <polygon points="220,90 212,82 212,98" fill="#16b8a6"/>
-    
     <text x="150" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Спина круглая</text>
     <text x="150" y="60" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Колени к груди</text>
   </svg>`,
 
+  'gym-roll': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="80" cy="90" r="14" fill="#ff6b35"/>
+    <line x1="80" y1="104" x2="100" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="104" x2="60" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 110 80 Q 150 40 200 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <circle cx="200" cy="80" r="14" fill="#ff6b35" opacity="0.4"/>
+    <polygon points="200,80 192,72 192,88" fill="#16b8a6"/>
+    <text x="120" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Перекат назад-вперёд</text>
+  </svg>`,
+
+  'gym-fwd': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="80" cy="85" r="14" fill="#ff6b35"/>
+    <line x1="94" y1="85" x2="130" y2="105" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="130" y1="105" x2="160" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="130" y1="105" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 170 90 Q 210 70 250 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,90 242,82 242,98" fill="#16b8a6"/>
+    <text x="40" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Через голову вперёд</text>
+  </svg>`,
+
+  'gym-back': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="100" cy="85" r="14" fill="#ff6b35"/>
+    <line x1="86" y1="85" x2="60" y2="105" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="60" y1="105" x2="40" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="60" y1="105" x2="50" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 90 Q 160 70 200 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="200,90 192,82 192,98" fill="#16b8a6"/>
+    <text x="140" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Через голову назад</text>
+  </svg>`,
+
   'gym-stand': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
-    
-    <!-- Человек -->
-    <circle cx="150" cy="40" r="14" fill="#ff6b35"/> <!-- Голова -->
-    <line x1="150" y1="54" x2="150" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Тело -->
-    <line x1="150" y1="80" x2="120" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Нога -->
-    <line x1="150" y1="80" x2="180" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Нога -->
-    <line x1="150" y1="80" x2="150" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/> <!-- Нога -->
-    
-    <!-- Стрелки вверх -->
+    <circle cx="150" cy="40" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="54" x2="150" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="120" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="180" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="150" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
     <path d="M 120 60 L 120 30" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-up)"/>
     <path d="M 180 60 L 180 30" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-up)"/>
-    <defs>
-      <marker id="arrow-up" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/>
-      </marker>
-    </defs>
-    
+    <defs><marker id="arrow-up" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
     <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Опора на лопатки</text>
-    <text x="200" y="60" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ноги вертикально</text>
   </svg>`,
 
-  'ski-step': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+  'gym-bridge': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="80" cy="90" r="14" fill="#ff6b35"/>
+    <path d="M 80 90 Q 150 30 220 90" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <line x1="80" y1="90" x2="50" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="220" y1="90" x2="250" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <text x="100" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Прогиб в спине</text>
+  </svg>`,
+
+  'gym-swallow': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="130" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="130" y1="95" x2="160" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="130" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="70" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="130" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 180 100 Q 220 80 250 100" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <text x="40" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">«Ласточка»</text>
+    <text x="40" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Равновесие на одной ноге</text>
+  </svg>`,
+
+  'gym-wheel': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="80" cy="90" r="14" fill="#ff6b35"/>
+    <line x1="80" y1="104" x2="110" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="80" y1="104" x2="60" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="40" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="54" x2="150" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 100 70 Q 150 20 200 70" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="200,70 192,62 192,78" fill="#16b8a6"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Через стойку на руках</text>
+  </svg>`,
+
+  'gym-head': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="150" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="64" x2="150" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="50" x2="130" y2="30" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+    <line x1="150" y1="50" x2="170" y2="30" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+    <text x="190" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Опора на голову и руки</text>
+  </svg>`,
+
+  'gym-hands': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#d9e2f2" rx="6"/>
+    <circle cx="150" cy="40" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="54" x2="150" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="40" x2="120" y2="118" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+    <line x1="150" y1="40" x2="180" y2="118" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+    <text x="190" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Стойка на руках</text>
+  </svg>`,
+
+  'gym-rope': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <line x1="150" y1="10" x2="150" y2="140" stroke="#16b8a6" stroke-width="5"/>
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="130" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="170" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 130 20 L 130 50" stroke="#ff6b35" stroke-width="3" fill="none" marker-end="url(#arrow-r)"/>
+    <defs><marker id="arrow-r" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b35"/></marker></defs>
+    <text x="170" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Вверх по канату</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // ЛЫЖНАЯ ПОДГОТОВКА
+  // ----------------------------------------------------------
+  'ski-classic': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
-    
-    <!-- Человек -->
-    <circle cx="80" cy="70" r="14" fill="#ff6b35"/>
-    <line x1="80" y1="84" x2="80" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
-    <line x1="80" y1="95" x2="60" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
-    <line x1="80" y1="95" x2="100" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
-    
-    <!-- Лыжи -->
-    <rect x="50" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
-    <rect x="95" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
-    
-    <!-- Стрелка -->
-    <path d="M 130 80 Q 180 50 220 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
-    <polygon points="220,80 212,72 212,88" fill="#16b8a6"/>
-    
-    <text x="140" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Вся подошва на снегу</text>
-    <text x="140" y="60" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ступающий шаг</text>
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="120" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="70" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="115" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <path d="M 150 90 Q 190 60 230 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="230,90 222,82 222,98" fill="#16b8a6"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Попеременный ход</text>
+    <text x="160" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Правая рука — левая нога</text>
   </svg>`,
 
-  'foot-kick': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <!-- Мяч -->
+  'ski-bez': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
+    <circle cx="150" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="74" x2="150" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="100" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="100" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="75" x2="110" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="75" x2="190" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="110" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="165" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <path d="M 150 40 L 150 10" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-sb)"/>
+    <defs><marker id="arrow-sb" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Только палки</text>
+  </svg>`,
+
+  'ski-odn': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
+    <circle cx="120" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="120" y1="74" x2="120" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="100" x2="100" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="100" x2="140" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="75" x2="90" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="75" x2="150" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="90" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="135" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <path d="M 170 80 L 230 80" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-o)"/>
+    <defs><marker id="arrow-o" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Один шаг + палки</text>
+  </svg>`,
+
+  'ski-dva': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
+    <circle cx="100" cy="55" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="69" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="70" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="115" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <text x="150" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Два шага + палки</text>
+    <text x="150" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Толчок в конце 2-го шага</text>
+  </svg>`,
+
+  'ski-up': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <path d="M 20 120 L 280 120" stroke="#d9e2f2" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 20 120 L 280 60" stroke="#d9e2f2" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="120" cy="85" r="14" fill="#ff6b35"/>
+    <line x1="120" y1="99" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="110" x2="105" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="110" x2="135" y2="115" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">«Ёлочка»</text>
+    <text x="160" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Носки лыж врозь</text>
+  </svg>`,
+
+  'ski-down': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <path d="M 20 40 L 280 40" stroke="#d9e2f2" stroke-width="6" stroke-dasharray="10,5"/>
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="105" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="105" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="105" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="85" x2="120" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="85" x2="180" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="120" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="165" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Низкая стойка</text>
+  </svg>`,
+
+  'ski-brake': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
+    <circle cx="150" cy="55" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="69" x2="150" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="75" x2="120" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="75" x2="180" y2="85" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="120" y="115" width="25" height="6" fill="#ff6b35" rx="3" transform="rotate(-10, 120, 115)"/>
+    <rect x="165" y="115" width="25" height="6" fill="#ff6b35" rx="3" transform="rotate(10, 165, 115)"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">«Плуг»</text>
+    <text x="200" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Пятки врозь</text>
+  </svg>`,
+
+  'ski-turn': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="120" width="260" height="12" fill="#e0f2fe" rx="6"/>
+    <circle cx="120" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="120" y1="74" x2="120" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="100" x2="100" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="100" x2="140" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <rect x="90" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <rect x="135" y="115" width="25" height="6" fill="#ff6b35" rx="3"/>
+    <path d="M 160 90 Q 200 60 240 90" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="240,90 232,82 232,98" fill="#16b8a6"/>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Поворот</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // ФУТБОЛ
+  // ----------------------------------------------------------
+  'foot-pass-in': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
     <circle cx="150" cy="75" r="20" fill="#14213d"/>
     <circle cx="145" cy="70" r="5" fill="#fff" opacity="0.4"/>
-    
-    <!-- Опорная нога -->
     <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
     <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
-    <text x="50" y="40" fill="#16b8a6" font-weight="800" font-family="Montserrat, sans-serif" font-size="10">Опорная</text>
-    
-    <!-- Бьющая нога -->
     <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
     <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
-    <text x="210" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="10">Бьющая</text>
-    
-    <!-- Линия удара -->
     <line x1="170" y1="75" x2="150" y2="75" stroke="#ff3d71" stroke-width="3" stroke-dasharray="3,3"/>
+    <text x="40" y="30" fill="#16b8a6" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Опорная</text>
+    <text x="210" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Бьющая</text>
   </svg>`,
 
+  'foot-pass-out': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <path d="M 180 60 Q 200 40 230 50" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="4,4"/>
+    <text x="220" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Резаный</text>
+  </svg>`,
+
+  'foot-pass-lift': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="80" r="20" fill="#14213d"/>
+    <path d="M 130 80 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 80 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <path d="M 170 70 Q 200 30 240 50" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="4,4"/>
+    <text x="220" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Дальний</text>
+  </svg>`,
+
+  'foot-pass-toe': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <circle cx="225" cy="120" r="4" fill="#ff3d71"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Носком</text>
+  </svg>`,
+
+  'foot-pass-move': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="110" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="160" cy="90" r="12" fill="#14213d"/>
+    <path d="M 180 90 Q 220 70 250 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,80 242,72 242,88" fill="#16b8a6"/>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">В движении</text>
+  </svg>`,
+
+  'foot-stop-sole': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="80" r="18" fill="#14213d"/>
+    <rect x="120" y="60" width="60" height="40" fill="#ff6b35" opacity="0.3" rx="4"/>
+    <path d="M 150 40 L 150 55" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-stop)"/>
+    <defs><marker id="arrow-stop" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Подошва</text>
+    <text x="180" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Сверху на мяч</text>
+  </svg>`,
+
+  'foot-stop-in': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="80" r="18" fill="#14213d"/>
+    <path d="M 130 80 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 80 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4" transform="rotate(-20, 225, 120)"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Внутренняя сторона</text>
+  </svg>`,
+
+  'foot-stop-lift': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="18" fill="#14213d"/>
+    <path d="M 130 70 Q 100 90 80 110" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="105" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 70 Q 200 90 220 110" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="105" width="30" height="10" fill="#ff6b35" rx="4" transform="rotate(-30, 225, 110)"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Средняя часть подъёма</text>
+  </svg>`,
+
+  'foot-dribble-in': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="110" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="80" cy="100" r="10" fill="#14213d"/>
+    <path d="M 40 120 Q 80 120 120 120" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="6,4"/>
+    <text x="150" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Внутренней</text>
+    <text x="150" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">По дуге</text>
+  </svg>`,
+
+  'foot-dribble-out': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="110" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="120" cy="100" r="10" fill="#14213d"/>
+    <path d="M 40 120 Q 80 120 120 120" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="6,4"/>
+    <text x="150" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Внешней</text>
+    <text x="150" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">По прямой</text>
+  </svg>`,
+
+  'foot-kick-in': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <circle cx="145" cy="70" r="5" fill="#fff" opacity="0.4"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <line x1="170" y1="75" x2="150" y2="75" stroke="#ff3d71" stroke-width="3" stroke-dasharray="3,3"/>
+    <text x="40" y="30" fill="#16b8a6" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Опорная</text>
+    <text x="210" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Бьющая</text>
+  </svg>`,
+
+  'foot-kick-lift': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <path d="M 160 60 L 170 30" stroke="#ff3d71" stroke-width="3" fill="none" marker-end="url(#arrow-kl)"/>
+    <defs><marker id="arrow-kl" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff3d71"/></marker></defs>
+    <text x="180" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Подъёмом</text>
+  </svg>`,
+
+  'foot-kick-toe': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4"/>
+    <circle cx="225" cy="120" r="4" fill="#ff3d71"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Носком</text>
+  </svg>`,
+
+  'foot-kick-out': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="75" r="20" fill="#14213d"/>
+    <path d="M 130 75 Q 100 100 80 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="115" width="30" height="10" fill="#16b8a6" rx="4"/>
+    <path d="M 170 75 Q 200 100 220 120" stroke="#14213d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="210" y="115" width="30" height="10" fill="#ff6b35" rx="4" transform="rotate(-20, 225, 120)"/>
+    <path d="M 170 60 Q 200 40 230 50" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="4,4"/>
+    <text x="220" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Внешней</text>
+  </svg>`,
+
+  'foot-head': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="18" fill="#ff6b35"/>
+    <circle cx="150" cy="35" r="8" fill="#fff" opacity="0.3"/>
+    <circle cx="150" cy="100" r="16" fill="#14213d"/>
+    <path d="M 150 70 L 150 90" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-head)"/>
+    <defs><marker id="arrow-head" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="180" y="50" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Лбом</text>
+    <text x="180" y="65" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Чуть выше переносицы</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // ВОЛЕЙБОЛ
+  // ----------------------------------------------------------
   'volley-top': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <!-- Мяч -->
     <circle cx="150" cy="50" r="22" fill="#16b8a6"/>
     <path d="M 130 50 Q 150 30 170 50" stroke="#fff" stroke-width="3" fill="none"/>
     <path d="M 130 50 Q 150 70 170 50" stroke="#fff" stroke-width="3" fill="none"/>
-    
-    <!-- Руки (Ковшик) -->
     <path d="M 120 80 L 130 50 L 150 45 L 170 50 L 180 80" stroke="#14213d" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="150" cy="45" r="4" fill="#ff6b35"/> <!-- Треугольник -->
-    
-    <!-- Стрелка вверх -->
+    <circle cx="150" cy="45" r="4" fill="#ff6b35"/>
     <path d="M 150 20 L 150 5" stroke="#ff6b35" stroke-width="3" fill="none" marker-end="url(#arrow-top)"/>
-    <defs>
-      <marker id="arrow-top" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b35"/>
-      </marker>
-    </defs>
-    
+    <defs><marker id="arrow-top" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b35"/></marker></defs>
     <text x="200" y="50" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ковшик</text>
-    <text x="200" y="70" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Пальцы образуют треугольник</text>
+    <text x="200" y="70" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Пальцы — треугольник</text>
+  </svg>`,
+
+  'volley-bottom': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="40" r="20" fill="#16b8a6"/>
+    <line x1="100" y1="90" x2="200" y2="90" stroke="#14213d" stroke-width="8" stroke-linecap="round"/>
+    <line x1="100" y1="90" x2="80" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="200" y1="90" x2="220" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 150 70 L 150 55" stroke="#ff6b35" stroke-width="3" fill="none" marker-end="url(#arrow-vb)"/>
+    <defs><marker id="arrow-vb" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6b35"/></marker></defs>
+    <text x="40" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Платформа предплечий</text>
+  </svg>`,
+
+  'volley-serve-low': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="60" cy="82" r="10" fill="#16b8a6"/>
+    <path d="M 140 70 Q 200 50 260 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="260,60 252,52 252,68" fill="#16b8a6"/>
+    <text x="160" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Нижняя подача</text>
+  </svg>`,
+
+  'volley-serve-top': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="50" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="60" cy="45" r="10" fill="#16b8a6"/>
+    <path d="M 140 50 Q 200 30 260 50" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="260,50 252,42 252,58" fill="#16b8a6"/>
+    <text x="160" y="25" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Верхняя подача</text>
+  </svg>`,
+
+  'volley-attack': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="160" cy="40" r="18" fill="#16b8a6"/>
+    <path d="M 140 60 Q 150 30 180 30" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="4,4"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Нападающий удар</text>
+    <text x="200" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">В высшей точке</text>
+  </svg>`,
+
+  'volley-block': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <line x1="20" y1="60" x2="280" y2="60" stroke="#d9e2f2" stroke-width="4" stroke-dasharray="6,4"/>
+    <circle cx="150" cy="100" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="114" x2="150" y2="130" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="130" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="90" x2="170" y2="70" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="130" cy="50" r="14" fill="#16b8a6"/>
+    <circle cx="170" cy="50" r="14" fill="#16b8a6"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Блок над сеткой</text>
+  </svg>`,
+
+  'volley-receive': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="170" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="120" y1="90" x2="180" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="30" r="16" fill="#16b8a6"/>
+    <path d="M 150 46 L 150 80" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="4,4"/>
+    <text x="180" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Приём на платформу</text>
+  </svg>`,
+
+  'volley-move': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 130 70 L 200 70" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="200,70 192,62 192,78" fill="#16b8a6"/>
+    <text x="140" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Перемещение</text>
+  </svg>`,
+
+  'volley-pass-jump': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="40" r="14" fill="#16b8a6"/>
+    <path d="M 140 60 Q 150 40 160 40" stroke="#ff6b35" stroke-width="3" fill="none"/>
+    <path d="M 120 80 L 120 50" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Передача в прыжке</text>
+  </svg>`,
+
+  'volley-block-group': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <line x1="20" y1="60" x2="280" y2="60" stroke="#d9e2f2" stroke-width="4" stroke-dasharray="6,4"/>
+    <circle cx="90" cy="50" r="12" fill="#16b8a6"/>
+    <circle cx="150" cy="50" r="12" fill="#16b8a6"/>
+    <circle cx="210" cy="50" r="12" fill="#16b8a6"/>
+    <text x="180" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Групповой блок</text>
+  </svg>`,
+
+  'volley-tactics': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="20" width="260" height="110" fill="none" stroke="#d9e2f2" stroke-width="2"/>
+    <line x1="20" y1="75" x2="280" y2="75" stroke="#d9e2f2" stroke-width="2" stroke-dasharray="6,4"/>
+    <circle cx="80" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="140" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="200" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="80" cy="110" r="10" fill="#16b8a6"/>
+    <circle cx="140" cy="110" r="10" fill="#16b8a6"/>
+    <circle cx="200" cy="110" r="10" fill="#16b8a6"/>
+    <text x="120" y="135" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="10">Расстановка</text>
+  </svg>`,
+
+  'volley-referee': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="18" fill="#ff6b35"/>
+    <path d="M 130 40 L 120 30" stroke="#16b8a6" stroke-width="3"/>
+    <path d="M 170 40 L 180 30" stroke="#16b8a6" stroke-width="3"/>
+    <rect x="130" y="70" width="40" height="30" fill="#16b8a6" rx="4"/>
+    <text x="150" y="90" fill="#fff" font-weight="800" font-family="Montserrat, sans-serif" font-size="14" text-anchor="middle">СУДЬЯ</text>
+    <text x="150" y="130" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12" text-anchor="middle">Жесты и правила</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // БАСКЕТБОЛ
+  // ----------------------------------------------------------
+  'basket-stance': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="90" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="90" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="130" cy="82" r="12" fill="#14213d"/>
+    <path d="M 160 100 L 160 40" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="180" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Стойка</text>
+    <text x="180" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ноги полусогнуты</text>
+  </svg>`,
+
+  'basket-move': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="110" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 80 Q 200 60 250 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,80 242,72 242,88" fill="#16b8a6"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Передвижение</text>
+    <text x="160" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">На полусогнутых</text>
+  </svg>`,
+
+  'basket-catch': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="20" fill="#ff6b35"/>
+    <path d="M 120 80 L 130 60 L 150 55 L 170 60 L 180 80" stroke="#14213d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 150 70 L 150 40" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-c)"/>
+    <defs><marker id="arrow-c" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="190" y="50" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ловля</text>
+    <text x="190" y="65" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Воронка из кистей</text>
+  </svg>`,
+
+  'basket-pass-chest': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="70" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="130" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="70" cy="78" r="10" fill="#16b8a6"/>
+    <path d="M 140 80 L 240 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="240,80 232,72 232,88" fill="#16b8a6"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">От груди</text>
+  </svg>`,
+
+  'basket-pass-shoulder': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="80" x2="130" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="140" cy="55" r="10" fill="#16b8a6"/>
+    <path d="M 150 60 L 250 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,60 242,52 242,68" fill="#16b8a6"/>
+    <text x="160" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Одной от плеча</text>
+  </svg>`,
+
+  'basket-dribble': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="100" r="12" fill="#ff6b35"/>
+    <path d="M 130 90 L 145 98" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+    <path d="M 150 60 L 150 85" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="170" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ведение</text>
+    <text x="170" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Кончиками пальцев</text>
+  </svg>`,
+
+  'basket-stop-2': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="120" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="180" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Остановка 2 шагами</text>
+    <text x="200" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">1-й длинный, 2-й короткий</text>
+  </svg>`,
+
+  'basket-stop-jump': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="64" x2="150" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 40 L 120 20" stroke="#16b8a6" stroke-width="2" fill="none" marker-end="url(#arrow-sj)"/>
+    <path d="M 180 40 L 180 20" stroke="#16b8a6" stroke-width="2" fill="none" marker-end="url(#arrow-sj)"/>
+    <defs><marker id="arrow-sj" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Остановка прыжком</text>
+  </svg>`,
+
+  'basket-turn': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="120" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="180" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 180 70 Q 220 50 230 90 Q 230 120 190 110" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Поворот</text>
+    <text x="200" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Опорная нога на месте</text>
   </svg>`,
 
   'basket-shot': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <!-- Кольцо -->
     <rect x="200" y="20" width="10" height="100" fill="#d9e2f2"/>
     <circle cx="205" cy="50" r="16" fill="none" stroke="#ff6b35" stroke-width="5"/>
-    
-    <!-- Мяч -->
     <circle cx="100" cy="80" r="18" fill="#ff6b35"/>
     <path d="M 85 80 Q 100 65 115 80" stroke="#14213d" stroke-width="2" fill="none"/>
-    
-    <!-- Траектория -->
     <path d="M 120 80 Q 160 40 190 50" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
     <polygon points="190,50 182,42 182,58" fill="#16b8a6"/>
-    
     <text x="50" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Траектория</text>
+  </svg>`,
+
+  'basket-feint': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 80 Q 160 60 180 90 Q 160 120 140 90" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <circle cx="200" cy="70" r="12" fill="#14213d"/>
+    <path d="M 180 70 L 195 70" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="3,3"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Финт</text>
+    <text x="200" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ложное движение</text>
+  </svg>`,
+
+  // ----------------------------------------------------------
+  // ГАНДБОЛ
+  // ----------------------------------------------------------
+  'hand-stance': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="90" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="90" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="130" cy="82" r="12" fill="#14213d"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Стойка</text>
+    <text x="160" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ноги полусогнуты</text>
+  </svg>`,
+
+  'hand-move': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="110" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="90" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="110" y1="110" x2="130" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 80 Q 200 60 250 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,80 242,72 242,88" fill="#16b8a6"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Перемещение</text>
+    <text x="160" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Приставными шагами</text>
+  </svg>`,
+
+  'hand-catch': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="20" fill="#ff6b35"/>
+    <path d="M 120 80 L 130 60 L 150 55 L 170 60 L 180 80" stroke="#14213d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 150 70 L 150 40" stroke="#16b8a6" stroke-width="3" fill="none" marker-end="url(#arrow-hc)"/>
+    <defs><marker id="arrow-hc" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="190" y="50" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ловля</text>
+    <text x="190" y="65" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Воронка из кистей</text>
+  </svg>`,
+
+  'hand-pass-chest': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="70" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="85" x2="130" y2="80" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="70" cy="78" r="10" fill="#16b8a6"/>
+    <path d="M 140 80 L 240 80" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="240,80 232,72 232,88" fill="#16b8a6"/>
+    <text x="160" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">От груди</text>
+  </svg>`,
+
+  'hand-pass-shoulder': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="80" x2="130" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="140" cy="55" r="10" fill="#16b8a6"/>
+    <path d="M 150 60 L 250 60" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="250,60 242,52 242,68" fill="#16b8a6"/>
+    <text x="160" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Одной от плеча</text>
+  </svg>`,
+
+  'hand-dribble': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="64" x2="100" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="130" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="100" r="12" fill="#ff6b35"/>
+    <path d="M 130 90 L 145 98" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+    <path d="M 150 60 L 150 85" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="170" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Ведение</text>
+    <text x="170" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Кончиками пальцев</text>
+  </svg>`,
+
+  'hand-stop-2': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="120" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="180" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Остановка 2 шагами</text>
+  </svg>`,
+
+  'hand-stop-jump': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="50" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="64" x2="150" y2="95" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="95" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 40 L 120 20" stroke="#16b8a6" stroke-width="2" fill="none" marker-end="url(#arrow-hsj)"/>
+    <path d="M 180 40 L 180 20" stroke="#16b8a6" stroke-width="2" fill="none" marker-end="url(#arrow-hsj)"/>
+    <defs><marker id="arrow-hsj" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16b8a6"/></marker></defs>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Остановка прыжком</text>
+  </svg>`,
+
+  'hand-turn': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="120" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="80" x2="180" y2="90" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 180 70 Q 220 50 230 90 Q 230 120 190 110" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="200" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Поворот</text>
+    <text x="200" y="45" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Опорная нога на месте</text>
+  </svg>`,
+
+  'hand-shot': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="220" y="30" width="10" height="80" fill="#d9e2f2"/>
+    <rect x="220" y="30" width="10" height="80" fill="none" stroke="#ff6b35" stroke-width="3"/>
+    <circle cx="100" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="75" x2="70" y2="60" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="60" cy="55" r="10" fill="#ff6b35"/>
+    <path d="M 120 70 Q 170 30 220 50" stroke="#16b8a6" stroke-width="3" fill="none" stroke-dasharray="6,4"/>
+    <polygon points="220,50 212,42 212,58" fill="#16b8a6"/>
+    <text x="40" y="30" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Бросок по воротам</text>
+  </svg>`,
+
+  'hand-feint': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="100" cy="60" r="14" fill="#ff6b35"/>
+    <line x1="100" y1="74" x2="100" y2="100" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="80" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 120 80 Q 160 60 180 90 Q 160 120 140 90" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <circle cx="200" cy="70" r="12" fill="#14213d"/>
+    <path d="M 180 70 L 195 70" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="3,3"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Финт</text>
+    <text x="200" y="55" fill="#14213d" font-weight="600" font-family="Montserrat, sans-serif" font-size="10">Ложное движение</text>
+  </svg>`,
+
+  'hand-def-ind': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <circle cx="150" cy="70" r="14" fill="#ff6b35"/>
+    <line x1="150" y1="84" x2="150" y2="110" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="120" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <line x1="150" y1="110" x2="180" y2="118" stroke="#14213d" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="100" cy="70" r="14" fill="#16b8a6"/>
+    <line x1="100" y1="84" x2="100" y2="110" stroke="#16b8a6" stroke-width="4" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="80" y2="118" stroke="#16b8a6" stroke-width="4" stroke-linecap="round"/>
+    <line x1="100" y1="110" x2="120" y2="118" stroke="#16b8a6" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 120 60 L 140 60" stroke="#ff3d71" stroke-width="3" fill="none" stroke-dasharray="3,3"/>
+    <text x="200" y="40" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="12">Защита 1 на 1</text>
+  </svg>`,
+
+  'hand-def-group': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="20" width="260" height="110" fill="none" stroke="#d9e2f2" stroke-width="2"/>
+    <circle cx="100" cy="60" r="12" fill="#16b8a6"/>
+    <circle cx="150" cy="60" r="12" fill="#16b8a6"/>
+    <circle cx="200" cy="60" r="12" fill="#16b8a6"/>
+    <circle cx="100" cy="100" r="12" fill="#ff6b35"/>
+    <circle cx="150" cy="100" r="12" fill="#ff6b35"/>
+    <circle cx="200" cy="100" r="12" fill="#ff6b35"/>
+    <text x="100" y="140" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="10">Групповая защита</text>
+  </svg>`,
+
+  'hand-tactics': `<svg viewBox="0 0 300 150" style="width:100%; max-width:400px; display:block; margin:0 auto; background:#f8faff; border-radius:16px; padding:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <rect x="20" y="20" width="260" height="110" fill="none" stroke="#d9e2f2" stroke-width="2"/>
+    <circle cx="80" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="140" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="200" cy="40" r="10" fill="#ff6b35"/>
+    <circle cx="80" cy="110" r="10" fill="#16b8a6"/>
+    <circle cx="140" cy="110" r="10" fill="#16b8a6"/>
+    <circle cx="200" cy="110" r="10" fill="#16b8a6"/>
+    <path d="M 100 60 Q 140 80 180 60" stroke="#16b8a6" stroke-width="2" fill="none" stroke-dasharray="4,4"/>
+    <text x="120" y="135" fill="#ff6b35" font-weight="800" font-family="Montserrat, sans-serif" font-size="10">Тактика</text>
   </svg>`
 };
-
-// --- ВСЕ РАЗДЕЛЫ И ТЕМЫ ---
+// ============================================================
+// УЧАЩИМСЯ: ВСЕ НАПРАВЛЕНИЯ
+// ============================================================
 const STUDENT_DATA = [
+  // ----------------------------------------------------------
+  // ЛЁГКАЯ АТЛЕТИКА (14 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-ath', title: 'Лёгкая атлетика', icon: '🏃‍♂️',
     subtopics: [
-      { id: 'ath-high', title: 'Высокий старт', content: { 'Теория': `<p>Используется для бега на средние и длинные дистанции. Позволяет быстро набрать скорость без излишнего напряжения в первые секунды.</p>`, 'Техника выполнения': `<ol><li>Сильную (толчковую) ногу ставим вперед, носком вплотную к стартовой линии.</li><li>Вторую ногу отставляем назад на расстояние 1,5–2 стоп.</li><li>Корпус наклонен вперед, взгляд направлен на дорожку в 2–3 метрах перед собой.</li><li>Руки согнуты в локтях, разноименно ногам (если впереди правая нога — впереди левая рука).</li><li>Команда учителя: "На старт!", "Внимание!", "Марш!".</li></ol>`, 'Типичные ошибки': `<ul><li>Выпрямление корпуса до начала бега.</li><li>Взгляд под ноги (замедляет реакцию).</li></ul>` }, challenge: 'Сделай высокий старт 5 раз с ускорением на 10 метров.', scheme: SVG_SCHEMES['ath-high'] },
-      { id: 'ath-low', title: 'Низкий старт', content: { 'Теория': `<p>Применяется в спринте (60 м, 100 м) для максимально быстрого старта за счет использования стартовых колодок.</p>`, 'Техника выполнения': `<ol><li>Опора на руки и колено сзади стоящей ноги.</li><li>Руки ставятся на ширине плеч, пальцы образуют "коридор" для головы.</li><li>По команде "Внимание!" таз поднимается немного выше плеч, вес переносится на руки.</li><li>Мощный одновременный толчок обеими ногами и руками.</li></ol>`, 'Типичные ошибки': `<ul><li>Слишком высокое или низкое положение таза.</li><li>Прямые руки.</li></ul>` }, challenge: 'Выполни низкий старт с колодками и пробеги 20 метров.', scheme: SVG_SCHEMES['ath-low'] },
-      { id: 'ath-run', title: 'Бег по дистанции', content: { 'Теория': `<p>Поддержание скорости и экономичность движений.</p>`, 'Техника выполнения': `<ol><li>Корпус наклонен вперед на 5–7 градусов.</li><li>Работа рук: локти согнуты под углом 90 градусов, движение вперед-назад (не поперек тела).</li><li>Дыхание ровное, глубокое.</li></ol>`, 'Типичные ошибки': `<p>Зажатые плечи.</p>` }, challenge: 'Пробеги 100 метров, сохраняя ровное дыхание.', scheme: '' },
-      { id: 'ath-finish', title: 'Финиширование', content: { 'Теория': `<p>Пересечение финишной линии с сохранением максимальной скорости.</p>`, 'Техника выполнения': `<ol><li>"Бросок грудью": наклон корпуса вперед в последний момент.</li><li>"Плечом": касание ленты плечом, если бег идет в группе.</li><li>Важно: Не тормозить перед финишем, а пробегать линию на полной скорости.</li></ol>`, 'Типичные ошибки': `<p>Прыжок на линию.</p>` }, challenge: 'Попробуй финишировать "броском грудью" 3 раза.', scheme: '' },
-      { id: 'ath-shuttle', title: 'Челночный бег', content: { 'Теория': `<p>Тест на скоростную выносливость и ловкость. Главная сложность — резкая смена направления.</p>`, 'Техника выполнения': `<ol><li>Старт высокий.</li><li>Добегая до линии, не тормозите резко! Делайте стопорящий шаг и резкий разворот.</li><li>При касании линии корпус должен быть максимально низко, чтобы не потерять скорость на обратном пути.</li><li>Совет: Касайтесь линии рукой или ногой максимально близко к земле.</li></ol>`, 'Типичные ошибки': `<p>Потеря равновесия.</p>` }, challenge: 'Пробеги челночный бег 3х10 м, записывая время.', scheme: '' },
-      { id: 'ath-30-60', title: 'Бег на 30 и 60 метров', content: { 'Теория': `<p>Тестирование скоростных качеств.</p>`, 'Техника выполнения': `<ol><li>Максимально быстрый старт (лучше низкий).</li><li>Работа рук "как поршни", частый и широкий шаг.</li></ol>`, 'Типичные ошибки': `<p>Взгляд вниз.</p>` }, challenge: 'Пробеги 30 метров на максимальной скорости.', scheme: '' },
-      { id: 'ath-jump', title: 'Прыжки в длину с места', content: { 'Теория': `<p>Развитие силы ног и координации.</p>`, 'Техника выполнения': `<ol><li>Ноги на ширине плеч, носки у линии.</li><li>Глубокий присед, руки назад.</li><li>Мощный мах руками вперед-вверх и одновременный толчок ногами.</li><li>Приземление на две ноги, мягко сгибая колени.</li><li>Способы: "Ножницы" (в полете ноги меняются местами) или "согнув ноги" (группировка в полете).</li></ol>`, 'Типичные ошибки': `<p>Заступ за линию.</p>` }, challenge: 'Сделай 3 подхода по 10 прыжков в длину.', scheme: SVG_SCHEMES['ath-jump'] },
-      { id: 'ath-multi', title: 'Многоскоки', content: { 'Теория': `<p>Развитие силы отталкивания и выносливости.</p>`, 'Техника выполнения': `<ol><li>Прыжки с ноги на ногу с активным махом свободной ноги вперед-вверх.</li><li>Корпус прямой, руки работают как при беге.</li></ol>`, 'Типичные ошибки': `<p>Приземление на прямые ноги.</p>` }, challenge: 'Пройди дистанцию 30 метров многоскоками.', scheme: '' },
-      { id: 'ath-jump-run', title: 'Прыжки в длину с разбега', content: { 'Теория': `<p>Совмещение разбега и мощного толчка.</p>`, 'Техника выполнения': `<ol><li>Определение толчковой ноги.</li><li>Разбег (8–10 шагов) с постепенным ускорением.</li><li>Последние 2–3 шага — подготовка к толчку.</li><li>Толчок выполняется сильнейшей ногой с акцентом на мах руками.</li></ol>`, 'Типичные ошибки': `<p>Неправильный выбор толчковой ноги.</p>` }, challenge: 'Выполни прыжок в длину с разбега (8–10 шагов).', scheme: '' },
-      { id: 'ath-throw', title: 'Метание малого мяча (150 г)', content: { 'Теория': `<p>Развитие координации и силы рук.</p>`, 'Техника выполнения': `<ol><li>Держим мяч фалангами пальцев.</li><li>Замах: рука с мячом отводится назад, корпус разворачивается.</li><li>Скрестный шаг (левая нога впереди, правая сзади).</li><li>Резкий рывок корпусом и рукой вперед.</li><li>Выпуск мяча происходит в высшей точке над плечом, кисть "щелкает" в последний момент.</li></ol>`, 'Типичные ошибки': `<p>Бросок без поворота корпуса.</p>` }, challenge: 'Сделай 10 бросков мяча в стену с правильной техникой.', scheme: '' },
-      { id: 'ath-medball', title: 'Метание набивного мяча', content: { 'Теория': `<p>Развитие силы спины и рук, гибкости плечевого пояса.</p>`, 'Техника выполнения': `<ol><li><strong>Из-за головы (сидя):</strong> Сидя на полу, ноги врозь. Мяч за головой. Резкий бросок вперед-вверх, работая мышцами спины и рук.</li><li><strong>Из-за головы (стоя):</strong> Ноги на ширине плеч, мяч за головой. Толчок двумя руками от груди или из-за головы с активным участием ног.</li><li><strong>Назад через голову:</strong> Стоя спиной к цели, бросок через голову назад.</li></ol>`, 'Типичные ошибки': `<p>Слабый мах руками.</p>` }, challenge: 'Выполни 10 бросков набивного мяча из-за головы.', scheme: '' },
-      { id: 'ath-push', title: 'Толкание набивного мяча', content: { 'Теория': `<p>Имитация толкания ядра.</p>`, 'Техника выполнения': `<ol><li>Мяч у груди, локти прижаты.</li><li>Ноги согнуты.</li><li>Мощный толчок двумя руками от груди вперед-вверх.</li><li>Вес тела переносится с задней ноги на переднюю.</li></ol>`, 'Типичные ошибки': `<p>Толчок одной рукой.</p>` }, challenge: 'Толкни набивной мяч 5 раз на максимальное расстояние.', scheme: '' }
+      { id: 'ath-uniform', title: 'Равномерный бег (500–3000 м)', description: 'Бег в постоянном темпе без ускорений и замедлений. Применяется для развития общей выносливости.', content: { 'Теория': `<p>Основная задача — научиться поддерживать ровный темп, правильно дышать (вдох носом, выдох ртом), сохранять осанку.</p>`, 'Как выполнять': `<ol><li>Старт с высокого положения.</li><li>Корпус слегка наклонён вперёд, руки согнуты в локтях, работают вдоль туловища.</li><li>Нога ставится на полную стопу или перекатом с пятки на носок.</li><li>Дыхание ритмичное.</li></ol>`, 'Типичные ошибки': `<ul><li>Резкие ускорения и замедления.</li><li>Сбивчивое дыхание.</li><li>Наклон корпуса назад.</li><li>«Шлёпающая» постановка стопы.</li></ul>`, 'Упражнения': `<ul><li>Бег в умеренном темпе на 400–800 м с контролем дыхания.</li><li>Интервальный бег: 200 м быстро, 200 м медленно.</li><li>Бег с изменением темпа по сигналу учителя.</li></ul>` }, challenge: 'Пробеги 400–800 м в умеренном темпе с контролем дыхания.', scheme: SVG_SCHEMES['ath-uniform'] },
+      { id: 'ath-high', title: 'Высокий старт', description: 'Применяется на средних и длинных дистанциях (от 400 м и более).', content: { 'Теория': `<p>Позволяет быстро начать бег без использования стартовых колодок.</p>`, 'Как выполнять': `<ol><li>Одна нога у линии старта, другая — на 1–1,5 стопы назад.</li><li>Корпус наклонён вперёд, руки опущены или одна впереди, другая сзади.</li><li>По команде «Марш!» — резкий толчок и стартовый разгон.</li></ol>`, 'Типичные ошибки': `<ul><li>Выпрямление корпуса до начала бега.</li><li>Медленная реакция на команду.</li><li>Неправильная постановка ног.</li></ul>`, 'Упражнения': `<ul><li>Старты из разных положений.</li><li>Бег с высокого старта на 20–30 м.</li><li>Игра «Кто быстрее?» — старт по сигналу.</li></ul>` }, challenge: 'Выполни высокий старт 5 раз с ускорением на 10–20 метров.', scheme: SVG_SCHEMES['ath-high'] },
+      { id: 'ath-low', title: 'Низкий старт', description: 'Используется на коротких дистанциях (до 400 м).', content: { 'Теория': `<p>Обеспечивает максимально быстрое начало бега за счёт упора руками о землю и сильного толчка ногами.</p>`, 'Как выполнять': `<ol><li>Упор руками о землю, ноги в стартовых колодках (или без них), корпус параллелен земле.</li><li>По команде «Внимание!» — таз поднимается выше плеч.</li><li>По команде «Марш!» — мощный одновременный толчок обеими ногами.</li></ol>`, 'Типичные ошибки': `<ul><li>Раннее выпрямление корпуса.</li><li>Слабый толчок.</li><li>Неправильная постановка рук.</li></ul>`, 'Упражнения': `<ul><li>Принятие положения низкого старта без колодок.</li><li>Бег с низкого старта на 10–20 м.</li><li>Упражнение «Старт по хлопку».</li></ul>` }, challenge: 'Выполни низкий старт с колодками и пробеги 20 метров.', scheme: SVG_SCHEMES['ath-low'] },
+      { id: 'ath-technique', title: 'Техника бега', description: 'Совокупность движений, обеспечивающих эффективное передвижение.', content: { 'Теория': `<p>Включает работу рук, постановку стопы, наклон корпуса, дыхание.</p>`, 'Как выполнять': `<ol><li>Корпус слегка наклонён вперёд, руки согнуты в локтях и двигаются в такт ногам.</li><li>Постановка стопы — на переднюю часть или перекатом.</li><li>Дыхание — ритмичное, глубокое.</li></ol>`, 'Типичные ошибки': `<ul><li>Зажатость плечевого пояса.</li><li>Неправильная работа рук.</li><li>«Шлёпающая» постановка стопы.</li><li>Сбивчивое дыхание.</li></ul>`, 'Упражнения': `<ul><li>Бег с высоким подниманием бедра.</li><li>Бег с захлёстыванием голени.</li><li>Семенящий бег.</li></ul>` }, challenge: 'Пробеги 60 м, контролируя работу рук и постановку стопы.', scheme: SVG_SCHEMES['ath-technique'] },
+      { id: 'ath-finish', title: 'Финиширование', description: 'Завершение дистанции с максимальной скоростью.', content: { 'Теория': `<p>Важно не снижать темп до пересечения финишной черты.</p>`, 'Как выполнять': `<ol><li>На последних метрах — ускорение.</li><li>Корпус наклонён вперёд.</li><li>Резкий бросок грудью или плечом на финишную ленту.</li></ol>`, 'Типичные ошибки': `<ul><li>Снижение скорости до финиша.</li><li>Ранний наклон корпуса.</li><li>Потеря координации.</li></ul>`, 'Упражнения': `<ul><li>Бег на 30 м с ускорением на последних 10 м.</li><li>Имитация финиширования на месте.</li><li>Эстафеты с финишным броском.</li></ul>` }, challenge: 'Попробуй финишировать «броском грудью» 3 раза.', scheme: SVG_SCHEMES['ath-finish'] },
+      { id: 'ath-sprint', title: 'Бег 30, 60, 100, 200, 400 м', description: 'Спринтерские дистанции, требующие максимальной скорости и техники.', content: { 'Теория': `<p>Включает старт, стартовый разгон, бег по дистанции, финиширование.</p>`, 'Как выполнять': `<ol><li>Старт (низкий или высокий).</li><li>Быстрый разгон.</li><li>Поддержание максимальной скорости.</li><li>Финишный бросок.</li></ol>`, 'Типичные ошибки': `<ul><li>Медленный старт.</li><li>Неправильный разгон.</li><li>Потеря техники на дистанции.</li><li>Раннее замедление.</li></ul>`, 'Упражнения': `<ul><li>Повторный бег на 30–60 м с максимальной скоростью.</li><li>Бег с ускорением на 20–30 м.</li><li>Эстафеты на короткие дистанции.</li></ul>` }, challenge: 'Пробеги 30 м на максимальной скорости, запиши время.', scheme: SVG_SCHEMES['ath-sprint'] },
+      { id: 'ath-shuttle', title: 'Челночный бег', description: 'Бег с резкими разворотами на коротких отрезках (обычно 3×10 м).', content: { 'Теория': `<p>Развивает скоростную выносливость, координацию, ловкость.</p>`, 'Как выполнять': `<ol><li>Быстрый бег до отметки.</li><li>Резкий разворот с касанием рукой пола.</li><li>Бег обратно.</li></ol>`, 'Типичные ошибки': `<ul><li>Медленный разворот.</li><li>Потеря равновесия.</li><li>Неправильная постановка ног.</li></ul>`, 'Упражнения': `<ul><li>Челночный бег 3×10 м.</li><li>Челночный бег 4×9 м.</li><li>Игра «Змейка» с резкими поворотами.</li></ul>` }, challenge: 'Пробеги челночный бег 3×10 м, записывая время.', scheme: SVG_SCHEMES['ath-shuttle'] },
+      { id: 'ath-relay', title: 'Эстафетный бег', description: 'Командный бег с передачей эстафетной палочки.', content: { 'Теория': `<p>Важно соблюдать зону передачи, не ронять палочку, правильно принимать и передавать.</p>`, 'Как выполнять': `<ol><li>Принимающий начинает разбег заранее.</li><li>Передающий подаёт палочку снизу или сверху в 20-метровой зоне.</li></ol>`, 'Типичные ошибки': `<ul><li>Потеря палочки.</li><li>Передача вне зоны.</li><li>Несогласованность действий.</li></ul>`, 'Упражнения': `<ul><li>Передача эстафетной палочки на месте.</li><li>Эстафеты 4×30 м.</li><li>Встречная эстафета.</li></ul>` }, challenge: 'Передай эстафетную палочку в паре 10 раз без ошибок.', scheme: SVG_SCHEMES['ath-relay'] },
+      { id: 'ath-jump', title: 'Прыжок в длину с места', description: 'Прыжок с двух ног на максимальное расстояние.', content: { 'Теория': `<p>Важно мощное отталкивание и правильная координация движений.</p>`, 'Как выполнять': `<ol><li>Глубокий присед, мах руками назад.</li><li>Резкий взмах вперёд и толчок ногами.</li><li>Полёт с выносом ног вперёд.</li><li>Приземление на обе ноги с перекатом.</li></ol>`, 'Типичные ошибки': `<ul><li>Слабый толчок.</li><li>Неправильный мах руками.</li><li>Приземление на одну ногу.</li></ul>`, 'Упражнения': `<ul><li>Прыжки с места на дальность.</li><li>Прыжки через скакалку.</li><li>Прыжки с доставанием предмета рукой.</li></ul>` }, challenge: 'Сделай 3 подхода по 10 прыжков в длину.', scheme: SVG_SCHEMES['ath-jump'] },
+      { id: 'ath-jump-run', title: 'Прыжок в длину с разбега', description: 'Прыжок с разбега на максимальное расстояние.', content: { 'Теория': `<p>Требует точного попадания на брусок, мощного отталкивания, координации в полёте и рационального приземления.</p>`, 'Как выполнять': `<ol><li>Разбег (22–24 шага).</li><li>Попадание на брусок.</li><li>Мощный толчок.</li><li>Полёт (способ «согнув ноги», «прогнувшись» или «ножницы»).</li><li>Приземление.</li></ol>`, 'Типичные ошибки': `<ul><li>Недолёт или перелёт за брусок.</li><li>Слабый толчок.</li><li>Неправильное приземление.</li></ul>`, 'Упражнения': `<ul><li>Прыжки с короткого разбега.</li><li>Прыжки с доставанием предмета в полёте.</li><li>Прыжки через барьеры.</li></ul>` }, challenge: 'Выполни прыжок в длину с разбега (8–10 шагов).', scheme: SVG_SCHEMES['ath-jump-run'] },
+      { id: 'ath-throw', title: 'Метание малого мяча', description: 'Метание мяча (150 г) на дальность или в цель.', content: { 'Теория': `<p>Важно правильное держание, замах, скрестный шаг, финальное усилие.</p>`, 'Как выполнять': `<ol><li>Держание мяча фалангами пальцев.</li><li>Замах.</li><li>Скрестный шаг.</li><li>Резкий бросок с хлёстом кисти.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный хват.</li><li>Слабый замах.</li><li>Отсутствие скрестного шага.</li><li>Бросок только рукой.</li></ul>`, 'Упражнения': `<ul><li>Метание мяча в цель с 6–10 м.</li><li>Метание мяча на дальность.</li><li>Метание с места и с шага.</li></ul>` }, challenge: 'Сделай 10 бросков мяча в стену с правильной техникой.', scheme: SVG_SCHEMES['ath-throw'] },
+      { id: 'ath-grenade', title: 'Метание гранаты', description: 'Метание гранаты (500/700 г) на дальность.', content: { 'Теория': `<p>Техника схожа с метанием копья, но требует большей силы и координации.</p>`, 'Как выполнять': `<ol><li>Держание за рукоятку.</li><li>Разбег.</li><li>Скрестный шаг.</li><li>Финальное усилие с хлёстом кисти и полным разгибанием руки.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный хват.</li><li>Слабый разбег.</li><li>Отсутствие хлёста кисти.</li><li>Преждевременное отпускание снаряда.</li></ul>`, 'Упражнения': `<ul><li>Метание гранаты с места.</li><li>Метание гранаты с разбега.</li><li>Метание в сектор на дальность.</li></ul>` }, challenge: 'Выполни 5 бросков гранаты с места на дальность.', scheme: SVG_SCHEMES['ath-grenade'] },
+      { id: 'ath-multi', title: 'Многоскоки', description: 'Развитие силы отталкивания и выносливости.', content: { 'Теория': `<p>Прыжки с ноги на ногу с активным махом свободной ноги вперёд-вверх.</p>`, 'Как выполнять': `<ol><li>Корпус прямой.</li><li>Руки работают как при беге.</li><li>Активный мах свободной ногой.</li></ol>`, 'Типичные ошибки': `<ul><li>Приземление на прямые ноги.</li><li>Слабый мах.</li></ul>`, 'Упражнения': `<ul><li>Многоскоки на 20 м.</li><li>Многоскоки через препятствия.</li><li>Прыжки на одной ноге.</li></ul>` }, challenge: 'Пройди дистанцию 30 метров многоскоками.', scheme: SVG_SCHEMES['ath-multi'] },
+      { id: 'ath-medball', title: 'Метание набивного мяча', description: 'Развитие силы спины и рук, гибкости плечевого пояса.', content: { 'Теория': `<p>Упражнения с набивным мячом развивают силу и координацию.</p>`, 'Как выполнять': `<ol><li><strong>Из-за головы (сидя):</strong> мяч за головой, резкий бросок вперёд-вверх.</li><li><strong>Из-за головы (стоя):</strong> толчок двумя руками от груди или из-за головы с участием ног.</li><li><strong>Назад через голову:</strong> стоя спиной к цели, бросок через голову назад.</li></ol>`, 'Типичные ошибки': `<ul><li>Слабый мах руками.</li><li>Бросок только руками, без работы ног.</li></ul>`, 'Упражнения': `<ul><li>Броски набивного мяча из-за головы.</li><li>Броски от груди.</li><li>Броски назад через голову.</li></ul>` }, challenge: 'Выполни 10 бросков набивного мяча из-за головы.', scheme: SVG_SCHEMES['ath-medball'] }
     ]
   },
+
+  // ----------------------------------------------------------
+  // ГИМНАСТИКА (12 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-gym', title: 'Гимнастика', icon: '🤸‍♂️',
     subtopics: [
-      { id: 'gym-group', title: 'Группировка и перекаты', content: { 'Теория': `<p>Основа безопасности при падениях и база для кувырков.</p>`, 'Техника выполнения': `<ol><li><strong>Группировка:</strong> Сидя, подтянуть колени к груди, обхватить их руками, голову наклонить вперед. Спина круглая.</li><li><strong>Перекат назад:</strong> Из упора присев перекатиться назад на спину, сохраняя группировку, вернуться в исходное положение.</li><li><strong>Кувырок вперед:</strong> Из упора присев, оттолкнувшись руками, перенести вес на плечи, перевернуться через голову и встать.</li></ol>`, 'Типичные ошибки': `<ul><li>Опора на голову при кувырке.</li><li>Разомкнутая группировка.</li></ul>` }, challenge: 'Выполни 3 кувырка вперед с правильной группировкой.', scheme: SVG_SCHEMES['gym-group'] },
-      { id: 'gym-stand', title: 'Стойка на лопатках ("Березка")', content: { 'Теория': `<p>Развитие гибкости позвоночника и силы мышц кора.</p>`, 'Техника выполнения': `<ol><li>Лечь на спину.</li><li>Опираясь на локти и затылок, поднять ноги и туловище вертикально вверх.</li><li>Поддерживать спину руками под лопатками.</li><li>Ноги вместе, носки натянуты.</li></ol>`, 'Типичные ошибки': `<p>Запрокидывание головы.</p>` }, challenge: 'Удерживай "березку" 15 секунд.', scheme: SVG_SCHEMES['gym-stand'] },
-      { id: 'gym-bridge', title: 'Мост из положения лежа', content: { 'Теория': `<p>Развитие гибкости спины и плечевого пояса.</p>`, 'Техника выполнения': `<ol><li>Лежа на спине, согнуть ноги (стопы близко к ягодицам) и руки (ладони у плеч, пальцы к ногам).</li><li>Опираясь на руки и ноги, прогнуться в спине, поднимая таз как можно выше.</li><li>Голова опущена назад.</li></ol>`, 'Типичные ошибки': `<p>Слишком резкий подъем.</p>` }, challenge: 'Сделай "мост" 3 раза подряд.', scheme: '' },
-      { id: 'gym-back', title: 'Кувырок назад', content: { 'Теория': `<p>Развитие координации и смелости.</p>`, 'Техника выполнения': `<ol><li>Из упора присев перекат назад.</li><li>Поставить ладони на мат возле плеч.</li><li>Оттолкнуться и перевернуться через голову, встав на ноги.</li></ol>`, 'Типичные ошибки': `<p>Недостаточный толчок руками.</p>` }, challenge: 'Выполни кувырок назад 3 раза.', scheme: '' },
-      { id: 'gym-climb', title: 'Лазание по канату в три приема', content: { 'Теория': `<p>Развитие силы рук и ног, координации.</p>`, 'Техника выполнения': `<ol><li>Захват каната ногами (ступни зажимают канат, одна над другой).</li><li>Руки скользят вверх по канату.</li><li>Ноги выпрямляются, подтягивая тело вверх.</li></ol>`, 'Типичные ошибки': `<p>Отсутствие страховки.</p>` }, challenge: 'Залезь по канату на 2 метра (со страховкой).', scheme: '' },
-      { id: 'gym-wall', title: 'Лазание по гимнастической стенке', content: { 'Теория': `<p>Развитие координации и силы.</p>`, 'Техника выполнения': `<ol><li>Руки и ноги ставятся на рейки перекрестно (левая рука — правая нога).</li><li>Движение ритмичное, без рывков.</li><li>Смотреть на руки, а не вниз.</li></ol>`, 'Типичные ошибки': `<p>Спуск спиной вперед.</p>` }, challenge: 'Поднимись и спустись по стенке 3 раза.', scheme: '' },
-      { id: 'gym-horse', title: 'Перелезание через "коня" и "козла"', content: { 'Теория': `<p>Развитие смелости и координации.</p>`, 'Техника выполнения': `<ol><li>Разбег, толчок одной ногой о мостик.</li><li>Опора руками о снаряд.</li><li>Перенос ног через снаряд.</li><li>Мягкое приземление на согнутые ноги.</li></ol>`, 'Типичные ошибки': `<p>Отсутствие страховки.</p>` }, challenge: 'Перелезь через "коня" с помощью учителя.', scheme: '' },
-      { id: 'gym-log', title: 'Ходьба по бревну', content: { 'Теория': `<p>Развитие равновесия и координации.</p>`, 'Техника выполнения': `<ol><li>Руки в стороны для баланса.</li><li>Взгляд направлен вперед (не под ноги).</li><li>Шаги мягкие, с носка на пятку.</li><li>Спина прямая.</li><li>Упражнения: Ходьба с предметом на голове, повороты на одной ноге, приседания на бревне.</li></ol>`, 'Типичные ошибки': `<p>Взгляд вниз.</p>` }, challenge: 'Пройди по бревну с предметом на голове.', scheme: '' }
+      { id: 'gym-oru', title: 'ОРУ с предметами', description: 'Общеразвивающие упражнения с гимнастическими палками, мячами, обручами, скакалками.', content: { 'Теория': `<p>Развивают все основные группы мышц, улучшают осанку, координацию движений. Предметы помогают контролировать правильность выполнения и добавляют разнообразие.</p>`, 'Как выполнять': `<p>Упражнения выполняются под счёт учителя, с соблюдением правильной осанки. Например: с палкой — повороты туловища, наклоны, приседания; с мячом — передачи, броски, перекаты; со скакалкой — прыжки различными способами.</p>`, 'Типичные ошибки': `<ul><li>Неправильная осанка.</li><li>Резкие движения.</li><li>Потеря предмета.</li><li>Несогласованность движений рук и ног.</li></ul>`, 'Упражнения': `<ul><li>Приседания с гимнастической палкой на плечах.</li><li>Повороты туловища с мячом в руках.</li><li>Прыжки через скакалку на двух ногах.</li><li>Наклоны вперёд с обручем.</li></ul>` }, challenge: 'Выполни комплекс ОРУ с предметом (палка, мяч или скакалка) 3 раза.', scheme: SVG_SCHEMES['gym-oru'] },
+      { id: 'gym-group', title: 'Группировка', description: 'Согнутое положение тела, при котором колени подтянуты к груди, локти прижаты к туловищу, спина округлена.', content: { 'Теория': `<p>Базовое подводящее упражнение для перекатов и кувырков. Развивает координацию и умение контролировать тело.</p>`, 'Как выполнять': `<p>Из положения сидя или лёжа на спине быстро подтянуть колени к груди, обхватить их руками, голову наклонить вперёд, спину округлить.</p>`, 'Типичные ошибки': `<ul><li>Откинутая назад голова.</li><li>Неплотная группировка.</li><li>Разведённые или слишком узко поставленные ноги.</li></ul>`, 'Упражнения': `<ul><li>Группировка из положения сидя.</li><li>Группировка из положения лёжа на спине.</li><li>Перекат назад-вперёд в группировке.</li></ul>` }, challenge: 'Выполни 3 кувырка вперед с правильной группировкой.', scheme: SVG_SCHEMES['gym-group'] },
+      { id: 'gym-roll', title: 'Перекаты', description: 'Вращательные движения тела с последовательным касанием опоры без переворачивания через голову.', content: { 'Теория': `<p>Подводящие упражнения к кувыркам, развивают координацию и вестибулярный аппарат.</p>`, 'Как выполнять': `<p>Из упора присев или лёжа на спине сгруппироваться и перекатиться назад или вперёд, касаясь опоры последовательно разными частями тела.</p>`, 'Типичные ошибки': `<ul><li>Отсутствие группировки.</li><li>Неправильная постановка рук.</li><li>Медленное выполнение.</li></ul>`, 'Упражнения': `<ul><li>Перекат назад из упора присев в упор присев.</li><li>Перекат вперёд из группировки лёжа на спине.</li><li>Перекаты в стороны из упора стоя на коленях.</li></ul>` }, challenge: 'Выполни перекат назад-вперёд 5 раз подряд.', scheme: SVG_SCHEMES['gym-roll'] },
+      { id: 'gym-fwd', title: 'Кувырок вперёд', description: 'Вращательное движение тела с переворачиванием через голову вперёд.', content: { 'Теория': `<p>Развивает смелость, координацию, умение группироваться и страховать себя при падении.</p>`, 'Как выполнять': `<p>Из упора присев поставить руки на пол перед собой, наклонить голову вперёд, оттолкнуться ногами и перекатиться через голову, сгруппироваться и прийти в упор присев.</p>`, 'Типичные ошибки': `<ul><li>Опора руками близко к ногам.</li><li>Отсутствие группировки.</li><li>Медленное переворачивание.</li><li>Неправильная постановка рук.</li></ul>`, 'Упражнения': `<ul><li>Кувырок вперёд из упора присев.</li><li>Два-три кувырка вперёд слитно.</li><li>Кувырок вперёд с возвышения (горки).</li></ul>` }, challenge: 'Выполни 3 кувырка вперёд слитно.', scheme: SVG_SCHEMES['gym-fwd'] },
+      { id: 'gym-back', title: 'Кувырок назад', description: 'Вращательное движение тела с переворачиванием через голову назад.', content: { 'Теория': `<p>Развивает координацию, умение контролировать тело в пространстве, смелость.</p>`, 'Как выполнять': `<p>Из упора присев подать плечи вперёд, опереться руками о пол за головой, оттолкнуться руками и перекатиться назад через голову, сгруппироваться и прийти в упор присев.</p>`, 'Типичные ошибки': `<ul><li>Неправильная постановка рук.</li><li>Отсутствие группировки.</li><li>Медленное переворачивание.</li><li>Опора на затылок.</li></ul>`, 'Упражнения': `<ul><li>Кувырок назад из упора присев.</li><li>Кувырок назад с помощью учителя.</li><li>Кувырок назад по наклонной поверхности.</li></ul>` }, challenge: 'Выполни кувырок назад 3 раза.', scheme: SVG_SCHEMES['gym-back'] },
+      { id: 'gym-stand', title: 'Стойка на лопатках', description: 'Стойка вверх ногами с опорой на лопатки, затылок и локти, ноги выпрямлены вверх.', content: { 'Теория': `<p>Развивает силу мышц спины и пресса, координацию, умение удерживать равновесие.</p>`, 'Как выполнять': `<p>Из упора присев перекат назад, в момент касания лопатками пола подставить руки под поясницу, выпрямить ноги вверх.</p>`, 'Типичные ошибки': `<ul><li>Сгибание ног.</li><li>Неправильное положение рук.</li><li>Отклонение туловища от вертикали.</li></ul>`, 'Упражнения': `<ul><li>Стойка на лопатках с согнутыми ногами.</li><li>Стойка на лопатках с прямыми ногами.</li><li>Перекат из стойки на лопатках в упор присев.</li></ul>` }, challenge: 'Удерживай «берёзку» 15 секунд.', scheme: SVG_SCHEMES['gym-stand'] },
+      { id: 'gym-bridge', title: 'Мост', description: 'Дугообразное прогнутое положение тела спиной к опоре.', content: { 'Теория': `<p>Развивает гибкость позвоночника, силу мышц спины и плечевого пояса.</p>`, 'Как выполнять': `<p>Лечь на спину, согнуть ноги и поставить стопы ближе к ягодицам, руки поставить ладонями у плеч, одновременно выпрямить руки и ноги, прогнуться в спине.</p>`, 'Типичные ошибки': `<ul><li>Согнутые ноги.</li><li>Неправильная постановка рук.</li><li>Недостаточный прогиб.</li><li>Голова наклонена вперёд.</li></ul>`, 'Упражнения': `<ul><li>Мост из положения лёжа на спине.</li><li>Мост из положения стоя с помощью.</li><li>Покачивания вперёд-назад в положении мост.</li></ul>` }, challenge: 'Сделай «мост» 3 раза подряд.', scheme: SVG_SCHEMES['gym-bridge'] },
+      { id: 'gym-swallow', title: 'Ласточка', description: 'Равновесие на одной ноге с наклоном туловища вперёд и отведением другой ноги назад, руки в стороны.', content: { 'Теория': `<p>Развивает равновесие, координацию, укрепляет мышцы ног и спины.</p>`, 'Как выполнять': `<p>Стоя на одной ноге, наклонить туловище вперёд, отвести другую ногу назад, руки развести в стороны, удерживать положение.</p>`, 'Типичные ошибки': `<ul><li>Потеря равновесия.</li><li>Согнутая опорная нога.</li><li>Неправильное положение рук.</li></ul>`, 'Упражнения': `<ul><li>Удержание положения «ласточка» на время.</li><li>Переход из основной стойки в «ласточку» и обратно.</li><li>«Ласточка» с закрытыми глазами.</li></ul>` }, challenge: 'Удерживай «ласточку» 10 секунд.', scheme: SVG_SCHEMES['gym-swallow'] },
+      { id: 'gym-wheel', title: 'Колесо', description: 'Переворот в сторону с опорой на руки и ноги, тело проходит через вертикальную плоскость.', content: { 'Теория': `<p>Развивает смелость, координацию, умение управлять телом в пространстве.</p>`, 'Как выполнять': `<p>Из стойки сделать шаг в сторону, поставить одноимённую руку на пол, махом другой ноги и толчком опорной выйти в стойку на руках, затем опустить ноги поочерёдно.</p>`, 'Типичные ошибки': `<ul><li>Неправильная постановка рук.</li><li>Недостаточный мах ногой.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Стойка на руках с помощью.</li><li>Махи ногами у стены.</li><li>Колесо с помощью учителя.</li></ul>` }, challenge: 'Выполни «колесо» с помощью учителя 3 раза.', scheme: SVG_SCHEMES['gym-wheel'] },
+      { id: 'gym-head', title: 'Стойка на голове', description: 'Стойка вверх ногами с опорой на голову и руки.', content: { 'Теория': `<p>Развивает силу, координацию, умение удерживать равновесие, укрепляет мышцы шеи и плечевого пояса.</p>`, 'Как выполнять': `<p>Поставить руки и голову треугольником, перенести вес тела на руки, поднять ноги вверх, выпрямить их.</p>`, 'Типичные ошибки': `<ul><li>Неправильная постановка головы и рук.</li><li>Перенос веса на голову.</li><li>Падение.</li></ul>`, 'Упражнения': `<ul><li>Стойка на голове с согнутыми ногами.</li><li>Стойка на голове с помощью учителя.</li><li>Упражнения на укрепление мышц шеи и рук.</li></ul>` }, challenge: 'Попробуй стойку на голове с помощью учителя.', scheme: SVG_SCHEMES['gym-head'] },
+      { id: 'gym-hands', title: 'Стойка на руках', description: 'Стойка вверх ногами с опорой на руки.', content: { 'Теория': `<p>Развивает силу рук, плечевого пояса, координацию, умение удерживать равновесие.</p>`, 'Как выполнять': `<p>Из упора присев махом одной и толчком другой выйти в стойку на руках, руки выпрямлены, тело вытянуто.</p>`, 'Типичные ошибки': `<ul><li>Согнутые руки.</li><li>Недостаточный мах ногой.</li><li>Падение.</li></ul>`, 'Упражнения': `<ul><li>Стойка на руках у стены.</li><li>Стойка на руках с помощью.</li><li>Махи ногами в стойке на руках.</li></ul>` }, challenge: 'Удерживай стойку на руках у стены 5 секунд.', scheme: SVG_SCHEMES['gym-hands'] },
+      { id: 'gym-rope', title: 'Лазание по канату', description: 'Перемещение вверх по канату с помощью рук и ног.', content: { 'Теория': `<p>Развивает силу рук, ног, спины, координацию, выносливость.</p>`, 'Как выполнять': `<p>Захватить канат руками и ногами, подтягиваться руками и отталкиваться ногами, подниматься вверх.</p>`, 'Типичные ошибки': `<ul><li>Слабый захват.</li><li>Недостаточная работа ног.</li><li>Быстрое утомление рук.</li></ul>`, 'Упражнения': `<ul><li>Лазание по канату в три приёма.</li><li>Вис на канате на время.</li><li>Подтягивания на канате.</li></ul>` }, challenge: 'Залезь по канату на 2 метра (со страховкой).', scheme: SVG_SCHEMES['gym-rope'] }
     ]
   },
+
+  // ----------------------------------------------------------
+  // ЛЫЖНАЯ ПОДГОТОВКА (9 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-ski', title: 'Лыжная подготовка', icon: '🎿',
     subtopics: [
-      { id: 'ski-step', title: 'Ступающий шаг', content: { 'Теория': `<p>Для подъема в гору или рыхлого снега.</p>`, 'Техника выполнения': `<ol><li>Лыжа ставится на снег всей подошвой.</li><li>Вес переносится на нее.</li><li>Затем вторая лыжа подтягивается к первой.</li><li>Палки используются для опоры.</li></ol>`, 'Типичные ошибки': `<p>Волок лыж по снегу.</p>` }, challenge: 'Пройди ступающим шагом 50 метров.', scheme: SVG_SCHEMES['ski-step'] },
-      { id: 'ski-slide', title: 'Скользящий шаг', content: { 'Теория': `<p>Основная техника передвижения.</p>`, 'Техника выполнения': `<ol><li>Отталкивание одной лыжей.</li><li>Скольжение на другой.</li><li>Вес тела полностью переносится на скользящую лыжу.</li><li>Руки работают попеременно.</li></ol>`, 'Типичные ошибки': `<p>Отсутствие переноса веса.</p>` }, challenge: 'Пройди скользящим шагом 100 метров.', scheme: '' },
-      { id: 'ski-classic', title: 'Попеременный двухшажный ход', content: { 'Теория': `<p>Классический ход для лыжни.</p>`, 'Техника выполнения': `<ol><li>Синхронизация рук и ног (правая рука — левая нога).</li><li>Толчок палкой происходит в момент, когда противоположная нога отталкивается от снега.</li></ol>`, 'Типичные ошибки': `<p>Толчок одноименными рукой и ногой.</p>` }, challenge: 'Пройди 100 метров попеременным двухшажным ходом.', scheme: '' },
-      { id: 'ski-bez', title: 'Одновременный бесшажный ход', content: { 'Теория': `<p>Для спусков и равнины.</p>`, 'Техника выполнения': `<ol><li>Только мощный толчок палками одновременно.</li><li>Ноги скользят по инерции.</li></ol>`, 'Типичные ошибки': `<p>Слабый толчок палками.</p>` }, challenge: 'Пройди 50 метров одновременным бесшажным ходом.', scheme: '' },
-      { id: 'ski-up', title: 'Преодоление подъемов', content: { 'Теория': `<p>Ступающим шагом: "Лесенкой" (боком), "елочкой" (разведя носки лыж). Полуелочкой и полулесенкой: Для склонов средней крутизны.</p>`, 'Техника выполнения': `<p>Подъем в гору требует активной работы палками и ногами.</p>`, 'Типичные ошибки': `<p>Потеря равновесия на склоне.</p>` }, challenge: 'Поднимись в горку "елочкой" 3 раза.', scheme: '' },
-      { id: 'ski-down', title: 'Спуски и торможение', content: { 'Теория': `<p>Основная стойка: Ноги согнуты, корпус наклонен вперед, руки держат палки кольцами назад.</p>`, 'Техника выполнения': `<ol><li><strong>Торможение "плугом":</strong> Сведение носков лыж и разведение пяток, давление на внутренние ребра лыж.</li><li><strong>Торможение "упором" (полуплугом):</strong> Давление на одну лыжу (внешнюю в повороте).</li></ol>`, 'Типичные ошибки': `<p>Падение на спуске.</p>` }, challenge: 'Спустись с горки и затормози "плугом".', scheme: '' }
+      { id: 'ski-classic', title: 'Попеременный двухшажный ход', description: 'Основной классический лыжный ход, применяется на равнине, пологих подъёмах и спусках.', content: { 'Теория': `<p>В цикле — два скользящих шага и попеременное отталкивание палками. Развивает координацию, выносливость, умение чередовать работу рук и ног. Является базой для освоения других ходов.</p>`, 'Как выполнять': `<p>Скользить на одной лыже, одновременно отталкиваясь противоположной рукой; смена ног и рук — поочерёдно, как при ходьбе.</p>`, 'Типичные ошибки': `<ul><li>Несогласованность движений рук и ног.</li><li>Отсутствие скольжения.</li><li>Неправильная постановка палок.</li></ul>`, 'Упражнения': `<ul><li>Имитация хода на месте без лыж.</li><li>Ходьба на лыжах с акцентом на скольжение.</li><li>Выполнение хода на равнине и пологом подъёме.</li></ul>` }, challenge: 'Пройди 100 метров попеременным двухшажным ходом.', scheme: SVG_SCHEMES['ski-classic'] },
+      { id: 'ski-bez', title: 'Одновременный бесшажный ход', description: 'Применяется на равнине и пологих спусках при хорошем скольжении. Отталкивание только руками, ноги скользят вместе.', content: { 'Теория': `<p>Развивает силу рук, плечевого пояса, координацию, умение эффективно использовать палки.</p>`, 'Как выполнять': `<p>Скользить на двух лыжах, одновременно отталкиваясь обеими палками, туловище наклонено вперёд, руки выпрямляются назад.</p>`, 'Типичные ошибки': `<ul><li>Недостаточный наклон туловища.</li><li>Слабое отталкивание.</li><li>Несогласованность движений рук.</li></ul>`, 'Упражнения': `<ul><li>Имитация хода на месте с палками.</li><li>Ход на лыжах только с работой рук.</li><li>Выполнение хода на раскатанной лыжне.</li></ul>` }, challenge: 'Пройди 50 метров одновременным бесшажным ходом.', scheme: SVG_SCHEMES['ski-bez'] },
+      { id: 'ski-odn', title: 'Одновременный одношажный ход', description: 'Применяется на равнине и спусках для развития скорости. В цикле — один скользящий шаг и одновременное отталкивание палками.', content: { 'Теория': `<p>Развивает скорость, силу, координацию, умение быстро чередовать движения.</p>`, 'Как выполнять': `<p>Скользящий шаг одной ногой с одновременным отталкиванием палками, затем смена ноги.</p>`, 'Типичные ошибки': `<ul><li>Несогласованность движений.</li><li>Слабый толчок.</li><li>Неправильная постановка палок.</li></ul>`, 'Упражнения': `<ul><li>Имитация хода на месте.</li><li>Выполнение хода на равнине и пологом спуске.</li><li>Ускорения на коротких отрезках.</li></ul>` }, challenge: 'Пройди 100 метров одновременным одношажным ходом.', scheme: SVG_SCHEMES['ski-odn'] },
+      { id: 'ski-dva', title: 'Одновременный двухшажный ход', description: 'Применяется на равнине и пологих спусках. В цикле — два скользящих шага и одновременное отталкивание палками.', content: { 'Теория': `<p>Развивает выносливость, координацию, умение чередовать длинные скольжения и мощное отталкивание.</p>`, 'Как выполнять': `<p>Два скользящих шага с одновременным отталкиванием палками в конце второго шага.</p>`, 'Типичные ошибки': `<ul><li>Несогласованность движений.</li><li>Слабый толчок.</li><li>Неправильная постановка палок.</li></ul>`, 'Упражнения': `<ul><li>Имитация хода на месте.</li><li>Выполнение хода на равнине и спуске.</li><li>Комбинации с другими ходами.</li></ul>` }, challenge: 'Пройди 100 метров одновременным двухшажным ходом.', scheme: SVG_SCHEMES['ski-dva'] },
+      { id: 'ski-up', title: 'Подъёмы на лыжах', description: 'Способы преодоления подъёмов: «ёлочка», «полуёлочка», «лесенка».', content: { 'Теория': `<p>Развивают силу ног, координацию, умение выбирать оптимальный способ в зависимости от крутизны склона.</p>`, 'Как выполнять': `<ul><li>«Ёлочка» — лыжи ставятся «V»-образно, носки врозь, шаг в сторону.</li><li>«Полуёлочка» — одна лыжа прямо, другая в сторону.</li><li>«Лесенка» — боком, приставными шагами.</li></ul>`, 'Типичные ошибки': `<ul><li>Недостаточный разворот лыж.</li><li>Потеря равновесия.</li><li>Проскальзывание.</li></ul>`, 'Упражнения': `<ul><li>Отработка каждого способа на учебном склоне.</li><li>Преодоление подъёма разными способами.</li></ul>` }, challenge: 'Поднимись в горку «ёлочкой» 3 раза.', scheme: SVG_SCHEMES['ski-up'] },
+      { id: 'ski-down', title: 'Спуски на лыжах', description: 'Спуски в высокой, средней и низкой стойках.', content: { 'Теория': `<p>Развивают равновесие, координацию, умение контролировать скорость и положение тела.</p>`, 'Как выполнять': `<ul><li>Высокая стойка — ноги слегка согнуты, туловище прямо.</li><li>Средняя стойка — колени согнуты сильнее, туловище наклонено вперёд.</li><li>Низкая стойка — глубокое приседание, туловище наклонено вперёд.</li></ul>`, 'Типичные ошибки': `<ul><li>Потеря равновесия.</li><li>Неправильная стойка.</li><li>Избыточное напряжение.</li></ul>`, 'Упражнения': `<ul><li>Спуски в разных стойках.</li><li>Изменение стойки во время спуска.</li></ul>` }, challenge: 'Спустись с горки в средней стойке.', scheme: SVG_SCHEMES['ski-down'] },
+      { id: 'ski-brake', title: 'Торможение на лыжах', description: 'Основные способы — «плуг», «упор», «падение».', content: { 'Теория': `<p>Развивают умение быстро снижать скорость, контролировать движение, обеспечивают безопасность.</p>`, 'Как выполнять': `<ul><li>«Плуг» — пятки лыж разводятся в стороны, носки вместе, колени согнуты.</li><li>«Упор» — одна лыжа ставится поперёк движения, другая продолжает скольжение.</li></ul>`, 'Типичные ошибки': `<ul><li>Недостаточный разворот лыж.</li><li>Потеря равновесия.</li><li>Неправильное распределение веса.</li></ul>`, 'Упражнения': `<ul><li>Отработка торможения «плугом» на пологом склоне.</li><li>Торможение «упором» на учебном склоне.</li></ul>` }, challenge: 'Спустись с горки и затормози «плугом».', scheme: SVG_SCHEMES['ski-brake'] },
+      { id: 'ski-turn', title: 'Повороты на лыжах', description: 'Повороты переступанием, «плугом», «упором», на параллельных лыжах.', content: { 'Теория': `<p>Развивают координацию, равновесие, умение быстро менять направление движения.</p>`, 'Как выполнять': `<ul><li>Переступанием — перенос веса на одну лыжу, другая приставляется.</li><li>«Плугом» — разведение пяток, перенос веса на внешнюю лыжу.</li><li>«Углом» — одна лыжа ставится поперёк движения.</li></ul>`, 'Типичные ошибки': `<ul><li>Потеря равновесия.</li><li>Неправильный перенос веса.</li><li>Недостаточный разворот лыж.</li></ul>`, 'Упражнения': `<ul><li>Повороты переступанием на месте и в движении.</li><li>Повороты «плугом» и «упором» на склоне.</li><li>Комбинации поворотов на учебной трассе.</li></ul>` }, challenge: 'Выполни поворот переступанием 5 раз.', scheme: SVG_SCHEMES['ski-turn'] },
+      { id: 'ski-step', title: 'Ступающий шаг', description: 'Для подъёма в гору или рыхлого снега.', content: { 'Теория': `<p>Базовая техника передвижения на лыжах, используется как подводящее упражнение.</p>`, 'Как выполнять': `<p>Лыжа ставится на снег всей подошвой, вес переносится на неё, затем вторая лыжа подтягивается к первой. Палки используются для опоры.</p>`, 'Типичные ошибки': `<ul><li>Волок лыж по снегу.</li><li>Отсутствие переноса веса.</li></ul>`, 'Упражнения': `<ul><li>Ступающий шаг на 50 м.</li><li>Ступающий шаг в гору.</li></ul>` }, challenge: 'Пройди ступающим шагом 50 метров.', scheme: SVG_SCHEMES['ski-step'] }
     ]
   },
-  {
-    id: 'st-mobile', title: 'Подвижные игры', icon: '🎲',
-    subtopics: [
-      { id: 'game-stroy', title: 'Строевые игры', content: { 'Теория': `<p>«Кто быстрее в строй», «Построй круг», «Путешествие на корабле», «Река и ров», «У ребят порядок строгий», «Елочки-березки», «Рыбки-крабики».</p>`, 'Техника выполнения': `<p>Акцент: Четкое выполнение команд, скорость, дисциплина.</p>`, 'Типичные ошибки': `<p>Толкотня при построении.</p>` }, challenge: 'Сыграй в игру "Кто быстрее в строй".', scheme: '' },
-      { id: 'game-attention', title: 'Игры на внимание', content: { 'Теория': `<p>«Фигуры», «Лес, болото, озеро», «Нос, нос, нос, лоб», «Класс, смирно!», «День и ночь», «Товарищ капитан», «Делай, как я», «Запрещенное движение», «Затейники», «Сделай фигуру», «Зеркало».</p>`, 'Техника выполнения': `<p>Акцент: Концентрация, периферическое зрение, скорость реакции на сигнал.</p>`, 'Типичные ошибки': `<p>Выполнение запрещенного движения.</p>` }, challenge: 'Сыграй в игру "Запрещенное движение".', scheme: '' },
-      { id: 'game-run', title: 'Игры с бегом', content: { 'Теория': `<p>«Ключи», «Кто быстрее», «Отдай ленту», «Быстро возьми и положи», «Перемени предмет», «Догони свою пару», «Два Мороза», «Совушка», «Докати обруч», «Не замочи ноги», «Успей догнать», «Скворечник», «Найди пару», «Поезд», «Бездомный заяц», «Маяк», «Конники-спортсмены», «Гуси-лебеди», «Пустое место», «Краски», «Свободное место».</p>`, 'Техника выполнения': `<p>Акцент: Скоростные качества, ловкость, умение уворачиваться.</p>`, 'Типичные ошибки': `<p>Высокая интенсивность бега без отдыха.</p>` }, challenge: 'Поиграй в "Два Мороза" с друзьями.', scheme: '' },
-      { id: 'game-jump', title: 'Игры с прыжками', content: { 'Теория': `<p>«Пингвины с мячом», «Спрыгни и повернись», «Не наступи», «Волк во рву», «Зайцы в огороде», «Лягушка и цапля», «Воробьи и кошки», «Удочка», «Поймай комара», «С кочки на кочку», «Не попадись», «Салки».</p>`, 'Техника выполнения': `<p>Акцент: Прыгучесть, координация, точность приземления.</p>`, 'Типичные ошибки': `<p>Много прыжков подряд.</p>` }, challenge: 'Попрыгай через скакалку 30 секунд.', scheme: '' }
-    ]
-  },
+
+  // ----------------------------------------------------------
+  // ФУТБОЛ (11 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-football', title: 'Футбол', icon: '⚽',
     subtopics: [
-      { id: 'foot-kick', title: 'Удары по мячу', content: { 'Теория': `<p><strong>Постановка опорной ноги:</strong> Правило 15–20 см от мяча, носок смотрит в цель.</p><p><strong>Удар серединой подъема:</strong> На силу и дальность.</p><p><strong>Удар внутренней частью стопы:</strong> На точность (пас).</p>`, 'Техника выполнения': `<ol><li><strong>Опорная нога:</strong> ставится сбоку от мяча на расстоянии 15–20 см. Носок смотрит в цель.</li><li><strong>Удар серединой подъема:</strong> Замах — отводите бьющую ногу назад. Удар — бейте точно в центр мяча подъемом стопы. Проводка — после удара нога продолжает движение по траектории мяча.</li><li><strong>Удар внутренней частью:</strong> Опорная нога ставится рядом с мячом. Бьющая нога разворачивается носком наружу. Удар наносится внутренней стороной стопы точно в центр мяча.</li></ol>`, 'Типичные ошибки': `<p>Неправильная постановка опорной ноги.</p>` }, challenge: 'Сделай 10 ударов по мячу в стену внутренней стороной стопы.', scheme: SVG_SCHEMES['foot-kick'] },
-      { id: 'foot-stop', title: 'Остановка мяча', content: { 'Теория': `<p>Для катящегося мяча (накрыть сверху), внутренней стороной (универсальный прием), летящего мяча.</p>`, 'Техника выполнения': `<ol><li><strong>Подошвой:</strong> Слегка согните опорную ногу для устойчивости. Накройте катящийся мяч подошвой сверху. Расслабьте голеностоп, чтобы нога сработала как амортизатор.</li><li><strong>Внутренней стороной:</strong> Опорная нога ставится сбоку от мяча. Бьющая нога разворачивается носком наружу. Накройте мяч внутренней стороной стопы, гася его скорость.</li><li><strong>Остановка летящего мяча:</strong> Подстраивайтесь под траекторию мяча. Нога должна быть расслаблена и работать как амортизатор.</li></ol>`, 'Типичные ошибки': `<p>Мяч отскакивает далеко.</p>` }, challenge: 'Останови мяч подошвой 10 раз подряд.', scheme: '' },
-      { id: 'foot-dribble', title: 'Ведение мяча', content: { 'Теория': `<p>Ведение одной ногой: По прямой, "змейкой", "восьмеркой".</p>`, 'Техника выполнения': `<ol><li><strong>Одной ногой:</strong> Ведите мяч одной ногой, контролируя его высоту отскока. Держите корпус прямо, взгляд направлен вперед.</li><li><strong>Попеременное ведение:</strong> Ведите мяч попеременно правой и левой ногой, контролируя его высоту отскока.</li><li><strong>Внешней и внутренней частью:</strong> Ведите мяч внешней или внутренней частью подъема, контролируя его высоту отскока.</li><li><strong>Ведение двух мячей:</strong> Ведите два мяча одновременно, контролируя их высоту отскока.</li></ol>`, 'Типичные ошибки': `<p>Слишком сильный толчок.</p>` }, challenge: 'Проведи мяч "змейкой" между 5 конусами.', scheme: '' },
-      { id: 'foot-pass', title: 'Передача и игра вратаря', content: { 'Теория': `<p>Передача правой и левой ногой. Вратарь: Стойка, ловля высоких и низких мячей.</p>`, 'Техника выполнения': `<ol><li><strong>Передача:</strong> Опорная нога ставится сбоку от мяча. Бьющая нога разворачивается носком наружу. Удар наносится внутренней стороной стопы точно в центр мяча.</li><li><strong>Вратарь:</strong> Стойка вратаря: ноги чуть согнуты, вес на носках, руки перед собой. Ловля: техника "Корзина" (для высоких мячей) и "Замок" (для низких).</li><li><strong>Введение мяча:</strong> Вратарь вводит мяч в игру броском одной рукой или ударом ногой по неподвижному мячу и после набрасывания.</li></ol>`, 'Типичные ошибки': `<p>Неточная передача.</p>` }, challenge: 'Сделай 10 точных передач в паре.', scheme: '' }
+      { id: 'foot-pass-in', title: 'Передача мяча внутренней стороной стопы', description: 'Самый точный и контролируемый способ передачи мяча на короткие и средние дистанции.', content: { 'Теория': `<p>Передача внутренней стороной стопы позволяет максимально увеличить площадь контакта с мячом, что обеспечивает точность и мягкость паса. Применяется для передач партнёру на 5–20 метров.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча, носок направлен в сторону передачи.</li><li>Бьющая нога разворачивается носком наружу, внутренняя сторона стопы полностью соприкасается с мячом.</li><li>Корпус слегка наклонён вперёд, взгляд направлен на партнёра.</li><li>В момент касания мяча нога должна быть напряжённой, но не жёсткой.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога слишком далеко или близко к мячу.</li><li>Носок бьющей ноги не развёрнут наружу.</li><li>Слабый или чрезмерно сильный удар.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в ворота или по мишеням.</li><li>Передачи в одно касание.</li><li>Игра в «квадрате» с акцентом на передачи внутренней стороной стопы.</li></ul>` }, challenge: 'Сделай 10 точных передач в паре внутренней стороной стопы.', scheme: SVG_SCHEMES['foot-pass-in'] },
+      { id: 'foot-pass-out', title: 'Передача мяча внешней стороной стопы', description: 'Используется для неожиданных, резаных передач, обхода соперника, передачи на среднюю дистанцию.', content: { 'Теория': `<p>Внешняя сторона стопы позволяет придать мячу вращение и изменить траекторию, что затрудняет перехват соперником.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча.</li><li>Бьющая нога разворачивается носком внутрь, внешняя сторона стопы соприкасается с мячом.</li><li>Корпус слегка наклонён в сторону передачи.</li><li>В момент удара нога напряжена, движение хлёсткое.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный разворот стопы.</li><li>Слабый контакт с мячом.</li><li>Потеря направления передачи.</li><li>Недостаточная амплитуда движения.</li></ul>`, 'Упражнения': `<ul><li>Передачи внешней стороной стопы в парах.</li><li>Передачи на точность в движении.</li><li>Игра с ограничением касаний (только внешней стороной стопы).</li><li>Эстафеты с передачами внешней стороной стопы.</li></ul>` }, challenge: 'Выполни 10 передач внешней стороной стопы в парах.', scheme: SVG_SCHEMES['foot-pass-out'] },
+      { id: 'foot-pass-lift', title: 'Передача мяча подъёмом', description: 'Применяется для длинных и мощных передач, перевода мяча на другой фланг, начала атаки.', content: { 'Теория': `<p>Передача подъёмом позволяет придать мячу большую силу и дальность, но требует высокой точности и координации.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится чуть позади мяча.</li><li>Бьющая нога отводится назад, затем резко выносится вперёд.</li><li>Контакт с мячом осуществляется верхней частью подъёма.</li><li>Корпус наклонён вперёд, взгляд направлен на цель.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога слишком далеко от мяча.</li><li>Неправильный угол наклона корпуса.</li><li>Слабый или слишком сильный удар.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Передачи подъёмом на дальность.</li><li>Передачи на точность в ворота.</li><li>Передачи после ведения мяча.</li><li>Игра с длинными передачами.</li></ul>` }, challenge: 'Выполни 5 длинных передач подъёмом.', scheme: SVG_SCHEMES['foot-pass-lift'] },
+      { id: 'foot-pass-toe', title: 'Передача мяча носком', description: 'Используется для неожиданных, коротких передач, отбора мяча у соперника.', content: { 'Теория': `<p>Передача носком позволяет быстро и неожиданно отдать мяч, но менее точна и требует хорошей координации.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча.</li><li>Бьющая нога резко выносится вперёд, контакт — носком.</li><li>Корпус слегка наклонён вперёд.</li></ol>`, 'Типичные ошибки': `<ul><li>Слабый контакт с мячом.</li><li>Потеря направления передачи.</li><li>Недостаточная амплитуда движения.</li></ul>`, 'Упражнения': `<ul><li>Передачи носком в парах.</li><li>Передачи на точность в движении.</li><li>Игра с ограничением касаний (только носком).</li></ul>` }, challenge: 'Выполни 10 передач носком в парах.', scheme: SVG_SCHEMES['foot-pass-toe'] },
+      { id: 'foot-pass-move', title: 'Передача мяча в движении', description: 'Передача мяча во время бега, без остановки, для поддержания темпа атаки.', content: { 'Теория': `<p>Требует высокой координации, умения контролировать мяч и быстро принимать решения.</p>`, 'Как выполнять': `<ol><li>Ведение мяча одной ногой, взгляд на партнёра.</li><li>В момент передачи опорная нога ставится рядом с мячом, бьющая нога выполняет передачу выбранной техникой (внутренней, внешней, подъёмом).</li><li>Корпус слегка наклонён вперёд.</li></ol>`, 'Типичные ошибки': `<ul><li>Потеря контроля над мячом.</li><li>Неточная передача.</li><li>Потеря темпа движения.</li></ul>`, 'Упражнения': `<ul><li>Передачи в движении в парах.</li><li>Передачи после ведения мяча.</li><li>Игра в «квадрате» с движением.</li></ul>` }, challenge: 'Выполни 10 передач в движении в паре.', scheme: SVG_SCHEMES['foot-pass-move'] },
+      { id: 'foot-stop-sole', title: 'Остановка мяча подошвой', description: 'Применяется для остановки катящегося мяча, позволяет быстро подготовить мяч к последующим действиям.', content: { 'Теория': `<p>Остановка подошвой — один из самых надёжных способов приёма мяча. Требует правильной постановки ноги и амортизации движения мяча.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится рядом с мячом, слегка согнута в колене.</li><li>Остановочная нога выносится навстречу мячу, носок слегка приподнят, пятка опущена.</li><li>В момент касания мяча подошвой нога мягко отводится назад, амортизируя скорость мяча.</li><li>Корпус слегка наклонён вперёд, взгляд на мяче.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога слишком далеко или близко к мячу.</li><li>Носок остановочной ноги не приподнят — мяч может проскочить.</li><li>Слабая амортизация — мяч отскакивает далеко.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Остановка катящегося мяча в парах.</li><li>Остановка мяча после отскока от стены.</li><li>Остановка мяча в движении.</li><li>Игра «квадрат» с акцентом на остановку мяча.</li></ul>` }, challenge: 'Останови мяч подошвой 10 раз подряд.', scheme: SVG_SCHEMES['foot-stop-sole'] },
+      { id: 'foot-stop-in', title: 'Остановка мяча внутренней стороной стопы', description: 'Используется для приёма катящихся и летящих мячей, обеспечивает высокую точность и контроль.', content: { 'Теория': `<p>Внутренняя сторона стопы — самая большая и мягкая поверхность для приёма мяча, позволяет эффективно гасить скорость.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча, носок в сторону движения мяча.</li><li>Остановочная нога выносится навстречу мячу, стопа разворачивается наружу, носок приподнят.</li><li>В момент касания мяча нога мягко отводится назад, амортизируя удар.</li><li>Корпус слегка наклонён вперёд, взгляд на мяче.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога неправильно поставлена.</li><li>Стопа остановочной ноги не развёрнута наружу.</li><li>Слабый контакт с мячом.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Остановка катящегося мяча в парах.</li><li>Остановка мяча после передачи партнёра.</li><li>Остановка мяча после отскока от стены.</li><li>Остановка мяча в движении.</li></ul>` }, challenge: 'Останови мяч внутренней стороной стопы 10 раз.', scheme: SVG_SCHEMES['foot-stop-in'] },
+      { id: 'foot-stop-lift', title: 'Остановка мяча средней частью подъёма', description: 'Применяется для приёма опускающихся мячей, особенно при плотной опеке соперника.', content: { 'Теория': `<p>Требует высокой координации и точности, так как площадь контакта мала, а амортизация движения мяча — за счёт уступающего движения ноги.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится рядом с мячом.</li><li>Остановочная нога выносится вперёд, носок оттянут вниз, средняя часть подъёма — к мячу.</li><li>В момент касания мяча нога мягко отводится назад, амортизируя удар.</li><li>Корпус слегка наклонён вперёд, взгляд на мяче.</li></ol>`, 'Типичные ошибки': `<ul><li>Низкий вынос ноги.</li><li>Слишком быстрое опускание стопы.</li><li>Слабый контакт с мячом.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Остановка мяча средней частью подъёма в парах.</li><li>Остановка мяча после передачи партнёра.</li><li>Остановка мяча после отскока от стены.</li><li>Остановка мяча в движении.</li></ul>` }, challenge: 'Останови мяч средней частью подъёма 10 раз.', scheme: SVG_SCHEMES['foot-stop-lift'] },
+      { id: 'foot-dribble-in', title: 'Ведение мяча внутренней стороной стопы', description: 'Основной способ ведения мяча на короткие и средние дистанции, обеспечивает высокий контроль и манёвренность.', content: { 'Теория': `<p>Ведение внутренней стороной стопы позволяет быстро менять направление движения и сохранять мяч под контролем.</p>`, 'Как выполнять': `<ol><li>Мяч находится у внутренней стороны стопы.</li><li>Лёгкие последовательные толчки по мячу, нога слегка согнута в колене.</li><li>Корпус слегка наклонён вперёд, взгляд на мяч и поле.</li><li>Опорная нога ставится сбоку от мяча, движение — по дуге или прямой.</li></ol>`, 'Типичные ошибки': `<ul><li>Мяч далеко от ноги.</li><li>Слабый контроль мяча.</li><li>Потеря темпа движения.</li><li>Неправильная постановка опорной ноги.</li></ul>`, 'Упражнения': `<ul><li>Ведение мяча по прямой и змейкой.</li><li>Ведение мяча между стойками.</li><li>Ведение мяча с изменением направления и скорости.</li><li>Ведение мяча в парах.</li></ul>` }, challenge: 'Проведи мяч «змейкой» между 5 конусами внутренней стороной стопы.', scheme: SVG_SCHEMES['foot-dribble-in'] },
+      { id: 'foot-dribble-out', title: 'Ведение мяча внешней стороной стопы', description: 'Используется для быстрого продвижения вперёд, обводки соперника, неожиданных рывков.', content: { 'Теория': `<p>Ведение внешней стороной стопы позволяет развивать высокую скорость и неожиданно менять направление движения.</p>`, 'Как выполнять': `<ol><li>Мяч находится у внешней стороны стопы.</li><li>Лёгкие последовательные толчки по мячу, нога слегка согнута в колене.</li><li>Корпус слегка наклонён вперёд, взгляд на мяч и поле.</li><li>Опорная нога ставится сбоку от мяча, движение — по прямой или дуге.</li></ol>`, 'Типичные ошибки': `<ul><li>Мяч далеко от ноги.</li><li>Слабый контроль мяча.</li><li>Потеря темпа движения.</li><li>Неправильная постановка опорной ноги.</li></ul>`, 'Упражнения': `<ul><li>Ведение мяча по прямой и змейкой.</li><li>Ведение мяча между стойками.</li><li>Ведение мяча с изменением направления и скорости.</li><li>Ведение мяча в парах.</li></ul>` }, challenge: 'Проведи мяч «змейкой» между 5 конусами внешней стороной стопы.', scheme: SVG_SCHEMES['foot-dribble-out'] },
+      { id: 'foot-kick-in', title: 'Удар по мячу внутренней стороной стопы', description: 'Самый точный и контролируемый удар, используется для передач и ударов по воротам с близкого расстояния.', content: { 'Теория': `<p>Внутренняя сторона стопы обеспечивает максимальную площадь контакта с мячом, что гарантирует точность и мягкость удара.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча, носок в сторону цели.</li><li>Бьющая нога разворачивается носком наружу, внутренняя сторона стопы соприкасается с мячом.</li><li>Корпус слегка наклонён вперёд, взгляд на цель.</li><li>В момент удара нога напряжена, движение — плавное и хлёсткое.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога слишком далеко или близко к мячу.</li><li>Носок бьющей ноги не развёрнут наружу.</li><li>Слабый или чрезмерно сильный удар.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>` }, challenge: 'Сделай 10 ударов по воротам внутренней стороной стопы.', scheme: SVG_SCHEMES['foot-kick-in'] },
+      { id: 'foot-kick-lift', title: 'Удар по мячу средней частью подъёма', description: 'Основной удар для мощных и дальних ударов по воротам, используется для передач на большие расстояния.', content: { 'Теория': `<p>Средняя часть подъёма позволяет придать мячу максимальную силу и дальность полёта.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится чуть позади мяча.</li><li>Бьющая нога отводится назад, затем резко выносится вперёд.</li><li>Контакт с мячом — верхней частью подъёма.</li><li>Корпус наклонён вперёд, взгляд на цель.</li></ol>`, 'Типичные ошибки': `<ul><li>Опорная нога слишком далеко от мяча.</li><li>Неправильный угол наклона корпуса.</li><li>Слабый или чрезмерно сильный удар.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>` }, challenge: 'Сделай 5 мощных ударов по воротам подъёмом.', scheme: SVG_SCHEMES['foot-kick-lift'] },
+      { id: 'foot-kick-toe', title: 'Удар по мячу носком', description: 'Используется для неожиданных, коротких ударов, отбора мяча у соперника.', content: { 'Теория': `<p>Удар носком позволяет быстро и неожиданно отдать мяч, но менее точен и требует хорошей координации.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча.</li><li>Бьющая нога резко выносится вперёд, контакт — носком.</li><li>Корпус слегка наклонён вперёд, взгляд на цель.</li></ol>`, 'Типичные ошибки': `<ul><li>Слабый контакт с мячом.</li><li>Потеря направления удара.</li><li>Недостаточная амплитуда движения.</li></ul>`, 'Упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>` }, challenge: 'Сделай 10 ударов носком по воротам.', scheme: SVG_SCHEMES['foot-kick-toe'] },
+      { id: 'foot-kick-out', title: 'Удар по мячу внешней стороной стопы', description: 'Используется для резаных, неожиданных ударов, обводки соперника.', content: { 'Теория': `<p>Внешняя сторона стопы позволяет придать мячу вращение и изменить траекторию полёта.</p>`, 'Как выполнять': `<ol><li>Опорная нога ставится сбоку от мяча.</li><li>Бьющая нога разворачивается носком внутрь, внешняя сторона стопы соприкасается с мячом.</li><li>Корпус слегка наклонён в сторону удара, взгляд на цель.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный разворот стопы.</li><li>Слабый контакт с мячом.</li><li>Потеря направления удара.</li></ul>`, 'Упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>` }, challenge: 'Сделай 10 ударов внешней стороной стопы по воротам.', scheme: SVG_SCHEMES['foot-kick-out'] },
+      { id: 'foot-head', title: 'Удар по мячу головой', description: 'Используется для ударов по воротам, передач, отбора мяча в воздухе.', content: { 'Теория': `<p>Удар головой требует правильной техники и координации, позволяет направлять мяч в нужную точку.</p>`, 'Как выполнять': `<ol><li>Глаза открыты, взгляд на мяч.</li><li>Встреча мяча лбом (чуть выше переносицы).</li><li>Корпус и ноги напряжены, движение — хлёсткое.</li><li>Приземление — на обе ноги.</li></ol>`, 'Типичные ошибки': `<ul><li>Закрытые глаза.</li><li>Неправильный угол встречи с мячом.</li><li>Слабый или чрезмерно сильный удар.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Удары головой по подвешенному мячу.</li><li>Удары головой после подачи партнёра.</li><li>Удары головой на точность.</li><li>Удары головой в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 ударов головой по подвешенному мячу.', scheme: SVG_SCHEMES['foot-head'] }
     ]
   },
+
+  // ----------------------------------------------------------
+  // ВОЛЕЙБОЛ (13 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-volley', title: 'Волейбол', icon: '🏐',
     subtopics: [
-      { id: 'volley-top', title: 'Передача мяча двумя руками сверху', content: { 'Теория': `<p>Положение кистей ("ковшик"), работа ног, удар о стену/пол.</p>`, 'Техника выполнения': `<ol><li><strong>Стойка:</strong> ноги согнуты в коленях, одна чуть впереди.</li><li><strong>Кисти рук</strong> образуют "ковшик" (большие и указательные пальцы образуют треугольник).</li><li><strong>Работа ног:</strong> выпрямляете ноги и корпус, толкая мяч вверх.</li><li><strong>Контакт с мячом:</strong> касайтесь мяча только фалангами пальцев, никогда не бейте ладонями.</li></ol>`, 'Типичные ошибки': `<p>Прием на ладони.</p>` }, challenge: 'Сделай 10 передач над собой.', scheme: SVG_SCHEMES['volley-top'] },
-      { id: 'volley-bottom', title: 'Передача мяча двумя руками снизу', content: { 'Теория': `<p>Прямые руки, прием на предплечья, удар о стену.</p>`, 'Техника выполнения': `<ol><li><strong>Стойка:</strong> ноги согнуты в коленях, одна чуть впереди.</li><li><strong>Руки прямые, кисти вместе,</strong> образуют "площадку".</li><li><strong>Прием мяча</strong> на предплечья (между локтем и кистью).</li><li><strong>Работа ног:</strong> выпрямляете ноги и корпус, толкая мяч вверх.</li></ol>`, 'Типичные ошибки': `<p>Согнутые руки.</p>` }, challenge: 'Прими мяч снизу 10 раз подряд.', scheme: '' },
-      { id: 'volley-serve', title: 'Подача нижняя прямая', content: { 'Теория': `<p>Исходное положение, подброс, хлесткий удар.</p>`, 'Техника выполнения': `<ol><li><strong>Исходное положение:</strong> левая нога впереди, мяч в левой руке, правая (бьющая) отведена назад.</li><li><strong>Замах и удар:</strong> подбрасываем мяч невысоко (на 20–30 см). Бьющая рука идет снизу вверх, удар наносится основанием ладони точно по центру мяча.</li><li><strong>Упражнение:</strong> Начинайте тренироваться у стены, затем в паре через сетку с 3 метров, постепенно отходя дальше.</li></ol>`, 'Типичные ошибки': `<p>Мяч не перелетает сетку.</p>` }, challenge: 'Сделай 5 подач через сетку с 3 метров.', scheme: '' }
+      { id: 'volley-top', title: 'Верхняя передача мяча двумя руками', description: 'Основной способ подготовки мяча для нападающего удара или передачи партнёру.', content: { 'Теория': `<p>Передача выполняется пальцами, кисти образуют «ковш», большие и указательные пальцы формируют треугольник. Важно согласованное движение ног, туловища и рук.</p>`, 'Как выполнять': `<ol><li>Исходное положение: ноги на ширине плеч, слегка согнуты, туловище наклонено вперёд, руки согнуты в локтях, кисти перед лицом.</li><li>Перемещение к мячу: быстрый выход под мяч, последний шаг — стопорящий.</li><li>Встреча с мячом: кисти выше лба, пальцы разведены, контакт — фалангами пальцев.</li><li>Движение: одновременное разгибание ног, туловища и рук, кисти сопровождают мяч до полного выпрямления рук.</li></ol>`, 'Типичные ошибки': `<ul><li>Мяч принимается ладонями, а не пальцами.</li><li>Большие пальцы направлены вперёд.</li><li>Кисти слишком напряжены или расслаблены.</li><li>Нет согласованности движений.</li><li>Передача выполняется прямыми руками.</li></ul>`, 'Упражнения': `<ul><li>Передачи над собой на месте и в движении.</li><li>Передачи в стену на разную высоту и расстояние.</li><li>Передачи в парах с перемещением.</li><li>Передачи в прыжке.</li></ul>` }, challenge: 'Сделай 10 передач над собой.', scheme: SVG_SCHEMES['volley-top'] },
+      { id: 'volley-bottom', title: 'Нижняя передача мяча двумя руками', description: 'Используется для приёма подач, нападающих ударов и низко летящих мячей.', content: { 'Теория': `<p>Руки образуют платформу из предплечий, кисти соединены, локти выпрямлены. Движение — за счёт разгибания ног и туловища.</p>`, 'Как выполнять': `<ol><li>Исходное положение: ноги согнуты, одна чуть впереди, руки выпрямлены и соединены, туловище наклонено вперёд.</li><li>Встреча с мячом: мяч принимается на платформу предплечий, кисти не участвуют.</li><li>Движение: ноги и туловище разгибаются, руки сопровождают мяч в нужном направлении.</li></ol>`, 'Типичные ошибки': `<ul><li>Руки согнуты в локтях.</li><li>Платформа не сформирована.</li><li>Нет согласованности движений.</li><li>Мяч принимается кистями или грудью.</li></ul>`, 'Упражнения': `<ul><li>Приём мяча после набрасывания партнёра.</li><li>Приём мяча от стены.</li><li>Приём мяча в парах с перемещением.</li><li>Приём мяча после подачи.</li></ul>` }, challenge: 'Прими мяч снизу 10 раз подряд.', scheme: SVG_SCHEMES['volley-bottom'] },
+      { id: 'volley-serve-low', title: 'Нижняя прямая подача', description: 'Простой и надёжный способ введения мяча в игру, используется новичками и для тактических подач.', content: { 'Теория': `<p>Подача выполняется одной рукой, удар — основанием ладони или кулаком, мяч подбрасывается невысоко.</p>`, 'Как выполнять': `<ol><li>Исходное положение: стоя боком к сетке, ноги слегка согнуты, мяч в левой руке (для правши).</li><li>Подброс: мяч подбрасывается на 0,4–0,6 м.</li><li>Удар: правая рука отводится назад, затем резко выносится вперёд, удар по мячу ниже пояса.</li><li>Завершение: шаг в сторону площадки.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный подброс мяча.</li><li>Удар согнутой рукой.</li><li>Расслабленная кисть.</li><li>Неточный удар.</li></ul>`, 'Упражнения': `<ul><li>Имитация подачи без мяча.</li><li>Подача в стену с близкого расстояния.</li><li>Подача партнёру.</li><li>Подача через сетку.</li></ul>` }, challenge: 'Сделай 5 подач через сетку с 3 метров.', scheme: SVG_SCHEMES['volley-serve-low'] },
+      { id: 'volley-serve-top', title: 'Верхняя прямая подача', description: 'Более сложный и атакующий способ подачи, используется для затруднения приёма соперником.', content: { 'Теория': `<p>Подача выполняется с замахом, удар — напряжённой ладонью или кулаком, мяч подбрасывается выше.</p>`, 'Как выполнять': `<ol><li>Исходное положение: стоя лицом к сетке, левая нога впереди, мяч в левой руке.</li><li>Подброс: мяч подбрасывается на 1–2 м.</li><li>Замах: правая рука отводится назад, кисть выше головы.</li><li>Удар: резкий мах рукой, удар по мячу в высшей точке.</li><li>Завершение: перенос веса на левую ногу.</li></ol>`, 'Типичные ошибки': `<ul><li>Неправильный подброс.</li><li>Слабый замах.</li><li>Расслабленная кисть.</li><li>Неточный удар.</li></ul>`, 'Упражнения': `<ul><li>Имитация подачи.</li><li>Подача в стену.</li><li>Подача партнёру.</li><li>Подача через сетку.</li></ul>` }, challenge: 'Сделай 5 верхних подач через сетку.', scheme: SVG_SCHEMES['volley-serve-top'] },
+      { id: 'volley-attack', title: 'Нападающий удар (прямой)', description: 'Основной способ завершения атаки, приносит большинство очков.', content: { 'Теория': `<p>Выполняется с разбега и прыжка, удар — в высшей точке, кисть напряжена, движение — хлёсткое.</p>`, 'Как выполнять': `<ol><li>Разбег: 2–4 шага, последний — стопорящий.</li><li>Прыжок: одновременный толчок обеими ногами.</li><li>Замах: правая рука отводится назад, левая — вверх для баланса.</li><li>Удар: правая рука резко выносится вперёд, удар по мячу в высшей точке.</li><li>Приземление: на обе ноги, готовность к следующему действию.</li></ol>`, 'Типичные ошибки': `<ul><li>Несвоевременный прыжок.</li><li>Слабый замах.</li><li>Удар расслабленной кистью.</li><li>Неточный удар.</li></ul>`, 'Упражнения': `<ul><li>Имитация удара без мяча.</li><li>Удар по мячу, подвешенному на шнуре.</li><li>Удар после передачи партнёра.</li><li>Удар через сетку.</li></ul>` }, challenge: 'Выполни 10 нападающих ударов по подвешенному мячу.', scheme: SVG_SCHEMES['volley-attack'] },
+      { id: 'volley-block', title: 'Блокирование', description: 'Основной способ защиты от нападающего удара соперника.', content: { 'Теория': `<p>Блок выполняется одним или несколькими игроками, руки поднимаются над сеткой, кисти — над мячом.</p>`, 'Как выполнять': `<ol><li>Перемещение: быстрый выход к месту удара.</li><li>Прыжок: одновременный толчок обеими ногами.</li><li>Руки: поднимаются вверх, кисти — над сеткой, пальцы разведены.</li><li>Амортизация: при контакте с мячом — мягкое уступающее движение.</li></ol>`, 'Типичные ошибки': `<ul><li>Поздно выполнен прыжок.</li><li>Руки не над сеткой.</li><li>Кисти расслаблены.</li><li>Нет согласованности действий.</li></ul>`, 'Упражнения': `<ul><li>Имитация блока у стены.</li><li>Блокирование мяча, брошенного партнёром.</li><li>Блокирование после передачи.</li><li>Блокирование в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 имитаций блока у стены.', scheme: SVG_SCHEMES['volley-block'] },
+      { id: 'volley-receive', title: 'Приём мяча с подачи', description: 'Первый элемент в розыгрыше, определяет дальнейший ход атаки.', content: { 'Теория': `<p>Чаще всего используется нижняя передача, важна правильная платформа и своевременный выход под мяч.</p>`, 'Как выполнять': `<ol><li>Исходное положение: ноги согнуты, платформа готова.</li><li>Перемещение: быстрый выход под мяч.</li><li>Приём: мяч принимается на платформу, руки сопровождают мяч.</li></ol>`, 'Типичные ошибки': `<ul><li>Несвоевременный выход.</li><li>Платформа не сформирована.</li><li>Мяч принимается кистями.</li></ul>`, 'Упражнения': `<ul><li>Приём подачи в парах.</li><li>Приём подачи от стены.</li><li>Приём подачи в игровых упражнениях.</li></ul>` }, challenge: 'Прими 10 подач в парах.', scheme: SVG_SCHEMES['volley-receive'] },
+      { id: 'volley-receive-attack', title: 'Приём мяча после нападающего удара', description: 'Защитный приём, требует быстрой реакции и правильной техники.', content: { 'Теория': `<p>Используется нижняя передача, важна амортизация и направление мяча.</p>`, 'Как выполнять': `<ol><li>Исходное положение: низкая стойка, платформа готова.</li><li>Перемещение: быстрый выход под мяч.</li><li>Приём: мяч принимается на платформу, руки сопровождают мяч.</li></ol>`, 'Типичные ошибки': `<ul><li>Несвоевременный выход.</li><li>Платформа не сформирована.</li><li>Мяч принимается кистями.</li></ul>`, 'Упражнения': `<ul><li>Приём нападающего удара в парах.</li><li>Приём удара от стены.</li><li>Приём удара в игровых упражнениях.</li></ul>` }, challenge: 'Прими 10 нападающих ударов в парах.', scheme: SVG_SCHEMES['volley-receive'] },
+      { id: 'volley-move', title: 'Перемещения и стойки', description: 'Базовые элементы техники, обеспечивают готовность к любому игровому действию.', content: { 'Теория': `<p>Стойки — исходные положения для выполнения технических приёмов. Перемещения — ходьба, бег, приставные шаги, прыжки.</p>`, 'Как выполнять': `<ol><li>Стойка: ноги согнуты, одна впереди, туловище наклонено вперёд, руки готовы к действию.</li><li>Перемещения: быстрые, с остановками, в разных направлениях.</li></ol>`, 'Типичные ошибки': `<ul><li>Ноги выпрямлены.</li><li>Руки опущены.</li><li>Нет устойчивости.</li></ul>`, 'Упражнения': `<ul><li>Перемещения по сигналу.</li><li>Старты из разных положений.</li><li>Челночный бег.</li><li>Перемещения с мячом.</li></ul>` }, challenge: 'Выполни 10 перемещений в стойке по сигналу.', scheme: SVG_SCHEMES['volley-move'] },
+      { id: 'volley-pass-jump', title: 'Передача мяча в прыжке', description: 'Используется для передачи мяча в сложных игровых ситуациях, когда нет времени на обычную передачу.', content: { 'Теория': `<p>Выполняется в безопорном положении, важна координация и точность.</p>`, 'Как выполнять': `<ol><li>Прыжок: одновременный толчок обеими ногами.</li><li>Передача: кисти в форме «ковша», мяч встречается над лицом.</li><li>Приземление: на обе ноги, готовность к следующему действию.</li></ol>`, 'Типичные ошибки': `<ul><li>Неточная передача.</li><li>Кисти не сформированы.</li><li>Потеря равновесия.</li></ul>`, 'Упражнения': `<ul><li>Передача в прыжке в парах.</li><li>Передача в прыжке через сетку.</li><li>Передача в прыжке в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 передач в прыжке в парах.', scheme: SVG_SCHEMES['volley-pass-jump'] },
+      { id: 'volley-block-group', title: 'Одиночное и групповое блокирование', description: 'Одиночное — один игрок, групповое — два или три игрока одновременно.', content: { 'Теория': `<p>Требует согласованности действий, правильного выбора позиции и времени прыжка.</p>`, 'Как выполнять': `<ol><li>Перемещение: быстрый выход к месту удара.</li><li>Прыжок: одновременный толчок.</li><li>Руки: поднимаются вверх, кисти — над сеткой.</li><li>Амортизация: мягкое уступающее движение.</li></ol>`, 'Типичные ошибки': `<ul><li>Несогласованность действий.</li><li>Поздно выполнен прыжок.</li><li>Руки не над сеткой.</li></ul>`, 'Упражнения': `<ul><li>Имитация блока в парах.</li><li>Блокирование мяча, брошенного партнёром.</li><li>Блокирование в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 групповых блоков в парах.', scheme: SVG_SCHEMES['volley-block-group'] },
+      { id: 'volley-tactics', title: 'Тактические действия в нападении и защите', description: 'Включают индивидуальные, групповые и командные действия, направленные на достижение победы.', content: { 'Теория': `<p>В нападении — передачи, обманные удары, комбинации. В защите — страховка, подстраховка, взаимодействие.</p>`, 'Как выполнять': `<ol><li>Нападение: быстрые передачи, неожиданные удары, смена позиций.</li><li>Защита: перемещение, блокирование, приём мяча.</li></ol>`, 'Типичные ошибки': `<ul><li>Несогласованность действий.</li><li>Потеря позиции.</li><li>Медленная реакция.</li></ul>`, 'Упражнения': `<ul><li>Игра в «квадрате».</li><li>Учебные двусторонние игры.</li><li>Выполнение тактических комбинаций.</li></ul>` }, challenge: 'Сыграй в учебную двустороннюю игру 10 минут.', scheme: SVG_SCHEMES['volley-tactics'] },
+      { id: 'volley-referee', title: 'Судейство и организация соревнований', description: 'Основы судейства, правила проведения соревнований, жесты судьи.', content: { 'Теория': `<p>Судья следит за соблюдением правил, фиксирует нарушения, управляет игрой.</p>`, 'Как выполнять': `<ol><li>Изучение правил.</li><li>Практика судейства учебных игр.</li><li>Организация мини-турниров.</li></ol>`, 'Типичные ошибки': `<ul><li>Незнание правил.</li><li>Неправильное судейство.</li></ul>`, 'Упражнения': `<ul><li>Судейство учебных игр.</li><li>Организация турниров.</li></ul>` }, challenge: 'Посуди учебную игру 5 минут.', scheme: SVG_SCHEMES['volley-referee'] }
     ]
   },
+
+  // ----------------------------------------------------------
+  // БАСКЕТБОЛ (11 тем)
+  // ----------------------------------------------------------
   {
     id: 'st-basket', title: 'Баскетбол', icon: '🏀',
     subtopics: [
-      { id: 'basket-stance', title: 'Стойки и перемещения', content: { 'Теория': `<p>Высокая — для отдыха, средняя — для передвижения, низкая — для защиты.</p>`, 'Техника выполнения': `<ol><li><strong>Высокая:</strong> ноги прямые, корпус прямой.</li><li><strong>Средняя:</strong> ноги согнуты в коленях, корпус наклонен вперед.</li><li><strong>Низкая:</strong> ноги сильно согнуты в коленях, корпус сильно наклонен вперед.</li><li><strong>Остановка шагом:</strong> делаете шаг вперед, перенося вес на переднюю ногу, задняя нога подтягивается.</li><li><strong>Остановка прыжком:</strong> делаете прыжок, приземляясь на обе ноги одновременно.</li></ol>`, 'Типичные ошибки': `<p>Прямые ноги в стойке.</p>` }, challenge: 'Потренируй 3 вида стоек и остановку прыжком.', scheme: '' },
-      { id: 'basket-pass', title: 'Передачи', content: { 'Теория': `<p>Основной способ, работа кистей ("кистевой бросок").</p>`, 'Техника выполнения': `<ol><li><strong>Двумя руками от груди:</strong> Мяч у груди, локти прижаты. Резкий толчок кистями вперед. Вес тела переносится с задней ноги на переднюю.</li><li><strong>Двумя руками сверху:</strong> Мяч над головой, локти согнуты. Резкий толчок кистями вперед.</li><li><strong>Одной рукой от плеча:</strong> Мяч у плеча, локоть согнут. Резкий толчок кистью вперед.</li></ol>`, 'Типичные ошибки': `<p>Слабый толчок кистями.</p>` }, challenge: 'Сделай 10 передач в паре от груди.', scheme: '' },
-      { id: 'basket-catch', title: 'Ловля мяча', content: { 'Теория': `<p>Руки вытянуты навстречу мячу, пальцы разведены.</p>`, 'Техника выполнения': `<ol><li>Руки вытянуты навстречу мячу, пальцы разведены.</li><li>Мяч ловится на уровне груди.</li><li>Руки сгибаются в локтях, гася скорость мяча.</li></ol>`, 'Типичные ошибки': `<p>Мяч отскакивает от рук.</p>` }, challenge: 'Поймай мяч 10 раз подряд в паре.', scheme: '' },
-      { id: 'basket-dribble', title: 'Ведение мяча', content: { 'Теория': `<p>Мяч должен отскакивать не выше пояса. Смотреть нужно не на мяч, а вперед (голова поднята!).</p>`, 'Техника выполнения': `<ol><li>Мяч отскакивает не выше пояса.</li><li>Смотреть нужно не на мяч, а вперед (голова поднята!).</li><li>Ведение выполняется одной рукой, контролируя высоту отскока.</li><li>Обводка препятствий выполняется одной рукой, контролируя высоту отскока.</li><li>Ведение по кругу выполняется одной рукой, контролируя высоту отскока.</li></ol>`, 'Типичные ошибки': `<p>Взгляд на мяч.</p>` }, challenge: 'Проведи мяч вокруг себя 5 раз, не глядя на него.', scheme: '' },
-      { id: 'basket-shot', title: 'Броски мяча', content: { 'Теория': `<p>Мяч у груди, локти прижаты.</p>`, 'Техника выполнения': `<ol><li><strong>Двумя руками от груди:</strong> Мяч у груди, локти прижаты. Резкий толчок кистями вперед. Вес тела переносится с задней ноги на переднюю.</li><li><strong>Одной от плеча:</strong> Мяч у плеча, локоть согнут. Резкий толчок кистью вперед.</li><li><strong>Под углом к щиту в движении:</strong> Использование щита для увеличения точности броска. Бросок выполняется под углом к щиту в движении с близкого расстояния.</li></ol>`, 'Типичные ошибки': `<p>Бросок без работы ног.</p>` }, challenge: 'Забрось мяч в кольцо 3 раза с близкого расстояния.', scheme: SVG_SCHEMES['basket-shot'] },
-      { id: 'basket-combo', title: 'Сочетание приемов "передача-ловля-ведение-бросок"', content: { 'Теория': `<p>Комплексное выполнение всех элементов в движении.</p>`, 'Техника выполнения': `<ol><li>Передача: делаете передачу партнеру.</li><li>Ловля: ловите мяч от партнера.</li><li>Ведение: ведете мяч к кольцу.</li><li>Бросок: делаете бросок по кольцу.</li></ol>`, 'Типичные ошибки': `<p>Потеря мяча при переходе от ведения к броску.</p>` }, challenge: 'Выполни комбинацию "передача-ловля-ведение-бросок" 5 раз.', scheme: '' }
+      { id: 'basket-stance', title: 'Стойка баскетболиста и держание мяча', description: 'Базовые элементы, обеспечивающие готовность к любому игровому действию.', content: { 'Теория': `<p>Стойка — исходное положение для быстрого старта, перемещений, ловли и передачи мяча. Держание мяча — правильная постановка кистей и пальцев для контроля и безопасности.</p>`, 'Как выполнять': `<p><strong>Стойка:</strong> ноги на ширине плеч, слегка согнуты, вес тела распределён равномерно, пятки слегка приподняты, туловище наклонено вперёд, руки согнуты и разведены в стороны.</p><p><strong>Держание мяча:</strong> кисти с обеих сторон мяча, пальцы широко расставлены, мяч не касается ладоней, большие пальцы направлены друг к другу под углом.</p>`, 'Типичные ошибки': `<ul><li>Ноги выпрямлены или чрезмерно согнуты.</li><li>Вес тела перенесён на одну ногу.</li><li>Пальцы не разведены, мяч удерживается ладонями.</li></ul>`, 'Упражнения': `<ul><li>Принятие стойки по сигналу.</li><li>Перемещения в стойке.</li><li>Имитация держания мяча.</li><li>Передачи мяча в парах с контролем правильной постановки кистей.</li></ul>` }, challenge: 'Прими стойку баскетболиста 10 раз по сигналу.', scheme: SVG_SCHEMES['basket-stance'] },
+      { id: 'basket-move', title: 'Передвижения без мяча', description: 'Перемещения по площадке для выхода на выгодную позицию, смены направления, подготовки к приёму или передаче.', content: { 'Теория': `<p>Передвижения выполняются на полусогнутых ногах, с перекатом с пятки на носок, туловище наклонено вперёд, руки готовы к действию.</p>`, 'Как выполнять': `<ol><li>Ходьба и бег: перекат с пятки на носок, корпус наклонён вперёд.</li><li>Остановка двумя шагами: первый шаг длинный, второй короткий, стопы параллельны, колени согнуты.</li><li>Остановка прыжком: прыжок с приземлением на обе ноги, амортизация за счёт сгибания ног.</li><li>Повороты: опорная нога не отрывается от пола, маховая нога переставляется вокруг опорной.</li></ol>`, 'Типичные ошибки': `<ul><li>Бег на прямых ногах.</li><li>Остановка с постановкой стоп на одну линию.</li><li>Потеря равновесия при повороте.</li></ul>`, 'Упражнения': `<ul><li>Бег с ускорениями и остановками по сигналу.</li><li>Остановка двумя шагами и прыжком.</li><li>Повороты на месте и в движении.</li><li>Эстафеты с остановками и поворотами.</li></ul>` }, challenge: 'Выполни 10 остановок двумя шагами и прыжком.', scheme: SVG_SCHEMES['basket-move'] },
+      { id: 'basket-catch', title: 'Ловля мяча двумя руками', description: 'Приём, позволяющий уверенно овладеть мячом и подготовиться к дальнейшим действиям.', content: { 'Теория': `<p>Руки вытянуты навстречу мячу, кисти образуют «воронку», пальцы разведены, локти слегка согнуты. В момент касания — амортизация за счёт сгибания рук.</p>`, 'Как выполнять': `<ol><li>Встреча мяча: руки вытянуты, кисти навстречу мячу.</li><li>Амортизация: руки сгибаются в локтях, мяч притягивается к груди.</li><li>Завершение: туловище слегка подаётся вперёд, мяч укрыт локтями.</li></ol>`, 'Типичные ошибки': `<ul><li>Кисти не разведены, мяч принимается ладонями.</li><li>Руки не амортизируют, мяч отскакивает.</li><li>Нет укрытия мяча от соперника.</li></ul>`, 'Упражнения': `<ul><li>Ловля мяча после набрасывания партнёра.</li><li>Ловля мяча после отскока от стены.</li><li>Ловля мяча в движении.</li><li>Ловля высоко- и низколетящих мячей.</li></ul>` }, challenge: 'Поймай мяч 10 раз подряд в паре.', scheme: SVG_SCHEMES['basket-catch'] },
+      { id: 'basket-pass-chest', title: 'Передача мяча двумя руками от груди', description: 'Основной способ быстрой и точной передачи мяча партнёру.', content: { 'Теория': `<p>Мяч удерживается на уровне груди, кисти с обеих сторон, локти опущены. Передача — за счёт разгибания рук и ног, завершающее движение кистями.</p>`, 'Как выполнять': `<ol><li>Исходное положение: мяч у груди, локти опущены.</li><li>Движение: шаг вперёд, разгибание рук и ног, захлёст кистями.</li><li>Завершение: руки сопровождают мяч, игрок возвращается в стойку.</li></ol>`, 'Типичные ошибки': `<ul><li>Передача выполняется только руками, без участия ног.</li><li>Кисти не сопровождают мяч.</li><li>Мяч принимается ладонями.</li></ul>`, 'Упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в цель.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>` }, challenge: 'Сделай 10 передач в паре от груди.', scheme: SVG_SCHEMES['basket-pass-chest'] },
+      { id: 'basket-pass-shoulder', title: 'Передача мяча одной рукой от плеча', description: 'Используется для быстрых и дальних передач, особенно в движении.', content: { 'Теория': `<p>Мяч удерживается одной рукой у плеча, вторая рука поддерживает сбоку. Передача — за счёт резкого разгибания руки и поворота корпуса.</p>`, 'Как выполнять': `<ol><li>Исходное положение: мяч у плеча, локоть согнут.</li><li>Движение: шаг вперёд, разгибание руки, захлёст кистью.</li><li>Завершение: рука сопровождает мяч, игрок возвращается в стойку.</li></ol>`, 'Типичные ошибки': `<ul><li>Передача выполняется только кистью.</li><li>Нет поворота корпуса.</li><li>Мяч летит слишком высоко или низко.</li></ul>`, 'Упражнения': `<ul><li>Передачи одной рукой в парах.</li><li>Передачи на дальность.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>` }, challenge: 'Сделай 10 передач одной рукой от плеча в паре.', scheme: SVG_SCHEMES['basket-pass-shoulder'] },
+      { id: 'basket-dribble', title: 'Ведение мяча (дриблинг)', description: 'Перемещение с мячом по площадке с контролем и защитой мяча.', content: { 'Теория': `<p>Мяч ведётся ударами о пол кончиками пальцев, рука над мячом, корпус слегка наклонён вперёд, взгляд — вперёд.</p>`, 'Как выполнять': `<ol><li>Удар по мячу: кончиками пальцев, не ладонью.</li><li>Положение руки: над мячом, слегка согнута.</li><li>Перемещение: корпус наклонён вперёд, ноги согнуты, взгляд вперёд.</li></ol>`, 'Типичные ошибки': `<ul><li>Ведение ладонью.</li><li>Мяч далеко от ноги.</li><li>Взгляд на мяч.</li></ul>`, 'Упражнения': `<ul><li>Ведение мяча на месте и в движении.</li><li>Ведение змейкой между стойками.</li><li>Ведение с изменением скорости и направления.</li><li>Ведение с сопротивлением защитника.</li></ul>` }, challenge: 'Проведи мяч вокруг себя 5 раз, не глядя на него.', scheme: SVG_SCHEMES['basket-dribble'] },
+      { id: 'basket-stop-2', title: 'Остановка двумя шагами', description: 'Применяется для быстрой остановки после ведения или бега.', content: { 'Теория': `<p>Первый шаг длинный, второй короткий и стопорящий, стопы параллельны, колени согнуты, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Первый шаг: длинный, с небольшим приседом.</li><li>Второй шаг: короткий, стопорящий.</li><li>Завершение: стопы параллельны, колени согнуты, мяч укрыт.</li></ol>`, 'Типичные ошибки': `<ul><li>Остановка с постановкой стоп на одну линию.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Остановка после ведения по сигналу.</li><li>Остановка с последующим поворотом и передачей.</li><li>Остановка в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 остановок двумя шагами после ведения.', scheme: SVG_SCHEMES['basket-stop-2'] },
+      { id: 'basket-stop-jump', title: 'Остановка прыжком', description: 'Используется для быстрой остановки и смены направления.', content: { 'Теория': `<p>Прыжок с приземлением на обе ноги, амортизация за счёт сгибания ног, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Прыжок: отталкивание одной или двумя ногами.</li><li>Приземление: на обе ноги, колени согнуты.</li><li>Завершение: амортизация, мяч укрыт.</li></ol>`, 'Типичные ошибки': `<ul><li>Приземление на одну ногу.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Остановка прыжком после ведения.</li><li>Остановка прыжком по сигналу.</li><li>Остановка прыжком в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 остановок прыжком после ведения.', scheme: SVG_SCHEMES['basket-stop-jump'] },
+      { id: 'basket-turn', title: 'Повороты на месте (с мячом и без мяча)', description: 'Используются для укрытия мяча и ухода от защитника.', content: { 'Теория': `<p>Опорная нога не отрывается от пола, маховая нога переставляется вокруг опорной, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Опорная нога: не отрывается от пола.</li><li>Маховая нога: переставляется вокруг опорной.</li><li>Мяч: укрыт корпусом.</li></ol>`, 'Типичные ошибки': `<ul><li>Отрыв опорной ноги.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Повороты на месте с мячом.</li><li>Повороты после ловли мяча.</li><li>Повороты с сопротивлением защитника.</li></ul>` }, challenge: 'Выполни 10 поворотов на месте с мячом.', scheme: SVG_SCHEMES['basket-turn'] },
+      { id: 'basket-shot', title: 'Бросок в корзину одной рукой от плеча', description: 'Основной способ завершения атаки.', content: { 'Теория': `<p>Мяч удерживается у плеча, локоть под мячом, взгляд — на кольцо. Бросок — за счёт разгибания руки и захлёста кистью.</p>`, 'Как выполнять': `<ol><li>Исходное положение: мяч у плеча, локоть под мячом.</li><li>Движение: шаг вперёд, разгибание руки, захлёст кистью.</li><li>Завершение: рука сопровождает мяч, игрок возвращается в стойку.</li></ol>`, 'Типичные ошибки': `<ul><li>Бросок выполняется только кистью.</li><li>Нет сопровождения мяча.</li><li>Мяч летит слишком высоко или низко.</li></ul>`, 'Упражнения': `<ul><li>Броски с места и в движении.</li><li>Броски на точность.</li><li>Броски после ведения.</li><li>Броски в игровых упражнениях.</li></ul>` }, challenge: 'Забрось мяч в кольцо 3 раза с близкого расстояния.', scheme: SVG_SCHEMES['basket-shot'] },
+      { id: 'basket-feint', title: 'Финты (обманные движения)', description: 'Используются для обыгрыша защитника и создания свободного пространства.', content: { 'Теория': `<p>Финт — ложное движение, вводящее защитника в заблуждение. Выполняется корпусом, взглядом, сменой направления ведения.</p>`, 'Как выполнять': `<ol><li>Корпус: наклон в одну сторону, резкое движение в другую.</li><li>Взгляд: в сторону ложного движения.</li><li>Ведение: смена направления или скорости.</li></ol>`, 'Типичные ошибки': `<ul><li>Финт неубедителен.</li><li>Потеря контроля над мячом.</li><li>Нет смены направления.</li></ul>`, 'Упражнения': `<ul><li>Финты с мячом в парах.</li><li>Финты с последующим ведением или передачей.</li><li>Финты в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 финтов в парах.', scheme: SVG_SCHEMES['basket-feint'] }
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // ГАНДБОЛ (14 тем)
+  // ----------------------------------------------------------
+  {
+    id: 'st-handball', title: 'Гандбол', icon: '🤾',
+    subtopics: [
+      { id: 'hand-stance', title: 'Стойка и держание мяча', description: 'Базовые элементы, обеспечивающие готовность к любому игровому действию.', content: { 'Теория': `<p>Стойка — исходное положение для быстрого старта, перемещений, ловли и передачи мяча. Держание мяча — правильная постановка кистей и пальцев для контроля и безопасности.</p>`, 'Как выполнять': `<p><strong>Стойка:</strong> ноги на ширине плеч, слегка согнуты, вес тела распределён равномерно, пятки слегка приподняты, колени полусогнуты, спина прямая, руки согнуты в локтях и разведены в стороны.</p><p><strong>Держание мяча:</strong> кисти с обеих сторон мяча, пальцы широко расставлены, мяч не касается ладоней, большие пальцы направлены друг к другу под углом.</p>`, 'Типичные ошибки': `<ul><li>Ноги выпрямлены или чрезмерно согнуты.</li><li>Вес тела перенесён на одну ногу.</li><li>Пальцы не разведены, мяч удерживается ладонями.</li></ul>`, 'Упражнения': `<ul><li>Принять положение стойки без мяча.</li><li>Ходьба и бег с переходом в стойку по сигналу.</li><li>Имитация держания мяча.</li><li>Перемещения с мячом в руках и по сигналу — стойка.</li></ul>` }, challenge: 'Прими стойку гандболиста 10 раз по сигналу.', scheme: SVG_SCHEMES['hand-stance'] },
+      { id: 'hand-move', title: 'Передвижения (бег, приставные шаги, прыжки)', description: 'Перемещения по площадке для выхода на выгодную позицию, освобождения от соперника, получения мяча.', content: { 'Теория': `<p>В гандболе используются приставные шаги, бег по прямой, бег с изменением направления и скорости, бег спиной вперёд, прыжки.</p>`, 'Как выполнять': `<ol><li>Приставные шаги: шаг в сторону, вторая нога приставляется, корпус слегка наклонён вперёд.</li><li>Бег: перекат с пятки на носок, корпус наклонён вперёд.</li><li>Прыжки: отталкивание одной или двумя ногами, мягкое приземление.</li></ol>`, 'Типичные ошибки': `<ul><li>Бег на прямых ногах.</li><li>Отсутствие наклона корпуса.</li><li>Потеря равновесия при смене направления.</li></ul>`, 'Упражнения': `<ul><li>Бег с ускорениями и остановками.</li><li>Приставные шаги вперёд, назад, в стороны.</li><li>Прыжки с продвижением.</li><li>Эстафеты с перемещениями.</li></ul>` }, challenge: 'Выполни 10 перемещений приставными шагами.', scheme: SVG_SCHEMES['hand-move'] },
+      { id: 'hand-catch', title: 'Ловля мяча двумя руками', description: 'Приём, позволяющий уверенно овладеть мячом и подготовиться к дальнейшим действиям.', content: { 'Теория': `<p>Руки вытянуты навстречу мячу, кисти образуют «воронку», пальцы разведены, локти слегка согнуты. В момент касания — амортизация за счёт сгибания рук.</p>`, 'Как выполнять': `<ol><li>Встреча мяча: руки вытянуты, кисти навстречу мячу.</li><li>Амортизация: руки сгибаются в локтях, мяч притягивается к груди.</li><li>Завершение: туловище слегка подаётся вперёд, мяч укрыт локтями.</li></ol>`, 'Типичные ошибки': `<ul><li>Кисти не разведены, мяч принимается ладонями.</li><li>Руки не амортизируют, мяч отскакивает.</li><li>Нет укрытия мяча от соперника.</li></ul>`, 'Упражнения': `<ul><li>Ловля мяча после набрасывания партнёра.</li><li>Ловля мяча от стены.</li><li>Ловля мяча в движении.</li><li>Ловля высоколетящих и низколетящих мячей.</li></ul>` }, challenge: 'Поймай мяч 10 раз подряд в паре.', scheme: SVG_SCHEMES['hand-catch'] },
+      { id: 'hand-pass-chest', title: 'Передача мяча двумя руками от груди', description: 'Основной способ быстрой и точной передачи мяча партнёру.', content: { 'Теория': `<p>Мяч удерживается на уровне груди, кисти с обеих сторон, локти опущены. Передача — за счёт разгибания рук и ног, завершающее движение кистями.</p>`, 'Как выполнять': `<ol><li>Исходное положение: мяч у груди, локти опущены.</li><li>Движение: шаг вперёд, разгибание рук и ног, захлёст кистями.</li><li>Завершение: руки сопровождают мяч, игрок возвращается в стойку.</li></ol>`, 'Типичные ошибки': `<ul><li>Передача выполняется только руками, без участия ног.</li><li>Кисти не сопровождают мяч.</li><li>Мяч принимается ладонями.</li></ul>`, 'Упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в цель.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>` }, challenge: 'Сделай 10 передач в паре от груди.', scheme: SVG_SCHEMES['hand-pass-chest'] },
+      { id: 'hand-pass-shoulder', title: 'Передача мяча одной рукой от плеча', description: 'Используется для быстрых и дальних передач, особенно в движении.', content: { 'Теория': `<p>Мяч удерживается одной рукой у плеча, вторая рука поддерживает сбоку. Передача — за счёт резкого разгибания руки и поворота корпуса.</p>`, 'Как выполнять': `<ol><li>Исходное положение: мяч у плеча, локоть согнут.</li><li>Движение: шаг вперёд, разгибание руки, захлёст кистью.</li><li>Завершение: рука сопровождает мяч, игрок возвращается в стойку.</li></ol>`, 'Типичные ошибки': `<ul><li>Передача выполняется только кистью.</li><li>Нет поворота корпуса.</li><li>Мяч летит слишком высоко или низко.</li></ul>`, 'Упражнения': `<ul><li>Передачи одной рукой в парах.</li><li>Передачи на дальность.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>` }, challenge: 'Сделай 10 передач одной рукой от плеча в паре.', scheme: SVG_SCHEMES['hand-pass-shoulder'] },
+      { id: 'hand-dribble', title: 'Ведение мяча', description: 'Перемещение с мячом по площадке с контролем и защитой мяча.', content: { 'Теория': `<p>Мяч ведётся ударами о пол кончиками пальцев, рука над мячом, корпус слегка наклонён вперёд, взгляд — вперёд.</p>`, 'Как выполнять': `<ol><li>Удар по мячу: кончиками пальцев, не ладонью.</li><li>Положение руки: над мячом, слегка согнута.</li><li>Перемещение: корпус наклонён вперёд, ноги согнуты, взгляд вперёд.</li></ol>`, 'Типичные ошибки': `<ul><li>Ведение ладонью.</li><li>Мяч далеко от ноги.</li><li>Взгляд на мяч.</li></ul>`, 'Упражнения': `<ul><li>Ведение мяча на месте и в движении.</li><li>Ведение змейкой между стойками.</li><li>Ведение с изменением скорости и направления.</li><li>Ведение с сопротивлением защитника.</li></ul>` }, challenge: 'Проведи мяч вокруг себя 5 раз, не глядя на него.', scheme: SVG_SCHEMES['hand-dribble'] },
+      { id: 'hand-stop-2', title: 'Остановка двумя шагами', description: 'Применяется для быстрой остановки после ведения или бега.', content: { 'Теория': `<p>Первый шаг длинный, второй короткий и стопорящий, стопы параллельны, колени согнуты, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Первый шаг: длинный, с небольшим приседом.</li><li>Второй шаг: короткий, стопорящий.</li><li>Завершение: стопы параллельны, колени согнуты, мяч укрыт.</li></ol>`, 'Типичные ошибки': `<ul><li>Остановка с постановкой стоп на одну линию.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Остановка после ведения по сигналу.</li><li>Остановка с последующим поворотом и передачей.</li><li>Остановка в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 остановок двумя шагами после ведения.', scheme: SVG_SCHEMES['hand-stop-2'] },
+      { id: 'hand-stop-jump', title: 'Остановка прыжком', description: 'Используется для быстрой остановки и смены направления.', content: { 'Теория': `<p>Прыжок с приземлением на обе ноги, амортизация за счёт сгибания ног, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Прыжок: отталкивание одной или двумя ногами.</li><li>Приземление: на обе ноги, колени согнуты.</li><li>Завершение: амортизация, мяч укрыт.</li></ol>`, 'Типичные ошибки': `<ul><li>Приземление на одну ногу.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Остановка прыжком после ведения.</li><li>Остановка прыжком по сигналу.</li><li>Остановка прыжком в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 остановок прыжком после ведения.', scheme: SVG_SCHEMES['hand-stop-jump'] },
+      { id: 'hand-turn', title: 'Повороты на месте (с мячом и без мяча)', description: 'Используются для укрытия мяча и ухода от защитника.', content: { 'Теория': `<p>Опорная нога не отрывается от пола, маховая нога переставляется вокруг опорной, мяч укрыт корпусом.</p>`, 'Как выполнять': `<ol><li>Опорная нога: не отрывается от пола.</li><li>Маховая нога: переставляется вокруг опорной.</li><li>Мяч: укрыт корпусом.</li></ol>`, 'Типичные ошибки': `<ul><li>Отрыв опорной ноги.</li><li>Потеря равновесия.</li><li>Мяч не укрыт.</li></ul>`, 'Упражнения': `<ul><li>Повороты на месте без мяча.</li><li>Повороты с мячом.</li><li>Повороты в сочетании с ловлей и передачей мяча.</li></ul>` }, challenge: 'Выполни 10 поворотов на месте с мячом.', scheme: SVG_SCHEMES['hand-turn'] },
+      { id: 'hand-shot', title: 'Бросок по воротам одной рукой (с места и в прыжке)', description: 'Основной способ завершения атаки, приносит большинство очков.', content: { 'Теория': `<p>Выполняется с разбега и прыжка, удар — в высшей точке, кисть напряжена, движение — хлёсткое.</p>`, 'Как выполнять': `<ol><li>Разбег: 2–4 шага.</li><li>Прыжок: одновременный толчок обеими ногами.</li><li>Замах: правая рука с мячом отводится назад.</li><li>Удар: резкий мах рукой, удар по мячу в высшей точке.</li><li>Приземление: на обе ноги.</li></ol>`, 'Типичные ошибки': `<ul><li>Несвоевременный прыжок.</li><li>Слабый замах.</li><li>Удар расслабленной кистью.</li><li>Неточный удар.</li></ul>`, 'Упражнения': `<ul><li>Броски по воротам с разных дистанций.</li><li>Броски на точность в парах.</li><li>Броски после ведения.</li><li>Броски через сетку.</li></ul>` }, challenge: 'Забрось мяч в ворота 5 раз с разных дистанций.', scheme: SVG_SCHEMES['hand-shot'] },
+      { id: 'hand-feint', title: 'Финты (обманные движения)', description: 'Используются для обыгрыша защитника и создания свободного пространства.', content: { 'Теория': `<p>Финт — ложное движение, вводящее защитника в заблуждение. Выполняется корпусом, взглядом, сменой направления ведения.</p>`, 'Как выполнять': `<ol><li>Корпус: наклон в одну сторону, резкое движение в другую.</li><li>Взгляд: в сторону ложного движения.</li><li>Ведение: смена направления или скорости.</li></ol>`, 'Типичные ошибки': `<ul><li>Финт неубедителен.</li><li>Потеря контроля над мячом.</li><li>Нет смены направления.</li></ul>`, 'Упражнения': `<ul><li>Финты с мячом в парах.</li><li>Финты с последующим ведением или передачей.</li><li>Финты в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 финтов в парах.', scheme: SVG_SCHEMES['hand-feint'] },
+      { id: 'hand-def-ind', title: 'Индивидуальные действия в защите', description: 'Выбор позиции, блокирование броска, перехват мяча.', content: { 'Теория': `<p>Защитник должен перекрывать путь к воротам, блокировать бросок, перехватывать передачи.</p>`, 'Как выполнять': `<ol><li>Позиция: между соперником и воротами.</li><li>Блокирование: прыжок с поднятыми руками.</li><li>Перехват: резкий выход на мяч.</li></ol>`, 'Типичные ошибки': `<ul><li>Потеря позиции.</li><li>Несвоевременный прыжок.</li><li>Пропуск соперника.</li></ul>`, 'Упражнения': `<ul><li>Блокирование мяча, брошенного партнёром.</li><li>Перехват передачи в парах.</li><li>Игра в защите в игровых упражнениях.</li></ul>` }, challenge: 'Выполни 10 перехватов в парах.', scheme: SVG_SCHEMES['hand-def-ind'] },
+      { id: 'hand-def-group', title: 'Групповые действия в защите', description: 'Взаимодействие двух и более защитников для перекрытия зон и подстраховки.', content: { 'Теория': `<p>Защитники должны координировать свои действия, перекрывать возможные направления атаки, страховать друг друга.</p>`, 'Как выполнять': `<ol><li>Согласование позиций.</li><li>Перекрытие зон.</li><li>Подстраховка партнёра.</li></ol>`, 'Типичные ошибки': `<ul><li>Несогласованность действий.</li><li>Оставленные зоны.</li><li>Отсутствие подстраховки.</li></ul>`, 'Упражнения': `<ul><li>Игра в защите 2 на 2, 3 на 3.</li><li>Перекрытие зон в игровых упражнениях.</li><li>Подстраховка партнёра.</li></ul>` }, challenge: 'Сыграй в защите 2 на 2 — 5 минут.', scheme: SVG_SCHEMES['hand-def-group'] },
+      { id: 'hand-tactics', title: 'Командные тактические действия в нападении и защите', description: 'Включают индивидуальные, групповые и командные действия, направленные на достижение победы.', content: { 'Теория': `<p>В нападении — передачи, обманные удары, комбинации. В защите — страховка, подстраховка, взаимодействие.</p>`, 'Как выполнять': `<ol><li>Нападение: быстрые передачи, неожиданные удары, смена позиций.</li><li>Защита: перемещение, блокирование, приём мяча.</li></ol>`, 'Типичные ошибки': `<ul><li>Несогласованность действий.</li><li>Потеря позиции.</li><li>Медленная реакция.</li></ul>`, 'Упражнения': `<ul><li>Игра в «квадрате».</li><li>Учебные двусторонние игры.</li><li>Выполнение тактических комбинаций.</li></ul>` }, challenge: 'Сыграй в учебную двустороннюю игру 10 минут.', scheme: SVG_SCHEMES['hand-tactics'] }
     ]
   }
 ];
+// ============================================================
+// УЧАЩИМСЯ: РЕНДЕР
+// ============================================================
 
 // --- Проверка выполнения челленджей ---
 function isChallengeDone(topicId, subId) {
@@ -506,7 +1383,21 @@ function toggleChallenge(topicId, subId, checkbox) {
   renderStudentSubtopics(topicId);
 }
 
-// 1. Экран плиток разделов
+// --- QR-код ---
+function getQRCodeHTML(topicTitle) {
+  const searchQuery = encodeURIComponent(`${topicTitle} техника выполнения`);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://www.youtube.com/results?search_query=${searchQuery}`;
+  return `
+    <div class="student-qr-wrap" style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 15px;">
+      <img src="${qrUrl}" alt="QR-код на видео" class="student-qr" style="width: 120px; height: 120px; border-radius: 8px; border: 1px solid var(--border);">
+      <span style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Наведи камеру на QR, чтобы найти видео по теме «${topicTitle}»</span>
+    </div>
+  `;
+}
+
+const studentContainer = document.getElementById('studentContainer');
+
+// 1. Экран плиток направлений
 window.renderStudentTiles = function() {
   if (!studentContainer) return;
   studentContainer.innerHTML = `<div class="method-tiles">${STUDENT_DATA.map(topic => `
@@ -518,7 +1409,7 @@ window.renderStudentTiles = function() {
   `).join('')}</div>`;
 };
 
-// 2. Экран списка тем (с прогресс-баром)
+// 2. Экран списка тем (с описанием и прогресс-баром)
 window.renderStudentSubtopics = function(topicId) {
   const topic = STUDENT_DATA.find(t => t.id === topicId);
   if (!topic) return;
@@ -548,10 +1439,11 @@ window.renderStudentSubtopics = function(topicId) {
   topic.subtopics.forEach(sub => {
     const isDone = isChallengeDone(topicId, sub.id);
     html += `
-      <div style="padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-        <div>
+      <div style="padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
           <div style="font-weight: 800; color: var(--text); font-size: 1.1rem;">${sub.title}</div>
-          ${isDone ? '<div style="color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 4px;">✅ Задание выполнено</div>' : ''}
+          ${sub.description ? `<div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">${sub.description}</div>` : ''}
+          ${isDone ? '<div style="color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 6px;">✅ Задание выполнено</div>' : ''}
         </div>
         <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="renderStudentSubDetail('${topicId}', '${sub.id}')">Открыть</button>
       </div>
@@ -562,27 +1454,42 @@ window.renderStudentSubtopics = function(topicId) {
   studentContainer.innerHTML = html;
 };
 
-// 3. Экран конкретной темы (с челленджем, СХЕМОЙ и QR-КОДОМ)
+// 3. Экран конкретной темы (5 вкладок + челлендж + QR)
 window.renderStudentSubDetail = function(topicId, subId) {
   const topic = STUDENT_DATA.find(t => t.id === topicId);
   const sub = topic.subtopics.find(s => s.id === subId);
   if (!sub) return;
 
-  const tabs = ['Теория', 'Техника выполнения', 'Типичные ошибки'];
-  const tabEmoji = { 'Теория': '📖', 'Техника выполнения': '📝', 'Типичные ошибки': '⚠️' };
+  const tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения', 'Схема'];
+  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Типичные ошибки': '⚠️', 'Упражнения': '💪', 'Схема': '📐' };
   const isDone = isChallengeDone(topicId, subId);
+
+  // Содержимое вкладки «Схема»
+  const schemeContent = sub.scheme
+    ? `<div style="text-align: center;">${sub.scheme}</div>`
+    : `<p style="color: var(--text-muted); text-align: center;">Схема скоро появится</p>`;
+
+  // Содержимое вкладок
+  const contentMap = {
+    'Теория': sub.content['Теория'] || '<p>Информация скоро появится.</p>',
+    'Как выполнять': sub.content['Как выполнять'] || '<p>Информация скоро появится.</p>',
+    'Типичные ошибки': sub.content['Типичные ошибки'] || '<p>Информация скоро появится.</p>',
+    'Упражнения': sub.content['Упражнения'] || '<p>Информация скоро появится.</p>',
+    'Схема': schemeContent
+  };
 
   studentContainer.innerHTML = `
     <div class="method-detail">
       <div class="method-detail__header">
         <button class="method-detail__back" onclick="renderStudentSubtopics('${topicId}')">← Назад к темам</button>
         <h3 class="method-detail__title">${sub.title}</h3>
+        ${sub.description ? `<p style="color: var(--text-muted); margin-top: 8px; font-size: 0.95rem;">${sub.description}</p>` : ''}
       </div>
       <div class="method-tabs" id="studentTabs">
         ${tabs.map((tab, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${tab}">${tabEmoji[tab]} ${tab}</button>`).join('')}
       </div>
       <div class="method-tab__content" id="studentTabContent">
-        ${sub.content[tabs[0]] || '<p>Информация скоро появится.</p>'}
+        ${contentMap[tabs[0]]}
       </div>
 
       <div style="padding: 30px; background: var(--bg-alt); border-top: 1px solid var(--border);">
@@ -599,16 +1506,10 @@ window.renderStudentSubDetail = function(topicId, subId) {
           </label>
         </div>
 
-        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-          <div style="background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); flex: 1; min-width: 250px; text-align: center;">
-            <h4 style="color: var(--text); margin-bottom: 15px; font-size: 1rem;">🎬 Видео-разбор</h4>
-            ${getQRCodeHTML(sub.title)}
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;">Нет камеры? <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(sub.title + ' техника выполнения')}" target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: underline;">Открыть в YouTube</a></p>
-          </div>
-          <div style="background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); flex: 1; min-width: 250px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <h4 style="color: var(--text); margin-bottom: 15px; font-size: 1rem;">📐 Схема выполнения</h4>
-            ${sub.scheme ? sub.scheme : '<p style="color: var(--text-muted);">Схема скоро появится</p>'}
-          </div>
+        <div style="background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
+          <h4 style="color: var(--text); margin-bottom: 15px; font-size: 1rem;">🎬 Видео-разбор</h4>
+          ${getQRCodeHTML(sub.title)}
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;">Нет камеры? <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(sub.title + ' техника выполнения')}" target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: underline;">Открыть в YouTube</a></p>
         </div>
       </div>
     </div>
@@ -620,11 +1521,758 @@ window.renderStudentSubDetail = function(topicId, subId) {
     document.querySelectorAll('#studentTabs .method-tab').forEach(b => b.classList.remove('is-active'));
     btn.classList.add('is-active');
     const tab = btn.dataset.tab;
-    document.getElementById('studentTabContent').innerHTML = sub.content[tab] || '<p>Материал скоро появится.</p>';
+    document.getElementById('studentTabContent').innerHTML = contentMap[tab] || '<p>Материал скоро появится.</p>';
   });
 };
 
+// Инициализация
 if (studentContainer) renderStudentTiles();
+// ============================================================
+// УЧИТЕЛЮ: ВСЕ НАПРАВЛЕНИЯ
+// ============================================================
+const METHOD_DATA = {
+
+  // ----------------------------------------------------------
+  // ЛЁГКАЯ АТЛЕТИКА (14 тем)
+  // ----------------------------------------------------------
+  athletics: {
+    icon: '🏃', title: 'Лёгкая атлетика',
+    topics: [
+      { id: 'ath-uniform', title: 'Равномерный бег (500–3000 м)', icon: '🏃', content: {
+        'Темы': `<p>Бег в постоянном темпе без ускорений и замедлений. Применяется для развития общей выносливости.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Следить за ритмом дыхания (вдох носом, выдох ртом).</li><li>Контролировать осанку — корпус слегка наклонён вперёд.</li><li>Дозировка: 500–3000 м в зависимости от возраста и подготовки.</li><li>Страховка: следить за состоянием учеников, при утомлении — снижать темп.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Бег в умеренном темпе на 400–800 м с контролем дыхания.</li><li>Интервальный бег: 200 м быстро, 200 м медленно.</li><li>Бег с изменением темпа по сигналу учителя.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Резкие ускорения и замедления</strong> — объяснить важность ровного темпа, показать пример.</li><li><strong>Сбивчивое дыхание</strong> — отработать дыхание на месте, затем в движении.</li><li><strong>Наклон корпуса назад</strong> — напомнить о наклоне вперёд, показать зеркально.</li><li><strong>«Шлёпающая» постановка стопы</strong> — упражнение «перекат с пятки на носок».</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема (как у ученика).</p>`
+      }},
+      { id: 'ath-high', title: 'Высокий старт', icon: '🏃', content: {
+        'Темы': `<p>Применяется на средних и длинных дистанциях (от 400 м и более). Позволяет быстро начать бег без стартовых колодок.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать команды «На старт!», «Внимание!», «Марш!».</li><li>Следить за наклоном корпуса и работой рук.</li><li>Дозировка: 5–8 стартов на уроке.</li><li>Страховка: следить за дистанцией между учениками.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Старты из разных положений.</li><li>Бег с высокого старта на 20–30 м.</li><li>Игра «Кто быстрее?» — старт по сигналу.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Выпрямление корпуса до начала бега</strong> — показать правильное положение, использовать зеркало.</li><li><strong>Медленная реакция</strong> — тренировать реакцию на сигнал (хлопок, свисток).</li><li><strong>Неправильная постановка ног</strong> — отработать положение стоп у линии старта.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-low', title: 'Низкий старт', icon: '🏃', content: {
+        'Темы': `<p>Используется на коротких дистанциях (до 400 м). Обеспечивает максимально быстрое начало бега за счёт упора руками и сильного толчка ногами.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать положение рук и ног в колодках.</li><li>Следить за подъёмом таза по команде «Внимание!».</li><li>Дозировка: 5–8 стартов на уроке.</li><li>Страховка: колодки должны быть надёжно закреплены.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Принятие положения низкого старта без колодок.</li><li>Бег с низкого старта на 10–20 м.</li><li>Упражнение «Старт по хлопку».</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Раннее выпрямление корпуса</strong> — акцентировать наклон, использовать ориентир.</li><li><strong>Слабый толчок</strong> — отработать силу толчка в подводящих упражнениях.</li><li><strong>Неправильная постановка рук</strong> — показать правильное положение кистей.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-technique', title: 'Техника бега', icon: '🏃', content: {
+        'Темы': `<p>Совокупность движений, обеспечивающих эффективное передвижение. Включает работу рук, постановку стопы, наклон корпуса, дыхание.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Следить за работой рук (локти согнуты, движение вперёд-назад).</li><li>Контролировать постановку стопы (перекат с пятки на носок).</li><li>Дозировка: 3–4 упражнения по 30–40 м.</li><li>Страховка: следить за дистанцией.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Бег с высоким подниманием бедра.</li><li>Бег с захлёстыванием голени.</li><li>Семенящий бег.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Зажатость плечевого пояса</strong> — упражнения на расслабление.</li><li><strong>Неправильная работа рук</strong> — показать и отработать движение рук.</li><li><strong>«Шлёпающая» постановка стопы</strong> — упражнение «перекат».</li><li><strong>Сбивчивое дыхание</strong> — дыхательные упражнения.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-finish', title: 'Финиширование', icon: '🏃', content: {
+        'Темы': `<p>Завершение дистанции с максимальной скоростью. Важно не снижать темп до пересечения финишной черты.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать бросок грудью или плечом.</li><li>Следить, чтобы ученики не тормозили перед финишем.</li><li>Дозировка: 3–5 финишных бросков.</li><li>Страховка: следить за свободным местом после финиша.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Бег на 30 м с ускорением на последних 10 м.</li><li>Имитация финиширования на месте.</li><li>Эстафеты с финишным броском.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Снижение скорости до финиша</strong> — объяснить важность полной скорости.</li><li><strong>Ранний наклон корпуса</strong> — показать правильный момент броска.</li><li><strong>Потеря координации</strong> — отработать бросок на месте.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-sprint', title: 'Бег 30, 60, 100, 200, 400 м', icon: '🏃', content: {
+        'Темы': `<p>Спринтерские дистанции, требующие максимальной скорости и техники. Включают старт, стартовый разгон, бег по дистанции, финиширование.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать каждую фазу отдельно.</li><li>Следить за максимальной скоростью на дистанции.</li><li>Дозировка: 3–5 пробежек на дистанцию.</li><li>Страховка: достаточное место для торможения.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Повторный бег на 30–60 м с максимальной скоростью.</li><li>Бег с ускорением на 20–30 м.</li><li>Эстафеты на короткие дистанции.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Медленный старт</strong> — отработать старт отдельно.</li><li><strong>Неправильный разгон</strong> — подводящие упражнения.</li><li><strong>Потеря техники</strong> — снизить скорость, отработать технику.</li><li><strong>Раннее замедление</strong> — акцент на финише.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-shuttle', title: 'Челночный бег', icon: '🏃', content: {
+        'Темы': `<p>Бег с резкими разворотами на коротких отрезках (обычно 3×10 м). Развивает скоростную выносливость, координацию, ловкость.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать резкий разворот с касанием рукой пола.</li><li>Следить за низким положением корпуса при развороте.</li><li>Дозировка: 3–5 пробежек.</li><li>Страховка: нескользящее покрытие.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Челночный бег 3×10 м.</li><li>Челночный бег 4×9 м.</li><li>Игра «Змейка» с резкими поворотами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Медленный разворот</strong> — отработать технику разворота.</li><li><strong>Потеря равновесия</strong> — упражнения на координацию.</li><li><strong>Неправильная постановка ног</strong> — показать стопорящий шаг.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-relay', title: 'Эстафетный бег', icon: '🏃', content: {
+        'Темы': `<p>Командный бег с передачей эстафетной палочки. Важно соблюдать зону передачи, не ронять палочку.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать передачу палочки на месте и в движении.</li><li>Следить за зоной передачи (20 м).</li><li>Дозировка: 5–8 передач.</li><li>Страховка: следить за дистанцией между командами.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передача эстафетной палочки на месте.</li><li>Эстафеты 4×30 м.</li><li>Встречная эстафета.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря палочки</strong> — отработать хват и передачу.</li><li><strong>Передача вне зоны</strong> — обозначить зону, тренировать.</li><li><strong>Несогласованность</strong> — командные упражнения.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-jump', title: 'Прыжок в длину с места', icon: '🏃', content: {
+        'Темы': `<p>Прыжок с двух ног на максимальное расстояние. Важно мощное отталкивание и правильная координация.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать глубокий присед и мах руками.</li><li>Следить за приземлением на обе ноги.</li><li>Дозировка: 2–3 подхода по 8–10 прыжков.</li><li>Страховка: прыжок в яму с песком или на мат.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Прыжки с места на дальность.</li><li>Прыжки через скакалку.</li><li>Прыжки с доставанием предмета рукой.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Слабый толчок</strong> — отработать силу ног.</li><li><strong>Неправильный мах руками</strong> — показать мах.</li><li><strong>Приземление на одну ногу</strong> — акцент на две ноги.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-jump-run', title: 'Прыжок в длину с разбега', icon: '🏃', content: {
+        'Темы': `<p>Прыжок с разбега на максимальное расстояние. Требует точного попадания на брусок, мощного отталкивания.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разбег (22–24 шага).</li><li>Следить за попаданием на брусок.</li><li>Дозировка: 5–8 прыжков.</li><li>Страховка: яма с песком, достаточное место.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Прыжки с короткого разбега.</li><li>Прыжки с доставанием предмета в полёте.</li><li>Прыжки через барьеры.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Недолёт или перелёт за брусок</strong> — отрегулировать разбег.</li><li><strong>Слабый толчок</strong> — подводящие упражнения.</li><li><strong>Неправильное приземление</strong> — отработать приземление.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-throw', title: 'Метание малого мяча', icon: '🏃', content: {
+        'Темы': `<p>Метание мяча (150 г) на дальность или в цель. Важно правильное держание, замах, скрестный шаг, финальное усилие.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать держание мяча фалангами пальцев.</li><li>Следить за скрестным шагом.</li><li>Дозировка: 8–10 бросков.</li><li>Страховка: метание в одну сторону, по команде.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Метание мяча в цель с 6–10 м.</li><li>Метание мяча на дальность.</li><li>Метание с места и с шага.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный хват</strong> — показать хват.</li><li><strong>Слабый замах</strong> — отработать замах.</li><li><strong>Отсутствие скрестного шага</strong> — подводящие упражнения.</li><li><strong>Бросок только рукой</strong> — акцент на работу корпуса.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-grenade', title: 'Метание гранаты', icon: '🏃', content: {
+        'Темы': `<p>Метание гранаты (500/700 г) на дальность. Техника схожа с метанием копья, но требует большей силы и координации.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать держание за рукоятку.</li><li>Следить за разбегом и скрестным шагом.</li><li>Дозировка: 5–8 бросков.</li><li>Страховка: строго в одну сторону, по команде.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Метание гранаты с места.</li><li>Метание гранаты с разбега.</li><li>Метание в сектор на дальность.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный хват</strong> — показать хват.</li><li><strong>Слабый разбег</strong> — отработать разбег.</li><li><strong>Отсутствие хлёста кисти</strong> — подводящие упражнения.</li><li><strong>Преждевременное отпускание</strong> — акцент на финальном усилии.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-multi', title: 'Многоскоки', icon: '🏃', content: {
+        'Темы': `<p>Развитие силы отталкивания и выносливости. Прыжки с ноги на ногу с активным махом свободной ноги.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Следить за прямым корпусом и работой рук.</li><li>Отрабатывать активный мах свободной ногой.</li><li>Дозировка: 3–4 подхода по 20 м.</li><li>Страховка: мягкое покрытие.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Многоскоки на 20 м.</li><li>Многоскоки через препятствия.</li><li>Прыжки на одной ноге.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Приземление на прямые ноги</strong> — акцент на сгибание.</li><li><strong>Слабый мах</strong> — отработать мах.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ath-medball', title: 'Метание набивного мяча', icon: '🏃', content: {
+        'Темы': `<p>Развитие силы спины и рук, гибкости плечевого пояса. Упражнения с набивным мячом.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать броски из-за головы (сидя и стоя).</li><li>Следить за работой ног.</li><li>Дозировка: 8–10 бросков.</li><li>Страховка: мяч не должен быть тяжёлым для ученика.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Броски набивного мяча из-за головы.</li><li>Броски от груди.</li><li>Броски назад через голову.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Слабый мах руками</strong> — отработать мах.</li><li><strong>Бросок только руками</strong> — акцент на работу ног.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // ГИМНАСТИКА (12 тем)
+  // ----------------------------------------------------------
+  gym: {
+    icon: '🤸', title: 'Гимнастика',
+    topics: [
+      { id: 'gym-oru', title: 'ОРУ с предметами', icon: '🤸', content: {
+        'Темы': `<p>Общеразвивающие упражнения с гимнастическими палками, мячами, обручами, скакалками. Развивают все группы мышц, улучшают осанку.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Показ упражнений с правильной осанкой.</li><li>Дозировка: 6–8 упражнений по 6–8 повторений.</li><li>Страховка: следить за дистанцией между учениками.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Приседания с гимнастической палкой на плечах.</li><li>Повороты туловища с мячом в руках.</li><li>Прыжки через скакалку на двух ногах.</li><li>Наклоны вперёд с обручем.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильная осанка</strong> — показать правильную осанку.</li><li><strong>Резкие движения</strong> — акцент на плавность.</li><li><strong>Потеря предмета</strong> — отработать хват.</li><li><strong>Несогласованность</strong> — медленный темп.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-group', title: 'Группировка', icon: '🤸', content: {
+        'Темы': `<p>Согнутое положение тела, при котором колени подтянуты к груди, локти прижаты к туловищу, спина округлена.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать группировку из разных положений.</li><li>Следить за округлой спиной и наклоном головы.</li><li>Дозировка: 3–5 повторений.</li><li>Страховка: маты под учениками.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Группировка из положения сидя.</li><li>Группировка из положения лёжа на спине.</li><li>Перекат назад-вперёд в группировке.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Откинутая назад голова</strong> — показать наклон.</li><li><strong>Неплотная группировка</strong> — отработать хват.</li><li><strong>Разведённые ноги</strong> — акцент на вместе.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-roll', title: 'Перекаты', icon: '🤸', content: {
+        'Темы': `<p>Вращательные движения тела с последовательным касанием опоры без переворачивания через голову. Подводящие к кувыркам.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать перекаты из упора присев и лёжа.</li><li>Следить за группировкой.</li><li>Дозировка: 3–5 повторений.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Перекат назад из упора присев в упор присев.</li><li>Перекат вперёд из группировки лёжа на спине.</li><li>Перекаты в стороны из упора стоя на коленях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Отсутствие группировки</strong> — отработать группировку.</li><li><strong>Неправильная постановка рук</strong> — показать.</li><li><strong>Медленное выполнение</strong> — акцент на темп.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-fwd', title: 'Кувырок вперёд', icon: '🤸', content: {
+        'Темы': `<p>Вращательное движение тела с переворачиванием через голову вперёд. Развивает смелость, координацию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку рук и наклон головы.</li><li>Следить за группировкой.</li><li>Дозировка: 3–5 кувырков.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Кувырок вперёд из упора присев.</li><li>Два-три кувырка вперёд слитно.</li><li>Кувырок вперёд с возвышения (горки).</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опора руками близко к ногам</strong> — показать постановку.</li><li><strong>Отсутствие группировки</strong> — отработать.</li><li><strong>Медленное переворачивание</strong> — акцент на темп.</li><li><strong>Неправильная постановка рук</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-back', title: 'Кувырок назад', icon: '🤸', content: {
+        'Темы': `<p>Вращательное движение тела с переворачиванием через голову назад. Развивает координацию и смелость.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку рук за головой.</li><li>Следить за толчком руками.</li><li>Дозировка: 3–5 кувырков.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Кувырок назад из упора присев.</li><li>Кувырок назад с помощью учителя.</li><li>Кувырок назад по наклонной поверхности.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильная постановка рук</strong> — показать.</li><li><strong>Отсутствие группировки</strong> — отработать.</li><li><strong>Медленное переворачивание</strong> — акцент на темп.</li><li><strong>Опора на затылок</strong> — акцент на руки.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-stand', title: 'Стойка на лопатках', icon: '🤸', content: {
+        'Темы': `<p>Стойка вверх ногами с опорой на лопатки, затылок и локти. Развивает силу мышц спины и пресса.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать перекат назад и постановку рук под поясницу.</li><li>Следить за вертикальным положением ног.</li><li>Дозировка: 3–5 подходов по 10–15 с.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Стойка на лопатках с согнутыми ногами.</li><li>Стойка на лопатках с прямыми ногами.</li><li>Перекат из стойки на лопатках в упор присев.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Сгибание ног</strong> — акцент на выпрямление.</li><li><strong>Неправильное положение рук</strong> — показать.</li><li><strong>Отклонение туловища</strong> — акцент на вертикаль.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-bridge', title: 'Мост', icon: '🤸', content: {
+        'Темы': `<p>Дугообразное прогнутое положение тела спиной к опоре. Развивает гибкость позвоночника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку рук и ног.</li><li>Следить за прогибом.</li><li>Дозировка: 3–5 повторений.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Мост из положения лёжа на спине.</li><li>Мост из положения стоя с помощью.</li><li>Покачивания вперёд-назад в положении мост.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Согнутые ноги</strong> — акцент на выпрямление.</li><li><strong>Неправильная постановка рук</strong> — показать.</li><li><strong>Недостаточный прогиб</strong> — подводящие упражнения.</li><li><strong>Голова наклонена вперёд</strong> — акцент на назад.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-swallow', title: 'Ласточка', icon: '🤸', content: {
+        'Темы': `<p>Равновесие на одной ноге с наклоном туловища вперёд и отведением другой ноги назад. Развивает равновесие.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать положение рук и ног.</li><li>Следить за равновесием.</li><li>Дозировка: 3–5 подходов по 10 с.</li><li>Страховка: рядом с опорой.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удержание положения «ласточка» на время.</li><li>Переход из основной стойки в «ласточку» и обратно.</li><li>«Ласточка» с закрытыми глазами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li><li><strong>Согнутая опорная нога</strong> — акцент на выпрямление.</li><li><strong>Неправильное положение рук</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-wheel', title: 'Колесо', icon: '🤸', content: {
+        'Темы': `<p>Переворот в сторону с опорой на руки и ноги. Развивает смелость и координацию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать стойку на руках у стены.</li><li>Следить за махом ногой.</li><li>Дозировка: 3–5 повторений.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Стойка на руках с помощью.</li><li>Махи ногами у стены.</li><li>Колесо с помощью учителя.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильная постановка рук</strong> — показать.</li><li><strong>Недостаточный мах</strong> — отработать мах.</li><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-head', title: 'Стойка на голове', icon: '🤸', content: {
+        'Темы': `<p>Стойка вверх ногами с опорой на голову и руки. Развивает силу и координацию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку рук и головы треугольником.</li><li>Следить за переносом веса на руки.</li><li>Дозировка: 3–5 подходов по 5–10 с.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Стойка на голове с согнутыми ногами.</li><li>Стойка на голове с помощью учителя.</li><li>Упражнения на укрепление мышц шеи и рук.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильная постановка головы и рук</strong> — показать.</li><li><strong>Перенос веса на голову</strong> — акцент на руки.</li><li><strong>Падение</strong> — страховка.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-hands', title: 'Стойка на руках', icon: '🤸', content: {
+        'Темы': `<p>Стойка вверх ногами с опорой на руки. Развивает силу рук и плечевого пояса.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать мах и толчок.</li><li>Следить за выпрямленными руками.</li><li>Дозировка: 3–5 подходов по 5–10 с.</li><li>Страховка: маты, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Стойка на руках у стены.</li><li>Стойка на руках с помощью.</li><li>Махи ногами в стойке на руках.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Согнутые руки</strong> — акцент на выпрямление.</li><li><strong>Недостаточный мах</strong> — отработать мах.</li><li><strong>Падение</strong> — страховка.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'gym-rope', title: 'Лазание по канату', icon: '🤸', content: {
+        'Темы': `<p>Перемещение вверх по канату с помощью рук и ног. Развивает силу и выносливость.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать захват каната ногами.</li><li>Следить за работой рук и ног.</li><li>Дозировка: 2–3 подхода.</li><li>Страховка: маты под канатом, помощь учителя.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Лазание по канату в три приёма.</li><li>Вис на канате на время.</li><li>Подтягивания на канате.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Слабый захват</strong> — отработать захват.</li><li><strong>Недостаточная работа ног</strong> — акцент на ноги.</li><li><strong>Быстрое утомление рук</strong> — дозировать нагрузку.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // ЛЫЖНАЯ ПОДГОТОВКА (9 тем)
+  // ----------------------------------------------------------
+  ski: {
+    icon: '🎿', title: 'Лыжная подготовка',
+    topics: [
+      { id: 'ski-classic', title: 'Попеременный двухшажный ход', icon: '🎿', content: {
+        'Темы': `<p>Основной классический лыжный ход, применяется на равнине, пологих подъёмах и спусках.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать согласованность рук и ног.</li><li>Следить за скольжением.</li><li>Дозировка: 100–200 м.</li><li>Страховка: ровная лыжня, дистанция между учениками.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация хода на месте без лыж.</li><li>Ходьба на лыжах с акцентом на скольжение.</li><li>Выполнение хода на равнине и пологом подъёме.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность рук и ног</strong> — медленный темп, показ.</li><li><strong>Отсутствие скольжения</strong> — акцент на перенос веса.</li><li><strong>Неправильная постановка палок</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-bez', title: 'Одновременный бесшажный ход', icon: '🎿', content: {
+        'Темы': `<p>Применяется на равнине и пологих спусках при хорошем скольжении. Отталкивание только руками.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать одновременный толчок палками.</li><li>Следить за наклоном туловища.</li><li>Дозировка: 50–100 м.</li><li>Страховка: ровная лыжня.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация хода на месте с палками.</li><li>Ход на лыжах только с работой рук.</li><li>Выполнение хода на раскатанной лыжне.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Недостаточный наклон туловища</strong> — показать.</li><li><strong>Слабое отталкивание</strong> — отработать толчок.</li><li><strong>Несогласованность рук</strong> — медленный темп.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-odn', title: 'Одновременный одношажный ход', icon: '🎿', content: {
+        'Темы': `<p>Применяется на равнине и спусках для развития скорости. Один скользящий шаг и одновременное отталкивание палками.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать сочетание шага и толчка.</li><li>Следить за согласованностью.</li><li>Дозировка: 100–150 м.</li><li>Страховка: ровная лыжня.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация хода на месте.</li><li>Выполнение хода на равнине и пологом спуске.</li><li>Ускорения на коротких отрезках.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность движений</strong> — медленный темп.</li><li><strong>Слабый толчок</strong> — отработать.</li><li><strong>Неправильная постановка палок</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-dva', title: 'Одновременный двухшажный ход', icon: '🎿', content: {
+        'Темы': `<p>Применяется на равнине и пологих спусках. Два скользящих шага и одновременное отталкивание палками.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать два шага и толчок.</li><li>Следить за мощным отталкиванием.</li><li>Дозировка: 100–200 м.</li><li>Страховка: ровная лыжня.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация хода на месте.</li><li>Выполнение хода на равнине и спуске.</li><li>Комбинации с другими ходами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность движений</strong> — медленный темп.</li><li><strong>Слабый толчок</strong> — отработать.</li><li><strong>Неправильная постановка палок</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-up', title: 'Подъёмы на лыжах', icon: '🎿', content: {
+        'Темы': `<p>Способы преодоления подъёмов: «ёлочка», «полуёлочка», «лесенка».</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать каждый способ отдельно.</li><li>Следить за постановкой лыж.</li><li>Дозировка: 3–5 подъёмов.</li><li>Страховка: пологий склон.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Отработка каждого способа на учебном склоне.</li><li>Преодоление подъёма разными способами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Недостаточный разворот лыж</strong> — показать.</li><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li><li><strong>Проскальзывание</strong> — акцент на постановку лыж.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-down', title: 'Спуски на лыжах', icon: '🎿', content: {
+        'Темы': `<p>Спуски в высокой, средней и низкой стойках. Развивают равновесие и координацию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать каждую стойку.</li><li>Следить за равновесием.</li><li>Дозировка: 3–5 спусков.</li><li>Страховка: пологий склон, отсутствие препятствий.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Спуски в разных стойках.</li><li>Изменение стойки во время спуска.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li><li><strong>Неправильная стойка</strong> — показать.</li><li><strong>Избыточное напряжение</strong> — акцент на расслабление.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-brake', title: 'Торможение на лыжах', icon: '🎿', content: {
+        'Темы': `<p>Основные способы — «плуг», «упор», «падение». Развивают умение быстро снижать скорость.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать «плуг» и «упор».</li><li>Следить за распределением веса.</li><li>Дозировка: 3–5 торможений.</li><li>Страховка: пологий склон.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Отработка торможения «плугом» на пологом склоне.</li><li>Торможение «упором» на учебном склоне.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Недостаточный разворот лыж</strong> — показать.</li><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li><li><strong>Неправильное распределение веса</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-turn', title: 'Повороты на лыжах', icon: '🎿', content: {
+        'Темы': `<p>Повороты переступанием, «плугом», «упором», на параллельных лыжах. Развивают координацию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать каждый вид поворота.</li><li>Следить за переносом веса.</li><li>Дозировка: 3–5 поворотов.</li><li>Страховка: пологий склон.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Повороты переступанием на месте и в движении.</li><li>Повороты «плугом» и «упором» на склоне.</li><li>Комбинации поворотов на учебной трассе.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li><li><strong>Неправильный перенос веса</strong> — показать.</li><li><strong>Недостаточный разворот лыж</strong> — отработать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'ski-step', title: 'Ступающий шаг', icon: '🎿', content: {
+        'Темы': `<p>Для подъёма в гору или рыхлого снега. Базовая техника передвижения на лыжах.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку лыжи всей подошвой.</li><li>Следить за переносом веса.</li><li>Дозировка: 50–100 м.</li><li>Страховка: ровная лыжня.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ступающий шаг на 50 м.</li><li>Ступающий шаг в гору.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Волок лыж по снегу</strong> — акцент на подъём ноги.</li><li><strong>Отсутствие переноса веса</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+    // ----------------------------------------------------------
+  // ФУТБОЛ (11 тем)
+  // ----------------------------------------------------------
+  football: {
+    icon: '⚽', title: 'Футбол',
+    topics: [
+      { id: 'foot-pass-in', title: 'Передача мяча внутренней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Самый точный и контролируемый способ передачи мяча на короткие и средние дистанции.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку опорной ноги.</li><li>Следить за разворотом бьющей ноги.</li><li>Дозировка: 10–15 передач в парах.</li><li>Страховка: следить за дистанцией между парами.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в ворота или по мишеням.</li><li>Передачи в одно касание.</li><li>Игра в «квадрате» с акцентом на передачи внутренней стороной стопы.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога слишком далеко/близко</strong> — показать положение.</li><li><strong>Носок не развёрнут</strong> — акцент на разворот.</li><li><strong>Слабый/сильный удар</strong> — отработать силу.</li><li><strong>Потеря равновесия</strong> — упражнения на баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-pass-out', title: 'Передача мяча внешней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Используется для неожиданных, резаных передач, обхода соперника, передачи на среднюю дистанцию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разворот стопы носком внутрь.</li><li>Следить за хлёстким движением.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция между парами.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи внешней стороной стопы в парах.</li><li>Передачи на точность в движении.</li><li>Игра с ограничением касаний.</li><li>Эстафеты с передачами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный разворот стопы</strong> — показать.</li><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря направления</strong> — акцент на цель.</li><li><strong>Недостаточная амплитуда</strong> — увеличить замах.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-pass-lift', title: 'Передача мяча подъёмом', icon: '⚽', content: {
+        'Темы': `<p>Применяется для длинных и мощных передач, перевода мяча на другой фланг.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать замах и контакт верхней частью подъёма.</li><li>Следить за наклоном корпуса.</li><li>Дозировка: 8–10 передач.</li><li>Страховка: достаточное место.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи подъёмом на дальность.</li><li>Передачи на точность в ворота.</li><li>Передачи после ведения мяча.</li><li>Игра с длинными передачами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога далеко</strong> — показать.</li><li><strong>Неправильный наклон</strong> — акцент.</li><li><strong>Слабый/сильный удар</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-pass-toe', title: 'Передача мяча носком', icon: '⚽', content: {
+        'Темы': `<p>Используется для неожиданных, коротких передач, отбора мяча у соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать резкий вынос ноги.</li><li>Следить за контактом носком.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция между парами.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи носком в парах.</li><li>Передачи на точность в движении.</li><li>Игра с ограничением касаний.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря направления</strong> — акцент на цель.</li><li><strong>Недостаточная амплитуда</strong> — увеличить.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-pass-move', title: 'Передача мяча в движении', icon: '⚽', content: {
+        'Темы': `<p>Передача мяча во время бега, без остановки, для поддержания темпа атаки.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать ведение и передачу в движении.</li><li>Следить за взглядом на партнёра.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи в движении в парах.</li><li>Передачи после ведения мяча.</li><li>Игра в «квадрате» с движением.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря контроля</strong> — отработать ведение.</li><li><strong>Неточная передача</strong> — акцент на точность.</li><li><strong>Потеря темпа</strong> — работать над координацией.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-stop-sole', title: 'Остановка мяча подошвой', icon: '⚽', content: {
+        'Темы': `<p>Применяется для остановки катящегося мяча, позволяет быстро подготовить мяч к действиям.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку ноги и амортизацию.</li><li>Следить за наклоном корпуса.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка катящегося мяча в парах.</li><li>Остановка мяча после отскока от стены.</li><li>Остановка мяча в движении.</li><li>Игра «квадрат» с акцентом на остановку.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога не там</strong> — показать.</li><li><strong>Носок не приподнят</strong> — акцент.</li><li><strong>Слабая амортизация</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-stop-in', title: 'Остановка мяча внутренней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Используется для приёма катящихся и летящих мячей, обеспечивает высокую точность.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разворот стопы наружу.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка катящегося мяча в парах.</li><li>Остановка мяча после передачи партнёра.</li><li>Остановка после отскока от стены.</li><li>Остановка в движении.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога неправильно</strong> — показать.</li><li><strong>Стопа не развёрнута</strong> — акцент.</li><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-stop-lift', title: 'Остановка мяча средней частью подъёма', icon: '⚽', content: {
+        'Темы': `<p>Применяется для приёма опускающихся мячей, особенно при плотной опеке соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать вынос ноги и амортизацию.</li><li>Следить за носком.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка мяча средней частью подъёма в парах.</li><li>Остановка после передачи партнёра.</li><li>Остановка после отскока от стены.</li><li>Остановка в движении.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Низкий вынос ноги</strong> — показать.</li><li><strong>Быстрое опускание стопы</strong> — акцент.</li><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-dribble-in', title: 'Ведение мяча внутренней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Основной способ ведения мяча на короткие и средние дистанции, обеспечивает высокий контроль.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать лёгкие толчки.</li><li>Следить за взглядом (на мяч и поле).</li><li>Дозировка: 3–4 подхода по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ведение по прямой и змейкой.</li><li>Ведение между стойками.</li><li>Ведение с изменением направления и скорости.</li><li>Ведение в парах.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Мяч далеко от ноги</strong> — акцент на контроль.</li><li><strong>Слабый контроль</strong> — отработать.</li><li><strong>Потеря темпа</strong> — координация.</li><li><strong>Неправильная опорная нога</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-dribble-out', title: 'Ведение мяча внешней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Используется для быстрого продвижения вперёд, обводки соперника, неожиданных рывков.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать толчки внешней стороной.</li><li>Следить за скоростью.</li><li>Дозировка: 3–4 подхода по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ведение по прямой и змейкой.</li><li>Ведение между стойками.</li><li>Ведение с изменением направления и скорости.</li><li>Ведение в парах.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Мяч далеко от ноги</strong> — акцент на контроль.</li><li><strong>Слабый контроль</strong> — отработать.</li><li><strong>Потеря темпа</strong> — координация.</li><li><strong>Неправильная опорная нога</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-kick-in', title: 'Удар по мячу внутренней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Самый точный и контролируемый удар, используется для передач и ударов по воротам с близкого расстояния.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать постановку опорной ноги и разворот бьющей.</li><li>Следить за плавностью и хлёсткостью.</li><li>Дозировка: 10–15 ударов.</li><li>Страховка: ворота, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога не там</strong> — показать.</li><li><strong>Носок не развёрнут</strong> — акцент.</li><li><strong>Слабый/сильный удар</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-kick-lift', title: 'Удар по мячу средней частью подъёма', icon: '⚽', content: {
+        'Темы': `<p>Основной удар для мощных и дальних ударов по воротам, используется для передач на большие расстояния.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать замах и контакт верхней частью подъёма.</li><li>Следить за наклоном корпуса.</li><li>Дозировка: 10–15 ударов.</li><li>Страховка: ворота, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Опорная нога далеко</strong> — показать.</li><li><strong>Неправильный наклон</strong> — акцент.</li><li><strong>Слабый/сильный удар</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-kick-toe', title: 'Удар по мячу носком', icon: '⚽', content: {
+        'Темы': `<p>Используется для неожиданных, коротких ударов, отбора мяча у соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать резкий вынос ноги.</li><li>Следить за контактом носком.</li><li>Дозировка: 10–15 ударов.</li><li>Страховка: ворота, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря направления</strong> — акцент на цель.</li><li><strong>Недостаточная амплитуда</strong> — увеличить.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-kick-out', title: 'Удар по мячу внешней стороной стопы', icon: '⚽', content: {
+        'Темы': `<p>Используется для резаных, неожиданных ударов, обводки соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разворот стопы носком внутрь.</li><li>Следить за хлёстким движением.</li><li>Дозировка: 10–15 ударов.</li><li>Страховка: ворота, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удары по воротам с разных дистанций.</li><li>Удары на точность в парах.</li><li>Удары по катящемуся и неподвижному мячу.</li><li>Удары после ведения.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный разворот стопы</strong> — показать.</li><li><strong>Слабый контакт</strong> — отработать.</li><li><strong>Потеря направления</strong> — акцент на цель.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'foot-head', title: 'Удар по мячу головой', icon: '⚽', content: {
+        'Темы': `<p>Используется для ударов по воротам, передач, отбора мяча в воздухе.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать удар лбом.</li><li>Следить за открытыми глазами.</li><li>Дозировка: 8–10 ударов.</li><li>Страховка: мягкий мяч, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Удары головой по подвешенному мячу.</li><li>Удары головой после подачи партнёра.</li><li>Удары головой на точность.</li><li>Удары головой в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Закрытые глаза</strong> — акцент на открытые.</li><li><strong>Неправильный угол</strong> — показать.</li><li><strong>Слабый/сильный удар</strong> — отработать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // ВОЛЕЙБОЛ (13 тем)
+  // ----------------------------------------------------------
+  games: {
+    icon: '🏐', title: 'Спортивные игры',
+    topics: [
+      { id: 'volley-top', title: 'Верхняя передача мяча двумя руками', icon: '🏐', content: {
+        'Темы': `<p>Основной способ подготовки мяча для нападающего удара или передачи партнёру.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать положение кистей «ковшом».</li><li>Следить за согласованностью ног, туловища, рук.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи над собой на месте и в движении.</li><li>Передачи в стену на разную высоту и расстояние.</li><li>Передачи в парах с перемещением.</li><li>Передачи в прыжке.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Приём ладонями</strong> — акцент на пальцы.</li><li><strong>Большие пальцы вперёд</strong> — показать.</li><li><strong>Напряжённые/расслабленные кисти</strong> — отработать.</li><li><strong>Нет согласованности</strong> — медленный темп.</li><li><strong>Прямые руки</strong> — акцент на сгибание.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-bottom', title: 'Нижняя передача мяча двумя руками', icon: '🏐', content: {
+        'Темы': `<p>Используется для приёма подач, нападающих ударов и низко летящих мячей.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать платформу из предплечий.</li><li>Следить за разгибанием ног.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Приём мяча после набрасывания партнёра.</li><li>Приём мяча от стены.</li><li>Приём мяча в парах с перемещением.</li><li>Приём мяча после подачи.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Согнутые руки</strong> — акцент на выпрямление.</li><li><strong>Платформа не сформирована</strong> — показать.</li><li><strong>Нет согласованности</strong> — медленный темп.</li><li><strong>Приём кистями/грудью</strong> — акцент на предплечья.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-serve-low', title: 'Нижняя прямая подача', icon: '🏐', content: {
+        'Темы': `<p>Простой и надёжный способ введения мяча в игру, используется новичками.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать подброс и удар.</li><li>Следить за шагом вперёд.</li><li>Дозировка: 5–8 подач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация подачи без мяча.</li><li>Подача в стену с близкого расстояния.</li><li>Подача партнёру.</li><li>Подача через сетку.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный подброс</strong> — показать.</li><li><strong>Удар согнутой рукой</strong> — акцент.</li><li><strong>Расслабленная кисть</strong> — отработать.</li><li><strong>Неточный удар</strong> — акцент на цель.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-serve-top', title: 'Верхняя прямая подача', icon: '🏐', content: {
+        'Темы': `<p>Более сложный и атакующий способ подачи, используется для затруднения приёма соперником.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать подброс и замах.</li><li>Следить за ударом в высшей точке.</li><li>Дозировка: 5–8 подач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация подачи.</li><li>Подача в стену.</li><li>Подача партнёру.</li><li>Подача через сетку.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неправильный подброс</strong> — показать.</li><li><strong>Слабый замах</strong> — акцент.</li><li><strong>Расслабленная кисть</strong> — отработать.</li><li><strong>Неточный удар</strong> — акцент на цель.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-attack', title: 'Нападающий удар (прямой)', icon: '🏐', content: {
+        'Темы': `<p>Основной способ завершения атаки, приносит большинство очков.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разбег и прыжок.</li><li>Следить за ударом в высшей точке.</li><li>Дозировка: 8–10 ударов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация удара без мяча.</li><li>Удар по мячу, подвешенному на шнуре.</li><li>Удар после передачи партнёра.</li><li>Удар через сетку.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несвоевременный прыжок</strong> — показать.</li><li><strong>Слабый замах</strong> — акцент.</li><li><strong>Расслабленная кисть</strong> — отработать.</li><li><strong>Неточный удар</strong> — акцент на цель.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-block', title: 'Блокирование', icon: '🏐', content: {
+        'Темы': `<p>Основной способ защиты от нападающего удара соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать выход и прыжок.</li><li>Следить за положением рук над сеткой.</li><li>Дозировка: 8–10 блоков.</li><li>Страховка: сетка, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация блока у стены.</li><li>Блокирование мяча, брошенного партнёром.</li><li>Блокирование после передачи.</li><li>Блокирование в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Поздний прыжок</strong> — показать.</li><li><strong>Руки не над сеткой</strong> — акцент.</li><li><strong>Расслабленные кисти</strong> — отработать.</li><li><strong>Нет согласованности</strong> — медленный темп.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-receive', title: 'Приём мяча с подачи', icon: '🏐', content: {
+        'Темы': `<p>Первый элемент в розыгрыше, определяет дальнейший ход атаки.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать выход под мяч.</li><li>Следить за платформой.</li><li>Дозировка: 10–15 приёмов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Приём подачи в парах.</li><li>Приём подачи от стены.</li><li>Приём подачи в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несвоевременный выход</strong> — показать.</li><li><strong>Платформа не сформирована</strong> — акцент.</li><li><strong>Приём кистями</strong> — акцент на предплечья.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-receive-attack', title: 'Приём мяча после нападающего удара', icon: '🏐', content: {
+        'Темы': `<p>Защитный приём, требует быстрой реакции и правильной техники.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать низкую стойку.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 приёмов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Приём нападающего удара в парах.</li><li>Приём удара от стены.</li><li>Приём удара в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несвоевременный выход</strong> — показать.</li><li><strong>Платформа не сформирована</strong> — акцент.</li><li><strong>Приём кистями</strong> — акцент на предплечья.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-move', title: 'Перемещения и стойки', icon: '🏐', content: {
+        'Темы': `<p>Базовые элементы техники, обеспечивают готовность к любому игровому действию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать стойку и перемещения.</li><li>Следить за устойчивостью.</li><li>Дозировка: 3–4 упражнения по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Перемещения по сигналу.</li><li>Старты из разных положений.</li><li>Челночный бег.</li><li>Перемещения с мячом.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Выпрямленные ноги</strong> — акцент на сгибание.</li><li><strong>Опущенные руки</strong> — показать.</li><li><strong>Нет устойчивости</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-pass-jump', title: 'Передача мяча в прыжке', icon: '🏐', content: {
+        'Темы': `<p>Используется для передачи мяча в сложных игровых ситуациях, когда нет времени на обычную передачу.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать прыжок и передачу.</li><li>Следить за координацией.</li><li>Дозировка: 8–10 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передача в прыжке в парах.</li><li>Передача в прыжке через сетку.</li><li>Передача в прыжке в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неточная передача</strong> — акцент на точность.</li><li><strong>Кисти не сформированы</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-block-group', title: 'Одиночное и групповое блокирование', icon: '🏐', content: {
+        'Темы': `<p>Одиночное — один игрок, групповое — два или три игрока одновременно.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать согласованность действий.</li><li>Следить за временем прыжка.</li><li>Дозировка: 8–10 блоков.</li><li>Страховка: сетка, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Имитация блока в парах.</li><li>Блокирование мяча, брошенного партнёром.</li><li>Блокирование в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность</strong> — медленный темп.</li><li><strong>Поздний прыжок</strong> — показать.</li><li><strong>Руки не над сеткой</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-tactics', title: 'Тактические действия в нападении и защите', icon: '🏐', content: {
+        'Темы': `<p>Включают индивидуальные, групповые и командные действия, направленные на достижение победы.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать комбинации.</li><li>Следить за взаимодействием.</li><li>Дозировка: 10–15 минут игры.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Игра в «квадрате».</li><li>Учебные двусторонние игры.</li><li>Выполнение тактических комбинаций.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность</strong> — медленный темп.</li><li><strong>Потеря позиции</strong> — показать.</li><li><strong>Медленная реакция</strong> — упражнения на реакцию.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'volley-referee', title: 'Судейство и организация соревнований', icon: '🏐', content: {
+        'Темы': `<p>Основы судейства, правила проведения соревнований, жесты судьи.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Изучение правил.</li><li>Практика судейства учебных игр.</li><li>Организация мини-турниров.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Судейство учебных игр.</li><li>Организация турниров.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Незнание правил</strong> — изучить правила.</li><li><strong>Неправильное судейство</strong> — практика.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // БАСКЕТБОЛ (11 тем)
+  // ----------------------------------------------------------
+  basket: {
+    icon: '🏀', title: 'Баскетбол',
+    topics: [
+      { id: 'basket-stance', title: 'Стойка баскетболиста и держание мяча', icon: '🏀', content: {
+        'Темы': `<p>Базовые элементы, обеспечивающие готовность к любому игровому действию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать стойку и держание.</li><li>Следить за положением пальцев.</li><li>Дозировка: 3–4 упражнения.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Принятие стойки по сигналу.</li><li>Перемещения в стойке.</li><li>Имитация держания мяча.</li><li>Передачи мяча в парах.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Выпрямленные/согнутые ноги</strong> — показать.</li><li><strong>Вес на одной ноге</strong> — акцент.</li><li><strong>Пальцы не разведены</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-move', title: 'Передвижения без мяча', icon: '🏀', content: {
+        'Темы': `<p>Перемещения по площадке для выхода на выгодную позицию, смены направления.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать остановки и повороты.</li><li>Следить за перекатом с пятки на носок.</li><li>Дозировка: 3–4 упражнения.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Бег с ускорениями и остановками по сигналу.</li><li>Остановка двумя шагами и прыжком.</li><li>Повороты на месте и в движении.</li><li>Эстафеты с остановками и поворотами.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Бег на прямых ногах</strong> — акцент.</li><li><strong>Стопы на одной линии</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-catch', title: 'Ловля мяча двумя руками', icon: '🏀', content: {
+        'Темы': `<p>Приём, позволяющий уверенно овладеть мячом и подготовиться к дальнейшим действиям.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать «воронку» из кистей.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 ловлей.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ловля мяча после набрасывания партнёра.</li><li>Ловля мяча после отскока от стены.</li><li>Ловля мяча в движении.</li><li>Ловля высоко- и низколетящих мячей.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Кисти не разведены</strong> — показать.</li><li><strong>Нет амортизации</strong> — акцент.</li><li><strong>Нет укрытия</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-pass-chest', title: 'Передача мяча двумя руками от груди', icon: '🏀', content: {
+        'Темы': `<p>Основной способ быстрой и точной передачи мяча партнёру.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разгибание рук и ног.</li><li>Следить за захлёстом кистями.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в цель.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Только руки</strong> — акцент на ноги.</li><li><strong>Кисти не сопровождают</strong> — показать.</li><li><strong>Приём ладонями</strong> — акцент на пальцы.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-pass-shoulder', title: 'Передача мяча одной рукой от плеча', icon: '🏀', content: {
+        'Темы': `<p>Используется для быстрых и дальних передач, особенно в движении.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разгибание руки и поворот корпуса.</li><li>Следить за захлёстом кистью.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи одной рукой в парах.</li><li>Передачи на дальность.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Только кистью</strong> — акцент на руку и корпус.</li><li><strong>Нет поворота корпуса</strong> — показать.</li><li><strong>Мяч летит высоко/низко</strong> — акцент на траекторию.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-dribble', title: 'Ведение мяча (дриблинг)', icon: '🏀', content: {
+        'Темы': `<p>Перемещение с мячом по площадке с контролем и защитой мяча.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать удар кончиками пальцев.</li><li>Следить за взглядом вперёд.</li><li>Дозировка: 3–4 подхода по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ведение мяча на месте и в движении.</li><li>Ведение змейкой между стойками.</li><li>Ведение с изменением скорости и направления.</li><li>Ведение с сопротивлением защитника.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Ведение ладонью</strong> — акцент на пальцы.</li><li><strong>Мяч далеко</strong> — показать.</li><li><strong>Взгляд на мяч</strong> — акцент на взгляд вперёд.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-stop-2', title: 'Остановка двумя шагами', icon: '🏀', content: {
+        'Темы': `<p>Применяется для быстрой остановки после ведения или бега.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать первый длинный, второй короткий шаг.</li><li>Следить за укрытием мяча.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка после ведения по сигналу.</li><li>Остановка с последующим поворотом и передачей.</li><li>Остановка в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Стопы на одной линии</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-stop-jump', title: 'Остановка прыжком', icon: '🏀', content: {
+        'Темы': `<p>Используется для быстрой остановки и смены направления.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать прыжок и приземление на обе ноги.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка прыжком после ведения.</li><li>Остановка прыжком по сигналу.</li><li>Остановка прыжком в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Приземление на одну ногу</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-turn', title: 'Повороты на месте (с мячом и без мяча)', icon: '🏀', content: {
+        'Темы': `<p>Используются для укрытия мяча и ухода от защитника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать повороты на опорной ноге.</li><li>Следить за укрытием мяча.</li><li>Дозировка: 10–15 поворотов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Повороты на месте с мячом.</li><li>Повороты после ловли мяча.</li><li>Повороты с сопротивлением защитника.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Отрыв опорной ноги</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-shot', title: 'Бросок в корзину одной рукой от плеча', icon: '🏀', content: {
+        'Темы': `<p>Основной способ завершения атаки.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать положение локтя под мячом.</li><li>Следить за захлёстом кистью.</li><li>Дозировка: 10–15 бросков.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Броски с места и в движении.</li><li>Броски на точность.</li><li>Броски после ведения.</li><li>Броски в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Только кистью</strong> — акцент на руку и ноги.</li><li><strong>Нет сопровождения</strong> — показать.</li><li><strong>Мяч высоко/низко</strong> — акцент на траекторию.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'basket-feint', title: 'Финты (обманные движения)', icon: '🏀', content: {
+        'Темы': `<p>Используются для обыгрыша защитника и создания свободного пространства.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать корпусом, взглядом, ведением.</li><li>Следить за убедительностью.</li><li>Дозировка: 10–15 финтов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Финты с мячом в парах.</li><li>Финты с последующим ведением или передачей.</li><li>Финты в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неубедительный финт</strong> — показать.</li><li><strong>Потеря контроля</strong> — акцент.</li><li><strong>Нет смены направления</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  },
+
+  // ----------------------------------------------------------
+  // ГАНДБОЛ (14 тем)
+  // ----------------------------------------------------------
+  handball: {
+    icon: '🤾', title: 'Гандбол',
+    topics: [
+      { id: 'hand-stance', title: 'Стойка и держание мяча', icon: '🤾', content: {
+        'Темы': `<p>Базовые элементы, обеспечивающие готовность к любому игровому действию.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать стойку и держание.</li><li>Следить за положением пальцев.</li><li>Дозировка: 3–4 упражнения.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Принять положение стойки без мяча.</li><li>Ходьба и бег с переходом в стойку по сигналу.</li><li>Имитация держания мяча.</li><li>Перемещения с мячом в руках и по сигналу — стойка.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Выпрямленные/согнутые ноги</strong> — показать.</li><li><strong>Вес на одной ноге</strong> — акцент.</li><li><strong>Пальцы не разведены</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-move', title: 'Передвижения (бег, приставные шаги, прыжки)', icon: '🤾', content: {
+        'Темы': `<p>Перемещения по площадке для выхода на выгодную позицию, освобождения от соперника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать приставные шаги и бег.</li><li>Следить за наклоном корпуса.</li><li>Дозировка: 3–4 упражнения по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Бег с ускорениями и остановками.</li><li>Приставные шаги вперёд, назад, в стороны.</li><li>Прыжки с продвижением.</li><li>Эстафеты с перемещениями.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Бег на прямых ногах</strong> — акцент.</li><li><strong>Нет наклона корпуса</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-catch', title: 'Ловля мяча двумя руками', icon: '🤾', content: {
+        'Темы': `<p>Приём, позволяющий уверенно овладеть мячом и подготовиться к дальнейшим действиям.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать «воронку» из кистей.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 ловлей.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ловля мяча после набрасывания партнёра.</li><li>Ловля мяча от стены.</li><li>Ловля мяча в движении.</li><li>Ловля высоколетящих и низколетящих мячей.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Кисти не разведены</strong> — показать.</li><li><strong>Нет амортизации</strong> — акцент.</li><li><strong>Нет укрытия</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-pass-chest', title: 'Передача мяча двумя руками от груди', icon: '🤾', content: {
+        'Темы': `<p>Основной способ быстрой и точной передачи мяча партнёру.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разгибание рук и ног.</li><li>Следить за захлёстом кистями.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи в парах на месте и в движении.</li><li>Передачи на точность в цель.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Только руки</strong> — акцент на ноги.</li><li><strong>Кисти не сопровождают</strong> — показать.</li><li><strong>Приём ладонями</strong> — акцент на пальцы.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-pass-shoulder', title: 'Передача мяча одной рукой от плеча', icon: '🤾', content: {
+        'Темы': `<p>Используется для быстрых и дальних передач, особенно в движении.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разгибание руки и поворот корпуса.</li><li>Следить за захлёстом кистью.</li><li>Дозировка: 10–15 передач.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Передачи одной рукой в парах.</li><li>Передачи на дальность.</li><li>Передачи после ведения.</li><li>Передачи в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Только кистью</strong> — акцент на руку и корпус.</li><li><strong>Нет поворота корпуса</strong> — показать.</li><li><strong>Мяч летит высоко/низко</strong> — акцент на траекторию.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-dribble', title: 'Ведение мяча', icon: '🤾', content: {
+        'Темы': `<p>Перемещение с мячом по площадке с контролем и защитой мяча.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать удар кончиками пальцев.</li><li>Следить за взглядом вперёд.</li><li>Дозировка: 3–4 подхода по 20 м.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Ведение мяча на месте и в движении.</li><li>Ведение змейкой между стойками.</li><li>Ведение с изменением скорости и направления.</li><li>Ведение с сопротивлением защитника.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Ведение ладонью</strong> — акцент на пальцы.</li><li><strong>Мяч далеко</strong> — показать.</li><li><strong>Взгляд на мяч</strong> — акцент на взгляд вперёд.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-stop-2', title: 'Остановка двумя шагами', icon: '🤾', content: {
+        'Темы': `<p>Применяется для быстрой остановки после ведения или бега.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать первый длинный, второй короткий шаг.</li><li>Следить за укрытием мяча.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка после ведения по сигналу.</li><li>Остановка с последующим поворотом и передачей.</li><li>Остановка в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Стопы на одной линии</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-stop-jump', title: 'Остановка прыжком', icon: '🤾', content: {
+        'Темы': `<p>Используется для быстрой остановки и смены направления.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать прыжок и приземление на обе ноги.</li><li>Следить за амортизацией.</li><li>Дозировка: 10–15 остановок.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Остановка прыжком после ведения.</li><li>Остановка прыжком по сигналу.</li><li>Остановка прыжком в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Приземление на одну ногу</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-turn', title: 'Повороты на месте (с мячом и без мяча)', icon: '🤾', content: {
+        'Темы': `<p>Используются для укрытия мяча и ухода от защитника.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать повороты на опорной ноге.</li><li>Следить за укрытием мяча.</li><li>Дозировка: 10–15 поворотов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Повороты на месте без мяча.</li><li>Повороты с мячом.</li><li>Повороты в сочетании с ловлей и передачей мяча.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Отрыв опорной ноги</strong> — показать.</li><li><strong>Потеря равновесия</strong> — баланс.</li><li><strong>Мяч не укрыт</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-shot', title: 'Бросок по воротам одной рукой (с места и в прыжке)', icon: '🤾', content: {
+        'Темы': `<p>Основной способ завершения атаки, приносит большинство очков.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать разбег и прыжок.</li><li>Следить за ударом в высшей точке.</li><li>Дозировка: 10–15 бросков.</li><li>Страховка: ворота, дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Броски по воротам с разных дистанций.</li><li>Броски на точность в парах.</li><li>Броски после ведения.</li><li>Броски через сетку.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несвоевременный прыжок</strong> — показать.</li><li><strong>Слабый замах</strong> — акцент.</li><li><strong>Расслабленная кисть</strong> — отработать.</li><li><strong>Неточный удар</strong> — акцент на цель.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-feint', title: 'Финты (обманные движения)', icon: '🤾', content: {
+        'Темы': `<p>Используются для обыгрыша защитника и создания свободного пространства.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать корпусом, взглядом, ведением.</li><li>Следить за убедительностью.</li><li>Дозировка: 10–15 финтов.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Финты с мячом в парах.</li><li>Финты с последующим ведением или передачей.</li><li>Финты в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Неубедительный финт</strong> — показать.</li><li><strong>Потеря контроля</strong> — акцент.</li><li><strong>Нет смены направления</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-def-ind', title: 'Индивидуальные действия в защите', icon: '🤾', content: {
+        'Темы': `<p>Выбор позиции, блокирование броска, перехват мяча.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать позицию между соперником и воротами.</li><li>Следить за блокированием и перехватом.</li><li>Дозировка: 10–15 действий.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Блокирование мяча, брошенного партнёром.</li><li>Перехват передачи в парах.</li><li>Игра в защите в игровых упражнениях.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Потеря позиции</strong> — показать.</li><li><strong>Несвоевременный прыжок</strong> — акцент.</li><li><strong>Пропуск соперника</strong> — показать.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-def-group', title: 'Групповые действия в защите', icon: '🤾', content: {
+        'Темы': `<p>Взаимодействие двух и более защитников для перекрытия зон и подстраховки.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать согласование позиций.</li><li>Следить за подстраховкой.</li><li>Дозировка: 10–15 минут игры.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Игра в защите 2 на 2, 3 на 3.</li><li>Перекрытие зон в игровых упражнениях.</li><li>Подстраховка партнёра.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность</strong> — медленный темп.</li><li><strong>Оставленные зоны</strong> — показать.</li><li><strong>Нет подстраховки</strong> — акцент.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }},
+      { id: 'hand-tactics', title: 'Командные тактические действия в нападении и защите', icon: '🤾', content: {
+        'Темы': `<p>Включают индивидуальные, групповые и командные действия, направленные на достижение победы.</p>`,
+        'Как выполнять': `<p><strong>Методические акценты:</strong></p><ul><li>Отрабатывать комбинации.</li><li>Следить за взаимодействием.</li><li>Дозировка: 10–15 минут игры.</li><li>Страховка: дистанция.</li></ul>`,
+        'Подводящие упражнения': `<ul><li>Игра в «квадрате».</li><li>Учебные двусторонние игры.</li><li>Выполнение тактических комбинаций.</li></ul>`,
+        'Типичные ошибки и исправления': `<ul><li><strong>Несогласованность</strong> — медленный темп.</li><li><strong>Потеря позиции</strong> — показать.</li><li><strong>Медленная реакция</strong> — упражнения на реакцию.</li></ul>`,
+        'Видео, картинки': `<p>QR-код на видео + SVG-схема.</p>`
+      }}
+    ]
+  }
+
+};
+// ============================================================
+// УЧИТЕЛЮ: РЕНДЕР
+// ============================================================
+const methodContainer = document.getElementById('methodContainer');
+const methodFilters = document.getElementById('methodFilters');
+
+window.renderMethodTiles = function(block) {
+  if (!methodContainer) return;
+  const blockData = METHOD_DATA[block];
+  if (!blockData) return;
+  const topicTabs = ['Темы', 'Как выполнять', 'Подводящие упражнения', 'Типичные ошибки и исправления', 'Видео, картинки'];
+  methodContainer.innerHTML = `<div class="method-tiles">${blockData.topics.map(topic => `
+    <div class="method-tile" data-topic="${topic.id}" onclick="renderMethodDetail('${block}', '${topic.id}')">
+      <div class="method-tile__icon">${topic.icon}</div>
+      <div class="method-tile__title">${topic.title}</div>
+      <div class="method-tile__count">${topicTabs.length} подвкладок</div>
+    </div>
+  `).join('')}</div>`;
+};
+
+window.renderMethodDetail = function(block, topicId) {
+  const blockData = METHOD_DATA[block];
+  if (!blockData) return;
+  const topic = blockData.topics.find(t => t.id === topicId);
+  if (!topic) return;
+  const tabs = ['Темы', 'Как выполнять', 'Подводящие упражнения', 'Типичные ошибки и исправления', 'Видео, картинки'];
+  const tabEmoji = { 'Темы': '📖', 'Как выполнять': '📝', 'Подводящие упражнения': '💪', 'Типичные ошибки и исправления': '⚠️', 'Видео, картинки': '🎬' };
+  const contentMap = {};
+  tabs.forEach(t => { contentMap[t] = topic.content[t] || '<p>Информация скоро появится.</p>'; });
+
+  methodContainer.innerHTML = `
+    <div class="method-detail">
+      <div class="method-detail__header">
+        <button class="method-detail__back" onclick="renderMethodTiles('${block}')">← Назад</button>
+        <h3 class="method-detail__title">${topic.icon} ${topic.title}</h3>
+      </div>
+      <div class="method-tabs" id="methodTabs">
+        ${tabs.map((t, i) => `<button class="method-tab ${i === 0 ? 'is-active' : ''}" data-tab="${t}">${tabEmoji[t]} ${t}</button>`).join('')}
+      </div>
+      <div class="method-tab__content" id="methodTabContent">${contentMap[tabs[0]]}</div>
+    </div>
+  `;
+  document.getElementById('methodTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.method-tab');
+    if (!btn) return;
+    document.querySelectorAll('#methodTabs .method-tab').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    document.getElementById('methodTabContent').innerHTML = contentMap[btn.dataset.tab] || '<p>Материал скоро появится.</p>';
+  });
+};
+
+if (methodFilters) {
+  methodFilters.addEventListener('click', (e) => {
+    if (e.target.classList.contains('chip')) {
+      methodFilters.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
+      e.target.classList.add('is-active');
+      renderMethodTiles(e.target.dataset.block);
+    }
+  });
+  // По умолчанию открываем гимнастику
+  renderMethodTiles('gym');
+}
 
 // ============================================================
 // ТЕСТЫ
@@ -716,22 +2364,7 @@ window.checkQuiz = function(event) {
     if (typeof revealSecretMarker === 'function') revealSecretMarker();
   }
   questionsDiv.appendChild(scoreText);
-  event.currentTarget.style.display = 'none'; 
+  event.currentTarget.style.display = 'none';
 };
 
 if (document.getElementById('quizContainer')) renderQuizTiles();
-
-// ============================================================
-// ТЕМА
-// ============================================================
-const themeToggle = document.getElementById('themeToggle');
-if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
-if (themeToggle) {
-  themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙';
-  themeToggle.addEventListener('click', () => {
-    const isDark = document.documentElement.dataset.theme === 'dark';
-    document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-    localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    themeToggle.textContent = isDark ? '🌙' : '☀️';
-  });
-}
