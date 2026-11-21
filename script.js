@@ -33,7 +33,19 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
       setTimeout(() => {
         if (typeof renderMethodTiles === 'function') {
           renderMethodTiles('gym');
-        }
+// ============================================================
+// ВОЗВРАТ НА ПРЕДЫДУЩУЮ СТРАНИЦУ (ДЛЯ СПОРТСМЕНОВ И ОБЪЕКТОВ)
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const openPage = sessionStorage.getItem('openPage');
+  if (openPage) {
+    sessionStorage.removeItem('openPage'); // Очищаем, чтобы сработало один раз
+    const targetLink = document.querySelector(`[data-page-link="${openPage}"]`);
+    if (targetLink) {
+      targetLink.click();
+    }
+  }
+});        }
       }, 50);
     }
   });
