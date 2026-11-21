@@ -155,7 +155,7 @@ function cardHTML(item) {
   const href = item.link ? `href="${item.link}"` : '';
   const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
   
-  return `<${tag} ${href} class="card" style="text-decoration: none; color: inherit;">
+    return `<${tag} ${href} class="card" data-layer="${item.layer}" style="text-decoration: none; color: inherit;">
     <div class="${imgClass}">${img}</div>
     <div class="card-content">
       <h3>${item.title}</h3>
