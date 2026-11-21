@@ -135,6 +135,7 @@ document.querySelectorAll('.chip[data-layer]').forEach(btn => {
     document.querySelectorAll('.chip[data-layer]').forEach(b => b.classList.remove('is-active'));
     btn.classList.add('is-active');
     currentLayer = btn.dataset.layer;
+    document.body.setAttribute('data-layer', currentLayer);
     applyFilters();
   });
 });
