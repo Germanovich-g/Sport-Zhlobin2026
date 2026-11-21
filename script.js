@@ -2452,10 +2452,14 @@ const QUIZ_DATA = {
 const questContainer = document.getElementById('questContainer');
 
 const QUEST_DATA = [
-  { id: 1, question: "Какая арена является домашней для ХК «Металлург-Жлобин»?", answers: ["Дворец игровых видов спорта", "Ледовый дворец", "Городской стадион"], correct: 1 },
-  { id: 2, question: "Сколько мест вмещает Дворец игровых видов спорта?", answers: ["1500", "5000", "800"], correct: 0 },
-  { id: 3, question: "На каком стадионе проходят главные футбольные матчи города?", answers: ["Спартак", "Городской стадион", "Динамо"], correct: 1 },
-  { id: 4, question: "Где готовят будущих чемпионов в Жлобине?", answers: ["СДЮШОР", "Школа №1", "ДЮСШ"], correct: 0 }
+  { id: 1, image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=80", question: "Какая арена является домашней для ХК «Металлург-Жлобин»?", answers: ["Дворец игровых видов спорта", "Ледовый дворец", "Городской стадион"], correct: 1 },
+  { id: 2, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80", question: "Сколько мест вмещает Дворец игровых видов спорта?", answers: ["1500", "5000", "800"], correct: 0 },
+  { id: 3, image: "https://images.unsplash.com/photo-1459865264687-595d652de67e?auto=format&fit=crop&w=600&q=80", question: "На каком стадионе проходят главные футбольные матчи города?", answers: ["Спартак", "Городской стадион", "Динамо"], correct: 1 },
+  { id: 4, image: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=600&q=80", question: "Где готовят будущих чемпионов в Жлобине?", answers: ["СДЮШОР", "Школа №1", "ДЮСШ"], correct: 0 },
+  { id: 5, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80", question: "Какой объект имеет 50-метровые дорожки для плавания?", answers: ["Аквапарк", "Плавательный бассейн", "Озеро"], correct: 1 },
+  { id: 6, image: "https://images.unsplash.com/photo-1587280501635-a19de238a81e?auto=format&fit=crop&w=600&q=80", question: "В каком году Жлобин принимал II Игры стран СНГ?", answers: ["2021", "2023", "2025"], correct: 1 },
+  { id: 7, image: "https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&w=600&q=80", question: "Какой вид спорта прославил Василия Руденкова?", answers: ["Метание молота", "Плавание", "Бокс"], correct: 0 },
+  { id: 8, image: "https://images.unsplash.com/photo-1519766304817-4f37bda74a26?auto=format&fit=crop&w=600&q=80", question: "Какой турнир ежегодно проходит памяти Шоты Нармания?", answers: ["Футбол", "Греко-римская борьба", "Хоккей"], correct: 1 }
 ];
 
 let currentQuestStep = 0;
@@ -2481,6 +2485,7 @@ window.renderQuest = function() {
       Вопрос ${currentQuestStep + 1} из ${QUEST_DATA.length}
     </div>
     <div class="quiz-question">
+      <img src="${q.image}" alt="Иллюстрация" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 14px; margin-bottom: 20px;">
       <h4>${q.question}</h4>
       <div id="questOptions"></div>
     </div>
