@@ -5,7 +5,7 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const page = link.dataset.pageLink;
-    ['home', 'students', 'method', 'quiz'].forEach(p => {
+        ['home', 'students', 'method', 'quiz', 'quest'].forEach(p => {
       const el = document.getElementById(`page-${p}`);
       if (el) el.style.display = 'none';
     });
@@ -2446,6 +2446,88 @@ const QUIZ_DATA = {
     ]
   }
 };
+// ============================================================
+// КВЕСТ "СПОРТИВНЫЙ МАРШРУТ"
+// ============================================================
+const questContainer = document.getElementById('questContainer');
+
+const QUEST_DATA = [
+  { id: 1, question: "Какая арена является домашней для ХК «Металлург-Жлобин»?", answers: ["Дворец игровых видов спорта", "Ледовый дворец", "Городской стадион"], correct: 1 },
+  { id: 2, question: "Сколько мест вмещает Дворец игровых видов спорта?", answers: ["1500", "5000", "800"], correct: 0 },
+  { id: 3, question: "На каком стадионе проходят главные футбольные матчи города?", answers: ["Спартак", "Городской стадион", "Динамо"], correct: 1 },
+  { id: 4, question: "Где готовят будущих чемпионов в Жлобине?", answers: ["СДЮШОР", "Школа №1", "ДЮСШ"], correct: 0 }
+];
+
+let currentQuestStep = 0;
+let questScore = 0;
+
+window.renderQuest = function() {
+  if (!questContainer) return;
+  
+  if (currentQuestStep >= QUEST_DATA.length) {
+    questContainer.innerHTML = `
+      <div style="text-align: center; padding: 20px;">
+        <h3 style="font-size: 2rem; color: var(--primary); margin-bottom: 20px;">🏆 Победа!</h3>
+        <p style="font-size: 1.2rem; margin-bottom: 30px;">Ты прошёл маршрут и набрал ${questScore} из ${QUEST_DATA.length} баллов!</p>
+        <button class="btn" onclick="restartQuest()">Пройти заново</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = QUEST_DATA[currentQuestStep];
+  questContainer.innerHTML = `
+    <div style="text-align: center; margin-bottom: 20px; font-weight: 800; color: var(--text-muted);">
+      Вопрос ${currentQuestStep + 1} из ${QUEST_DATA.length}
+    </div>
+    <div class="quiz-question">
+      <h4>${q.question}</h4>
+      <div id="questOptions"></div>
+    </div>
+  `;
+
+  const optionsWrap = document.getElementById('questOptions');
+  q.answers.forEach((ans, index) => {
+    const opt = document.createElement('div');
+    opt.className = 'quiz-option';
+    opt.textContent = ans;
+    opt.onclick = () => {
+      if (opt.dataset.locked) return;
+      const allOpts = optionsWrap.querySelectorAll('.quiz-option');
+      allOpts.forEach(o => o.dataset.locked = '1');
+
+      if (index === q.correct) {
+        opt.classList.add('correct');
+        questScore++;
+      } else {
+        opt.classList.add('incorrect');
+        allOpts[q.correct].classList.add('correct');
+      }
+      
+      setTimeout(() => {
+        currentQuestStep++;
+        renderQuest();
+      }, 1000);
+    };
+    optionsWrap.appendChild(opt);
+  });
+};
+
+window.restartQuest = function() {
+  currentQuestStep = 0;
+  questScore = 0;
+  renderQuest();
+};
+
+// Запуск при переходе на страницу
+document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(() => {
+      if (currentQuestStep >= QUEST_DATA.length) restartQuest(); 
+      else renderQuest();
+    }, 50);
+  });
+});
 // ============================================================
 // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
 // ============================================================
