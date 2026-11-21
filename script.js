@@ -151,11 +151,20 @@ if (searchInput) {
 function cardHTML(item) {
   const img = item.photo ? `<img src="${item.photo}" alt="${item.title}" onerror="this.style.display='none'">` : LAYER_EMOJI[item.layer];
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
-    const cardThemeClass = `card--${item.layer}`;
   const tag = item.link ? 'a' : 'div';
   const href = item.link ? `href="${item.link}"` : '';
   const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
-  return `<${tag} ${href} class="card ${cardThemeClass}" style="text-decoration: none; color: inherit;"><div class="${imgClass}">${img}</div>
+  
+  return `<${tag} ${href} class="card" style="text-decoration: none; color: inherit;">
+    <div class="${imgClass}">${img}</div>
+    <div class="card-content">
+      <h3>${item.title}</h3>
+      <p>${item.text}</p>
+      <p class="card__meta">📍 ${item.address}</p>
+      ${readMore}
+    </div>
+  </${tag}>`;
+}
 
 function renderCards(layer, containerId) {
   const container = document.getElementById(containerId);
