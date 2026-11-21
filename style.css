@@ -745,3 +745,30 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
     position: relative;
   }
 }
+/* Плавное появление карточек */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Цветовые акценты для категорий (Идея 3) */
+/* Когда активен фильтр "Легенды" */
+body[data-layer="legends"] .card {
+  border-bottom-color: #ffd700; /* Золотой */
+}
+/* Когда активен фильтр "Молодежь" */
+body[data-layer="youth"] .card {
+  border-bottom-color: #3978ff; /* Синий */
+}
+/* Когда активен фильтр "События" */
+body[data-layer="events"] .card {
+  border-bottom-color: #ec4899; /* Розовый */
+}
+/* Когда активен фильтр "Объекты" */
+body[data-layer="objects"] .card {
+  border-bottom-color: #16b8a6; /* Бирюзовый */
+}
