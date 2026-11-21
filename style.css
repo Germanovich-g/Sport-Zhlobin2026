@@ -781,3 +781,4 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 .card {
   transition-delay: 0.1s;
 }
+.chip--teams.is-active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
