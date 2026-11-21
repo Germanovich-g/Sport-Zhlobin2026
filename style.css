@@ -690,3 +690,31 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
     color: var(--accent);
   }
 }
+/* Принудительное отображение бургера на мобильных */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    position: relative;
+  }
+  
+  /* Чтобы навигация точно открывалась поверх контента */
+  .nav.is-open {
+    display: flex !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(20, 33, 61, 0.98);
+    padding: 20px;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+  
+  /* Убедимся, что хедер не обрезает выпадающее меню */
+  .header {
+    position: relative;
+  }
+}
