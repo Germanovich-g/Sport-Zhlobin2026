@@ -88,7 +88,9 @@ const DATA = [
   { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg', link: 'narmania-event.html' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'2018', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg', link: 'spartakiada.html' },
   { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию!', lat:52.8928, lng:30.0272, photo:'', hidden: true }
-];
+  { id:'metallurg', layer:'teams', title:'ХК «Металлург-Жлобин»', address:'Хоккейный клуб', text:'Главная хоккейная команда города.', lat:52.8920, lng:30.0300, photo:'metallurg.jpg', link: 'metallurg.html' },
+  { id:'iskra', layer:'teams', title:'ВК «Искра»', address:'Волейбольный клуб', text:'Женская волейбольная команда.', lat:52.8925, lng:30.0310, photo:'iskra.jpg', link: 'iskra.html' },
+    ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
 let map = null;
