@@ -1,19 +1,4 @@
 // ============================================================
-// МОБИЛЬНОЕ МЕНЮ (БУРГЕР) - ВЫНЕСЕНО В НАЧАЛО ДЛЯ НАДЕЖНОСТИ
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  const navToggle = document.getElementById('navToggle');
-  const mainNav = document.getElementById('mainNav');
-
-  if (navToggle && mainNav) {
-    navToggle.addEventListener('click', (e) => {
-      e.preventDefault(); // Защита от перезагрузки страницы
-      mainNav.classList.toggle('is-open');
-      navToggle.classList.toggle('is-active');
-    });
-  }
-});
-// ============================================================
 // НАВИГАЦИЯ ПО СТРАНИЦАМ
 // ============================================================
 document.querySelectorAll('[data-page-link]').forEach(link => {
@@ -44,13 +29,7 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
     }
   });
 });
-if (page === 'quiz') {
-  setTimeout(() => {
-    if (typeof renderQuizTiles === 'function') {
-      renderQuizTiles();
-    }
-  }, 50);
-}
+
 // ============================================================
 // ДАННЫЕ КАРТЫ
 // ============================================================
@@ -2386,99 +2365,14 @@ const QUIZ_DATA = {
   }
 };
 // ============================================================
-// ТЕСТЫ: РЕНДЕР
+// МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
 // ============================================================
-const quizContainer = document.getElementById('quizContainer');
+const navToggle = document.getElementById('navToggle');
+const mainNav = document.getElementById('mainNav');
 
-// 1. Плитки разделов
-window.renderQuizTiles = function() {
-  if (!quizContainer) return;
-  quizContainer.innerHTML = `<div class="method-tiles">${Object.entries(QUIZ_DATA).map(([key, block]) => `
-    <div class="method-tile" onclick="renderQuizTopics('${key}')">
-      <div class="method-tile__icon">${block.icon}</div>
-      <div class="method-tile__title">${block.title}</div>
-      <div class="method-tile__count">${block.topics.length} тем</div>
-    </div>
-  `).join('')}</div>`;
-};
-
-// 2. Список тем раздела
-window.renderQuizTopics = function(blockKey) {
-  const block = QUIZ_DATA[blockKey];
-  if (!block || !quizContainer) return;
-  quizContainer.innerHTML = `
-    <div class="method-detail">
-      <div class="method-detail__header">
-        <button class="method-detail__back" onclick="renderQuizTiles()">← Назад к разделам</button>
-        <h3 class="method-detail__title">${block.icon} ${block.title}</h3>
-      </div>
-      <div class="method-tab__content" style="padding: 0;">
-        ${block.topics.map(t => `
-          <div style="padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px; font-weight: 800; color: var(--text); font-size: 1.1rem;">${t.title}</div>
-            <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="renderQuizQuestions('${blockKey}', '${t.id}')">Начать тест</button>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-};
-
-// 3. Вопросы с вариантами
-window.renderQuizQuestions = function(blockKey, topicId) {
-  const block = QUIZ_DATA[blockKey];
-  const topic = block && block.topics.find(t => t.id === topicId);
-  if (!topic || !quizContainer) return;
-
-  let score = 0;
-  let answered = 0;
-
-  quizContainer.innerHTML = `
-    <div class="method-detail">
-      <div class="method-detail__header">
-        <button class="method-detail__back" onclick="renderQuizTopics('${blockKey}')">← Назад к темам</button>
-        <h3 class="method-detail__title">${block.icon} ${topic.title}</h3>
-      </div>
-      <div class="quiz-container" style="margin: 30px;">
-        <div id="quizQuestions"></div>
-        <div id="quizResult" style="margin-top: 25px; font-weight: 800; font-size: 1.2rem; text-align: center;"></div>
-      </div>
-    </div>
-  `;
-
-  const qWrap = document.getElementById('quizQuestions');
-  const resultEl = document.getElementById('quizResult');
-
-  topic.questions.forEach((q, qi) => {
-    const qEl = document.createElement('div');
-    qEl.className = 'quiz-question';
-    qEl.innerHTML = `<h4>${qi + 1}. ${q.q}</h4>`;
-    q.a.forEach((ans, ai) => {
-      const opt = document.createElement('div');
-      opt.className = 'quiz-option';
-      opt.textContent = ans;
-      opt.addEventListener('click', () => {
-        if (opt.dataset.locked) return;
-        // блокируем все варианты этого вопроса
-        qEl.querySelectorAll('.quiz-option').forEach(o => o.dataset.locked = '1');
-        if (ai === q.correct) {
-          opt.classList.add('correct');
-          score++;
-        } else {
-          opt.classList.add('incorrect');
-          // показать правильный
-          qEl.querySelectorAll('.quiz-option')[q.correct].classList.add('correct');
-        }
-        answered++;
-        if (answered === topic.questions.length) {
-          resultEl.textContent = `Результат: ${score} из ${topic.questions.length} правильных.`;
-        }
-      });
-      qEl.appendChild(opt);
-    });
-    qWrap.appendChild(qEl);
+if (navToggle && mainNav) {
+  navToggle.addEventListener('click', () => {
+    mainNav.classList.toggle('is-open');
+    navToggle.classList.toggle('is-active');
   });
-};
-
-// 4. Автозапуск при переходе на страницу тестов
-// добавляем в существующий обработчик [data-page-link] (см. ниже)
+}
