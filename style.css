@@ -760,3 +760,24 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 .card[data-layer="legends"] { border-bottom-color: #ffd700; } /* Золотой */
 .card[data-layer="youth"] { border-bottom-color: #3978ff; }   /* Синий */
 .card[data-layer="events"] { border-bottom-color: #ec4899; }  /* Розовый */
+/* ============================================================
+   АНИМАЦИЯ ПРИ ПРОКРУТКЕ (SCROLL REVEAL)
+   ============================================================ */
+
+/* Изначально все секции скрыты и сдвинуты вниз */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease-out;
+}
+
+/* Когда секция появляется на экране, она плавно выезжает */
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Чтобы карточки внутри секций появлялись с небольшой задержкой друг за другом (эффект каскада) */
+.card {
+  transition-delay: 0.1s;
+}
