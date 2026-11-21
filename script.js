@@ -2501,9 +2501,9 @@ window.renderQuest = function() {
       Вопрос ${currentQuestStep + 1} из ${QUEST_DATA.length}
     </div>
     <div class="quiz-question">
-      <div style="font-size: 6rem; text-align: center; margin-bottom: 20px; line-height: 1;">${q.image}</div>
-      <h4 style="text-align: center; font-size: 1.3rem;">${q.question}</h4>
-      <div id="questOptions" style="margin-top: 20px;"></div>
+      <div style="font-size: 5rem; text-align: center; margin-bottom: 15px; line-height: 1;">${q.image}</div>
+      <h4 style="text-align: center; font-size: 1.2rem; margin-bottom: 20px;">${q.question}</h4>
+      <div id="questOptions" style="margin-top: 10px;"></div>
     </div>
   `;
 
@@ -2540,15 +2540,6 @@ window.restartQuest = function() {
   renderQuest();
 };
 
-// Запуск при переходе на страницу
-document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
-  link.addEventListener('click', () => {
-    setTimeout(() => {
-      if (currentQuestStep >= QUEST_DATA.length) restartQuest(); 
-      else renderQuest();
-    }, 50);
-  });
-});
 // Запуск при переходе на страницу
 document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
   link.addEventListener('click', () => {
