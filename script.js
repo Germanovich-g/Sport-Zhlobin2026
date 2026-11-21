@@ -2668,3 +2668,31 @@ document.querySelectorAll('[data-page-link="quiz"]').forEach(link => {
     }, 50);
   });
 });
+// ============================================================
+// АНИМАЦИЯ ПРИ ПРОКРУТКЕ
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Находим все секции, которые нужно анимировать
+  const sections = document.querySelectorAll('.section, .hero');
+  
+  // Сразу добавляем класс .reveal, чтобы они стали невидимыми до прокрутки
+  sections.forEach(sec => {
+    sec.classList.add('reveal');
+  });
+
+  // Настраиваем "наблюдатель" за прокруткой
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Если секция попала в поле зрения — показываем её
+        entry.target.classList.add('active');
+        // Отключаем наблюдение, чтобы анимация сработала только один раз
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1 // Секция должна показаться хотя бы на 10%, чтобы сработала анимация
+  });
+
+  sections.forEach(sec => observer.observe(sec));
+});
