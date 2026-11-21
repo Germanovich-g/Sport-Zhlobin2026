@@ -92,7 +92,7 @@ const DATA = [
   { id:'iskra', layer:'teams', title:'ВК «Искра»', address:'Волейбольный клуб', text:'Женская волейбольная команда.', lat:52.8925, lng:30.0310, photo:'iskra.jpg', link: 'iskra.html' },
     ];
 
-const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉', teams: '🛡️' };
+const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉' };
 let map = null;
 const markerMap = new Map();
 let currentLayer = 'all';
@@ -202,12 +202,12 @@ function renderCards(layer, containerId) {
     container.appendChild(realCard);
   });
 }
+
 function renderAllCards() {
   renderCards('objects', 'objectsList');
   renderCards('legends', 'legendsList');
   renderCards('youth', 'youthList');
   renderCards('events', 'eventsList');
-  renderCards('teams', 'teamsList');
 }
 
 if (map) applyFilters();
