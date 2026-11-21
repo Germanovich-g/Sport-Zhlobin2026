@@ -756,16 +756,7 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 }
 
 /* Цветовые акценты для карточек по их категориям */
-.card--objects { border-bottom-color: #16b8a6; } /* Бирюзовый */
-.card--legends { border-bottom-color: #ffd700; } /* Золотой */
-.card--youth { border-bottom-color: #3978ff; }   /* Синий */
-.card--events { border-bottom-color: #ec4899; }  /* Розовый */
-
-/* Плавное появление карточек оставляем */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.card {
-  animation: fadeInUp 0.5s ease forwards;
-}
+.card[data-layer="objects"] { border-bottom-color: #16b8a6; } /* Бирюзовый */
+.card[data-layer="legends"] { border-bottom-color: #ffd700; } /* Золотой */
+.card[data-layer="youth"] { border-bottom-color: #3978ff; }   /* Синий */
+.card[data-layer="events"] { border-bottom-color: #ec4899; }  /* Розовый */
