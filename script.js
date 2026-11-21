@@ -46,10 +46,10 @@ const DATA = [
   { id:'led', layer:'objects', title:'Ледовый дворец', address:'ул. Карла Маркса, 3/1', text:'Домашняя арена ХК «Металлург-Жлобин».', lat:52.8925, lng:30.0290, photo:'led.jpg', link: 'led.html' },
   { id:'dvor', layer:'objects', title:'Дворец игровых видов спорта', address:'ул. Карла Маркса, 3/1', text:'Комплекс на 1500 мест.', lat:52.8920, lng:30.0280, photo:'dvor.jpg', link: 'dvor.html' },
   { id:'pool', layer:'objects', title:'Плавательный бассейн', address:'ул. Карла Маркса, 3/1', text:'Арена с 50-метровыми дорожками.', lat:52.8915, lng:30.0270, photo:'pool.jpg', link: 'pool.html' },
-  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'stadium.jpg', link: 'stadium.html' },
-  { id:'sdyushor', layer:'objects', title:'Жлобинская районная СДЮШОР', address:'ул. Первомайская, 1А', text:'Кузница будущих чемпионов.', lat:52.8940, lng:30.0250, photo:'sdyushor.jpg', link: 'sdyushor.html' },
+  { id:'stadium', layer:'objects', title:'Городской стадион', address:'ул. Парижской Коммуны, 13', text:'Главная площадка для футбола.', lat:52.8890, lng:30.0220, photo:'stadium.jpeg', link: 'stadium.html' },
+  { id:'sdyushor', layer:'objects', title:'Жлобинская районная СДЮШОР', address:'ул. Первомайская, 1А', text:'Кузница будущих чемпионов.', lat:52.8940, lng:30.0250, photo:'sdyushor..jpg', link: 'sdyushor.html' },
   { id:'ski-track', layer:'objects', title:'Лыжероллерная трасса', address:'Берег Днепра', text:'2,5 км асфальтированной трассы. Биатлон, лыжи, роллеры.', lat:52.8850, lng:30.0350, photo:'ski-track.jpg', link: 'ski-track.html' },
-  { id:'rowing', layer:'objects', title:'Гребная база', address:'Берег Днепра', text:'Флотилия на Днепре. Академическая гребля и гребля на байдарках.', lat:52.8845, lng:30.0360, photo:'rowing.jpg', link: 'rowing.html' },
+  { id:'rowing', layer:'objects', title:'Гребная база', address:'Берег Днепра', text:'Флотилия на Днепре. Академическая гребля и гребля на байдарках.', lat:52.8845, lng:30.0360, photo:'greb.jpg', link: 'rowing.html' },
   { id:'rudenkov', layer:'legends', title:'Василий Руденков', address:'Олимпийский чемпион 1960', text:'Олимпийский чемпион по метанию молота.', lat:52.8935, lng:30.0310, photo:'rydenkov.jpeg', link: 'rudenkov.html' },
   { id:'lovetsky', layer:'legends', title:'Владимир Ловецкий', address:'Серебро Олимпиады-1972', text:'Серебряный призёр в эстафете 4×100 м.', lat:52.8945, lng:30.0320, photo:'lovec.jpg', link: 'lovetsky.html' },
   { id:'kirov', layer:'legends', title:'Николай Киров', address:'Бронза Олимпиады-1980', text:'Бронзовый призёр в беге на 800 м.', lat:52.8950, lng:30.0290, photo:'kirov2.jpg', link: 'kirov.html' },
@@ -73,7 +73,7 @@ const DATA = [
   { id:'malashchenko', layer:'youth', title:'Малащенко Ангелина', address:'Спорт', text:'Юный талант.', lat:52.8915, lng:30.0315, photo:'malashchenko.jpg', link: 'malashchenko.html' },
   { id:'novikov', layer:'youth', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'novikov.jpg', link: 'novikov.html' },
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'cis-games.jpg', link: 'cis-games.html' },
-  { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania-event.jpg', link: 'narmania-event.html' },
+  { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg', link: 'narmania-event.html' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'2018', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg', link: 'spartakiada.html' },
   { id:'secret', layer:'objects', title:'Секретный объект', address:'Скрытая локация', text:'Вы нашли скрытую информацию!', lat:52.8928, lng:30.0272, photo:'', hidden: true }
 ];
