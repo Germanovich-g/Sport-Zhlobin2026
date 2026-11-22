@@ -2710,3 +2710,20 @@ window.addEventListener('load', () => {
     sessionStorage.removeItem('scrollPosition'); // Очищаем, чтобы сработало один раз
   }
 });
+// ============================================================
+// ВОЗВРАТ НА ПРЕДЫДУЩУЮ СТРАНИЦУ И ПРОКРУТКА К КАРТЕ
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const openPage = sessionStorage.getItem('openPage');
+  if (openPage) {
+    sessionStorage.removeItem('openPage');
+    const targetLink = document.querySelector(`[data-page-link="${openPage}"]`);
+    if (targetLink) {
+      targetLink.click();
+      setTimeout(() => {
+        const mapSection = document.getElementById('map');
+        if (mapSection) mapSection.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
+});
