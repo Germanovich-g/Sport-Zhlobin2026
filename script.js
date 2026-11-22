@@ -153,7 +153,7 @@ function cardHTML(item) {
   const imgClass = (item.layer === 'legends' || item.layer === 'youth') ? 'card__img card__img--people' : 'card__img';
   const tag = item.link ? 'a' : 'div';
   const href = item.link ? `href="${item.link}"` : '';
-  const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">Читать биографию →</p>` : '';
+  const readMore = item.link ? `<p style="color: var(--primary); font-weight: bold; margin-top: 10px;">${item.layer === 'objects' || item.layer === 'events' || item.layer === 'teams' ? 'Узнать подробнее →' : 'Читать биографию →'}</p>` : '';
   
     return `<${tag} ${href} class="card" data-layer="${item.layer}" style="text-decoration: none; color: inherit;">
     <div class="${imgClass}">${img}</div>
