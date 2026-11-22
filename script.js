@@ -11,7 +11,6 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
     });
     const target = document.getElementById(`page-${page}`);
     if (target) target.style.display = 'block';
-    window.scrollTo(0, 0);
 
     // Закрываем мобильное меню после перехода
     const nav = document.querySelector('.nav');
