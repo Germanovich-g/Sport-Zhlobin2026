@@ -2694,3 +2694,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   sections.forEach(sec => observer.observe(sec));
 });
+// Запоминаем позицию прокрутки перед переходом на главную
+document.querySelectorAll('a[href="index.html"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    // Запоминаем, насколько страница прокручена вниз
+    sessionStorage.setItem('scrollPosition', window.scrollY);
+  });
+});
+
+// Когда главная страница загружается, восстанавливаем позицию
+window.addEventListener('load', () => {
+  const scrollPos = sessionStorage.getItem('scrollPosition');
+  if (scrollPos) {
+    window.scrollTo(0, parseInt(scrollPos));
+    sessionStorage.removeItem('scrollPosition'); // Очищаем, чтобы сработало один раз
+  }
+});
