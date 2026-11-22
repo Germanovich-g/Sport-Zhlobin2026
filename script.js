@@ -69,11 +69,11 @@ const DATA = [
   { id:'malyshev', layer:'youth', title:'Даниил Малышев', address:'Биатлон', text:'Победитель масс-старта.', lat:52.8885, lng:30.0320, photo:'malyshev.jpg', link: 'malyshev.html' },
   { id:'vashchenko', layer:'youth', title:'Владислав Ващенко', address:'Единоборства', text:'Призёр международных турниров.', lat:52.8945, lng:30.0225, photo:'vashchenko.jpg', link: 'vashchenko.html' },
   { id:'malashchenko', layer:'youth', title:'Малащенко Ангелина', address:'Спорт', text:'Юный талант.', lat:52.8915, lng:30.0315, photo:'malashchenko.jpg', link: 'malashchenko.html' },
-  { id:'novikov', layer:'youth', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'novikov.jpg', link: 'novikov.html' },
+  { id:'novikov', layer:'legends', title:'Сергей Новиков', address:'Биатлон', text:'Серебряный призёр Олимпиады-2010.', lat:52.8900, lng:30.0350, photo:'novikov.jpg', link: 'novikov.html' },
   { id:'cis-games', layer:'events', title:'II Игры стран СНГ', address:'2023', text:'Соревнования по самбо.', lat:52.8910, lng:30.0350, photo:'cis-games.jpg', link: 'cis-games.html' },
   { id:'narmania-event', layer:'events', title:'Турнир памяти Шоты Нармания', address:'Ежегодно', text:'Греко-римская борьба.', lat:52.8980, lng:30.0290, photo:'narmania.jpg', link: 'narmania-event.html' },
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'2018', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg', link: 'spartakiada.html' },
-  { id:'metallurg', layer:'teams', title:'ХК «Металлург-Жлобин»', address:'Хоккейный клуб', text:'Главная хоккейная команда города.', lat:52.8920, lng:30.0300, photo:'metallurg.jpg', link: 'metallurg.html' },
+  { id:'metallurg', layer:'teams', title:'ХК «Металлург-Жлобин»', address:'Хоккейный клуб', text:'Главная хоккейная команда города.', lat:52.8920, lng:30.0300, photo:'bg-events.jpg', link: 'metallurg.html' },
   { id:'iskra', layer:'teams', title:'ВК «Искра»', address:'Волейбольный клуб', text:'Женская волейбольная команда.', lat:52.8925, lng:30.0310, photo:'iskra.jpg', link: 'iskra.html' },
 ];
 
