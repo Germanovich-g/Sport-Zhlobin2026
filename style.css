@@ -781,3 +781,72 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 .card {
   transition-delay: 0.1s;
 }
+/* ============================================================
+   СТИЛИ ДЛЯ ОБЪЯСНЕНИЙ В ТЕСТАХ (НОВЫЕ)
+   ============================================================ */
+.quiz-explanation {
+  margin-top: 15px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: var(--bg-alt);
+  border-left: 5px solid var(--accent);
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.quiz-explanation strong {
+  color: var(--primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-theory-box {
+  margin-top: 12px;
+  padding: 15px 20px;
+  background: var(--bg-alt);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.quiz-theory-box summary {
+  cursor: pointer;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quiz-theory-box summary::-webkit-details-marker {
+  display: none;
+}
+
+.quiz-theory-box summary::before {
+  content: '📖';
+  font-size: 1.1rem;
+}
+
+.quiz-theory-box[open] summary {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.quiz-option[data-locked="1"] {
+  pointer-events: none;
+  cursor: default;
+}
+
+.quiz-option[data-locked="1"]:hover {
+  transform: none;
+}
