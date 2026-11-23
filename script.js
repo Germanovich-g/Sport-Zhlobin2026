@@ -2605,9 +2605,17 @@ window.renderQuizTopics = function(blockKey) {
       </div>
       <div class="method-tab__content" style="padding: 0;">
         ${block.topics.map(t => `
-          <div style="padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px; font-weight: 800; color: var(--text); font-size: 1.1rem;">${t.title}</div>
-            <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="renderQuizQuestions('${blockKey}', '${t.id}')">Начать тест</button>
+          <div style="padding: 25px 30px; border-bottom: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
+              <div style="flex: 1; min-width: 200px; font-weight: 800; color: var(--text); font-size: 1.1rem;">${t.title}</div>
+              <button class="btn" style="padding: 10px 20px; font-size: 0.85rem;" onclick="renderQuizQuestions('${blockKey}', '${t.id}')">Начать тест</button>
+            </div>
+            ${t.description ? `
+              <details class="quiz-theory-box">
+                <summary>Показать теорию перед тестом</summary>
+                <div>${t.description}</div>
+              </details>
+            ` : ''}
           </div>
         `).join('')}
       </div>
@@ -2629,7 +2637,7 @@ window.renderQuizQuestions = function(blockKey, topicId) {
         <button class="method-detail__back" onclick="renderQuizTopics('${blockKey}')">← Назад к темам</button>
         <h3 class="method-detail__title">${block.icon} ${topic.title}</h3>
       </div>
-      <div class="quiz-container" style="margin: 30px;">
+      <div class="quiz-container" style="margin: 30px auto; max-width: 800px;">
         <div id="quizQuestions"></div>
         <div id="quizResult" style="margin-top: 25px; font-weight: 800; font-size: 1.2rem; text-align: center; color: var(--primary);"></div>
       </div>
@@ -2643,31 +2651,48 @@ window.renderQuizQuestions = function(blockKey, topicId) {
     const qEl = document.createElement('div');
     qEl.className = 'quiz-question';
     qEl.innerHTML = `<h4>${qi + 1}. ${q.q}</h4>`;
+    
+    const optionsWrap = document.createElement('div');
+    
     q.a.forEach((ans, ai) => {
       const opt = document.createElement('div');
       opt.className = 'quiz-option';
       opt.textContent = ans;
+      
       opt.addEventListener('click', () => {
-        if (opt.dataset.locked) return;
-        qEl.querySelectorAll('.quiz-option').forEach(o => o.dataset.locked = '1');
+        if (optionsWrap.dataset.locked) return;
+        optionsWrap.dataset.locked = '1';
+        
+        const allOpts = optionsWrap.querySelectorAll('.quiz-option');
+        allOpts.forEach(o => o.dataset.locked = '1');
+        
         if (ai === q.correct) {
           opt.classList.add('correct');
           score++;
         } else {
           opt.classList.add('incorrect');
-          qEl.querySelectorAll('.quiz-option')[q.correct].classList.add('correct');
+          allOpts[q.correct].classList.add('correct');
         }
+        
+        if (q.explanation) {
+          const explDiv = document.createElement('div');
+          explDiv.className = 'quiz-explanation';
+          explDiv.innerHTML = `<strong>💡 Объяснение:</strong> ${q.explanation}`;
+          qEl.appendChild(explDiv);
+        }
+        
         answered++;
         if (answered === topic.questions.length) {
           resultEl.textContent = `Результат: ${score} из ${topic.questions.length} правильных.`;
         }
       });
-      qEl.appendChild(opt);
+      optionsWrap.appendChild(opt); // <-- ЭТА СТРОКА ТЕПЕРЬ НА ПРАВИЛЬНОМ МЕСТЕ
     });
+    
+    qEl.appendChild(optionsWrap);
     qWrap.appendChild(qEl);
   });
 };
-
 // Подключаем запуск тестов при переходе на страницу
 document.querySelectorAll('[data-page-link="quiz"]').forEach(link => {
   link.addEventListener('click', () => {
