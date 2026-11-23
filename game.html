@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Хоккейный буллит | Жлобин-Спорт</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <div class="game-page">
+    <a href="index.html" class="back-btn">← На главную</a>
+    
+    <div class="game-header">
+      <h1>Хоккейный буллит</h1>
+      <p>Забей гол вратарю «Металлурга»!</p>
+    </div>
+
+    <div class="game-container">
+      <div class="game-info">
+        <div>Уровень: <span id="levelDisplay">1</span> (Новичок)</div>
+        <div>Голы: <span id="scoreDisplay">0</span> / 3</div>
+        <div>Попытки: <span id="attemptsDisplay">5</span></div>
+      </div>
+
+      <div class="ice-rink" id="rink">
+        <!-- Ворота -->
+        <div class="goal" id="goal">
+          <div class="goalie" id="goalie"></div>
+        </div>
+        <!-- Шайба -->
+        <div class="puck" id="puck">🏒</div>
+      </div>
+
+      <div class="game-controls">
+        <p>Кликни по воротам, чтобы бросить шайбу!</p>
+        <button id="resetGame" class="btn" style="display: none;">Играть снова</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
