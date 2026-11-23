@@ -1,39 +1,44 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Хоккейный буллит | Жлобин-Спорт</title>
+  <title>Спортивный детектив | Жлобин-Спорт</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
-  <div class="game-page">
+  <div class="detective-page">
     <a href="index.html" class="back-btn">← На главную</a>
     
-    <div class="game-header">
-      <h1>Хоккейный буллит</h1>
-      <p>Стань лучшим снайпером «Металлурга»!</p>
+    <div class="detective-header">
+      <h1>🕵️‍♂️ Спортивный детектив</h1>
+      <p>Тайны белорусского золота</p>
     </div>
 
-    <div class="game-container">
-      <div class="game-hud">
-        <div class="hud-item">Уровень: <span id="levelDisplay">1</span></div>
-        <div class="hud-item">Голы: <span id="scoreDisplay">0</span> / 3</div>
-        <div class="hud-item">Попытки: <span id="attemptsDisplay">5</span></div>
+    <div class="case-container">
+      <div class="case-info">
+        <span id="levelTitle">Дело №1: Пропавший молот</span>
+        <span id="progress">Улики: 0 / 3</span>
       </div>
 
-      <div class="ice-rink" id="rink">
-        <div class="goal" id="goal">
-          <div class="goalie" id="goalie"></div>
+      <div class="case-text" id="caseText">
+        <!-- Текст завязки будет здесь -->
+      </div>
+
+      <div class="evidence-board" id="evidenceBoard">
+        <!-- Улики будут появляться здесь -->
+      </div>
+
+      <div class="question-area">
+        <h2 id="questionText">Вопрос</h2>
+        <div class="options" id="optionsContainer">
+          <!-- Варианты ответов -->
         </div>
-        <div class="puck" id="puck">🥅</div>
       </div>
 
-      <div class="game-controls">
-        <p id="message">Кликни по воротам, чтобы бросить шайбу!</p>
-        <button id="resetGame" class="btn" style="display: none;">Играть снова</button>
-      </div>
+      <div class="result-message" id="resultMessage"></div>
+      <button id="nextLevelBtn" class="btn" style="display: none;">Следующее дело →</button>
     </div>
   </div>
 
