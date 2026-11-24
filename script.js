@@ -2954,3 +2954,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+// ============================================================
+// БУРГЕР-МЕНЮ (ФИНАЛЬНАЯ ВЕРСИЯ)
+// ============================================================
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('#navToggle');
+  if (btn) {
+    e.preventDefault();
+    const nav = document.getElementById('mainNav');
+    if (nav) {
+      nav.classList.toggle('is-open');
+      btn.classList.toggle('is-active');
+    }
+  }
+});
