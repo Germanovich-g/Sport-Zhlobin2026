@@ -1,18 +1,32 @@
 // ============================================================
-// НАВИГАЦИЯ ПО СТРАНИЦАМ (ИСПРАВЛЕННАЯ)
+// НАВИГАЦИЯ ПО СТРАНИЦАМ
 // ============================================================
 document.querySelectorAll('[data-page-link]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const page = link.dataset.pageLink;
-    ['home', 'students', 'method', 'quiz', 'quest'].forEach(p => {
+        ['home', 'students', 'method', 'quiz', 'quest'].forEach(p => {
       const el = document.getElementById(`page-${p}`);
       if (el) el.style.display = 'none';
     });
     const target = document.getElementById(`page-${page}`);
     if (target) target.style.display = 'block';
-    window.scrollTo(0, 0);
 
+    // Закрываем мобильное меню после перехода
+    const nav = document.querySelector('.nav');
+    const burger = document.getElementById('navToggle');
+    if (nav) nav.classList.remove('is-open');
+    if (burger) burger.classList.remove('is-active');
+      // Обработчик для бургер-меню (добавлен для мобильной версии)
+      const navToggleBtn = document.getElementById('navToggle');
+      const mainNav = document.getElementById('mainNav');
+      if (navToggleBtn && mainNav) {
+        navToggleBtn.onclick = function(e) {
+          e.preventDefault();
+          mainNav.classList.toggle('is-open');
+          navToggleBtn.classList.toggle('is-active');
+        };
+      }
     // Если открыли страницу "Учителю" — запускаем отрисовку
     if (page === 'method') {
       setTimeout(() => {
@@ -2733,17 +2747,15 @@ document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
   });
 });
 // ============================================================
-// МОБИЛЬНОЕ МЕНЮ (БУРГЕР) — ИСПРАВЛЕННАЯ ВЕРСИЯ
+// МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
 // ============================================================
-const navToggleBtn = document.getElementById('navToggle');
-const mainNavMenu = document.getElementById('mainNav');
+const navToggle = document.getElementById('navToggle');
+const mainNav = document.getElementById('mainNav');
 
-if (navToggleBtn && mainNavMenu) {
-  navToggleBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    mainNavMenu.classList.toggle('is-open');
-    navToggleBtn.classList.toggle('is-active');
+if (navToggle && mainNav) {
+  navToggle.addEventListener('click', () => {
+    mainNav.classList.toggle('is-open');
+    navToggle.classList.toggle('is-active');
   });
 }
 // ============================================================
@@ -2927,44 +2939,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const mapSection = document.getElementById('map');
         if (mapSection) mapSection.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-    }
-  }
-});
-// ============================================================
-// МОБИЛЬНОЕ МЕНЮ (БУРГЕР) — НЕЗАВИСИМЫЙ ОБРАБОТЧИК
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  const navToggle = document.getElementById('navToggle');
-  const mainNav = document.getElementById('mainNav');
-  
-  if (navToggle && mainNav) {
-    navToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      mainNav.classList.toggle('is-open');
-      navToggle.classList.toggle('is-active');
-    });
-  }
-
-  // Закрываем меню при клике на любую ссылку внутри него
-  const navLinks = mainNav ? mainNav.querySelectorAll('a') : [];
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      mainNav.classList.remove('is-open');
-      navToggle.classList.remove('is-active');
-    });
-  });
-});
-// ============================================================
-// БУРГЕР-МЕНЮ (ФИНАЛЬНАЯ ВЕРСИЯ)
-// ============================================================
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('#navToggle');
-  if (btn) {
-    e.preventDefault();
-    const nav = document.getElementById('mainNav');
-    if (nav) {
-      nav.classList.toggle('is-open');
-      btn.classList.toggle('is-active');
     }
   }
 });
