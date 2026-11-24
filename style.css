@@ -889,3 +889,43 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
     z-index: 9999;
   }
 }
+/* ============================================================
+   МОБИЛЬНОЕ МЕНЮ (ПРИНУДИТЕЛЬНОЕ ИСПРАВЛЕНИЕ)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Когда меню открыто, оно должно быть поверх всего */
+  .nav.is-open {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 70px !important; /* под шапкой */
+    left: 0 !important;
+    right: 0 !important;
+    background: #14213d !important; /* тёмный фон */
+    padding: 20px !important;
+    z-index: 9999999 !important; /* поверх всего */
+    border-bottom: 3px solid #ff6b35 !important;
+  }
+
+  /* Ссылки внутри меню */
+  .nav.is-open a {
+    color: #fff !important;
+    padding: 12px !important;
+    text-align: center !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Кнопка бургера должна быть кликабельной */
+  .nav-toggle {
+    display: flex !important;
+    position: relative !important;
+    z-index: 10000000 !important;
+    pointer-events: auto !important;
+    background: #ff6b35 !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
