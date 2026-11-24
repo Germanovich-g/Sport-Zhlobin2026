@@ -2747,15 +2747,21 @@ document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
   });
 });
 // ============================================================
-// МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
+// МОБИЛЬНОЕ МЕНЮ (БУРГЕР) — ИСПРАВЛЕННЫЙ
 // ============================================================
-const navToggle = document.getElementById('navToggle');
-const mainNav = document.getElementById('mainNav');
+const navToggleBtn = document.getElementById('navToggle');
+const mainNavMenu = document.getElementById('mainNav');
 
-if (navToggle && mainNav) {
-  navToggle.addEventListener('click', () => {
-    mainNav.classList.toggle('is-open');
-    navToggle.classList.toggle('is-active');
+if (navToggleBtn && mainNavMenu) {
+  navToggleBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // Показываем/скрываем меню через inline-стиль
+    if (mainNavMenu.style.display === 'flex') {
+      mainNavMenu.style.display = 'none';
+    } else {
+      mainNavMenu.style.display = 'flex';
+    }
   });
 }
 // ============================================================
