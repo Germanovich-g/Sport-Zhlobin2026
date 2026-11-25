@@ -75,6 +75,7 @@ const DATA = [
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'2018', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg', link: 'spartakiada.html' },
   { id:'metallurg', layer:'teams', title:'ХК «Металлург-Жлобин»', address:'Хоккейный клуб', text:'Главная хоккейная команда города.', lat:52.8920, lng:30.0300, photo:'bg-events.jpg', link: 'metallurg.html' },
   { id:'iskra', layer:'teams', title:'ВК «Искра»', address:'Волейбольный клуб', text:'Женская волейбольная команда.', lat:52.8925, lng:30.0310, photo:'iskra.jpg', link: 'iskra.html' },
+  { id: 'secret', layer: 'events', title: '🌟 Секретная точка', address: 'Заказник «Смычок»', text: 'Вы нашли скрытое место! Говорят, именно здесь Наполеон спрятал свою золотую карету...', lat: 52.8800, lng: 30.0500, photo: 'secret.jpg', hidden: true, link: '' },
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉', teams: '🛡️' };
@@ -2657,27 +2658,39 @@ let questScore = 0;
 window.renderQuest = function() {
   if (!questContainer) return;
   
-  // Если квест закончен
+   // Если квест закончен
   if (currentQuestStep >= QUEST_DATA.length) {
     let title = "🏆 Победа!";
     let text = `Отличный результат! Ты набрал ${questScore} из ${QUEST_DATA.length} баллов!`;
-    
+    let showSecretBtn = false;
+
     if (questScore === 0) {
       title = "😢 Попробуй еще раз!";
       text = "Ты не ответил ни на один вопрос. Изучи карту и возвращайся!";
     } else if (questScore < 4) {
       title = "🤔 Неплохо!";
       text = `Ты набрал ${questScore} из ${QUEST_DATA.length} баллов. Попробуй улучшить результат!`;
-    } else if (questScore >= 7) {
+    } else if (questScore >= 6) { // <--- Если набрал 6 и больше
       title = "🌟 Настоящий эксперт!";
-      text = `Превосходно! ${questScore} из ${QUEST_DATA.length} баллов. Ты знаешь спорт Жлобина на отлично!`;
+      text = `Превосходно! ${questScore} из ${QUEST_DATA.length} баллов. Ты знаешь спорт Жлобина на отлично! Но самое интересное...`;
+      showSecretBtn = true; // <--- Включаем кнопку секрета
+      
+      // Активируем скрытый маркер
+      if (typeof window.revealSecretMarker === 'function') {
+        window.revealSecretMarker();
+      }
     }
+
+    let secretButtonHTML = showSecretBtn 
+      ? `<button class="btn" style="margin-top: 20px; background: var(--accent); width: 100%;" onclick="document.querySelector('[data-page-link=\\'home\\']').click(); setTimeout(() => { document.getElementById('map').scrollIntoView({behavior: 'smooth'}); }, 100);">🗺️ Открыть карту и найти секрет!</button>` 
+      : '';
 
     questContainer.innerHTML = `
       <div style="text-align: center; padding: 20px;">
         <h3 style="font-size: 2rem; color: var(--primary); margin-bottom: 20px;">${title}</h3>
-        <p style="font-size: 1.2rem; margin-bottom: 30px;">${text}</p>
-        <button class="btn" onclick="restartQuest()">Пройти заново</button>
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">${text}</p>
+        ${secretButtonHTML}
+        <button class="btn" style="margin-top: 10px; border: 2px solid var(--primary); background: transparent; color: var(--primary);" onclick="restartQuest()">Пройти заново</button>
       </div>
     `;
     return;
