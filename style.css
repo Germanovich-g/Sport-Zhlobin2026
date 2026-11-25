@@ -850,3 +850,14 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 .quiz-option[data-locked="1"]:hover {
   transform: none;
 }
+/* Выравнивание карточек в блоке "О проекте" */
+.info-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.info-card p, 
+.info-card ul {
+  flex-grow: 1; /* Это заставит текст занимать всё доступное пространство */
+}
