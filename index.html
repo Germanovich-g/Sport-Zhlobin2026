@@ -46,12 +46,33 @@
         </div>
       </div>
     </section>
-    
-    <!-- ================= О ПРОЕКТЕ ================= -->
-    <section class="section section--alt" id="about">
+
+    <section class="section" id="map">
+      <div class="container">
+        <h2 class="section__title">Динамическая карта города</h2>
+        <div class="map-toolbar">
+          <div class="search">
+            <input type="search" id="searchInput" placeholder="🔍 Поиск объекта или спортсмена...">
+          </div>
+          <div class="filters">
+            <button class="chip is-active" data-layer="all">✨ Все</button>
+            <button class="chip" data-layer="objects">🏟️ Объекты</button>
+            <button class="chip chip--legends" data-layer="legends">🏆 Легенды</button>
+            <button class="chip chip--youth" data-layer="youth">⭐ Молодежь</button>
+            <button class="chip" data-layer="events">🎉 События</button>
+            <button class="chip chip--teams" data-layer="teams">🛡️ Команды</button>
+          </div>
+        </div>
+        <div id="mapContainer" class="map-container"></div>
+        <p class="map__hint" id="resultHint">Показано точек: <strong>0</strong></p>
+      </div>
+    </section>
+
+        <section class="section section--alt" id="about">
       <div class="container">
         <h2 class="section__title">О проекте</h2>
         <div class="info-grid">
+          
           <!-- Цель -->
           <div class="info-card">
             <h3>🎯 Цель проекта</h3>
@@ -109,32 +130,7 @@
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;">Наведи камеру, чтобы перейти на eior.by</p>
           </div>
         </div>
-    <section class="section" id="map">
-      <div class="container">
-        <h2 class="section__title">Динамическая карта города</h2>
-        <div class="map-toolbar">
-          <div class="search">
-            <input type="search" id="searchInput" placeholder="🔍 Поиск объекта или спортсмена...">
-          </div>
-          <div class="filters">
-            <button class="chip is-active" data-layer="all">✨ Все</button>
-            <button class="chip" data-layer="objects">🏟️ Объекты</button>
-            <button class="chip chip--legends" data-layer="legends">🏆 Легенды</button>
-            <button class="chip chip--youth" data-layer="youth">⭐ Молодежь</button>
-            <button class="chip" data-layer="events">🎉 События</button>
-            <button class="chip chip--teams" data-layer="teams">🛡️ Команды</button>
-          </div>
-        </div>
-        <div id="mapContainer" class="map-container"></div>
-        <p class="map__hint" id="resultHint">Показано точек: <strong>0</strong></p>
-      </div>
-    </section>
 
-        <section class="section section--alt" id="about">
-      <div class="container">
-        <h2 class="section__title">О проекте</h2>
-        <div class="info-grid">
-          
         </div>
       </div>
     </section>
@@ -168,10 +164,9 @@
       <div class="container">
         <h2 class="section__title">События и история</h2>
         <div class="cards" id="eventsList"></div>
-        </div>   <!-- конец карточки -->
-      </div>     <!-- конец info-grid -->
-    </div>       <!-- конец container -->
-  </section>     <!-- конец about -->
+      </div>
+    </section>
+  </div>
 
    <!-- ================= СТРАНИЦА: УЧАЩИМСЯ ================= -->
   <div id="page-students" style="display: none; padding: 120px 0 60px;">
