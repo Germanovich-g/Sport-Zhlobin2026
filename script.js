@@ -127,11 +127,24 @@ function applyFilters() {
 function revealSecretMarker() {
   if (window.isSecretUnlocked) return;
   window.isSecretUnlocked = true;
-  const secret = markerMap.get('secret');
-  if (secret && map && !map.hasLayer(secret.marker)) secret.marker.addTo(map);
-  applyFilters();
-}
+  
+  // 1. Убираем все остальные маркеры с карты
+  markerMap.forEach(({ marker }) => {
+    if (map.hasLayer(marker)) map.removeLayer(marker);
+  });
+  
+  // 2. Меняем текст под картой
+  const hintEl = document.getElementById('resultHint');
+  if (hintEl) hintEl.innerHTML = `Секретная точка открыта!`;
 
+  // 3. Показываем только секретную точку, центрируем и открываем попап
+  const secret = markerMap.get('secret');
+  if (secret && map) {
+    secret.marker.addTo(map);
+    map.setView([secret.data.lat, secret.data.lng], 14); 
+    secret.marker.openPopup(); 
+  }
+}
 document.querySelectorAll('.chip[data-layer]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.chip[data-layer]').forEach(b => b.classList.remove('is-active'));
@@ -2642,40 +2655,125 @@ const QUIZ_DATA = {
 const questContainer = document.getElementById('questContainer');
 
 const QUEST_DATA = [
-  { id: 1, image: "🏒", question: "Какая арена является домашней для ХК «Металлург-Жлобин»?", answers: ["Дворец игровых видов спорта", "Ледовый дворец", "Городской стадион"], correct: 1 },
-  { id: 2, image: "🏟️", question: "Сколько мест вмещает Дворец игровых видов спорта?", answers: ["1500", "5000", "800"], correct: 0 },
-  { id: 3, image: "⚽", question: "На каком стадионе проходят главные футбольные матчи города?", answers: ["Спартак", "Городской стадион", "Динамо"], correct: 1 },
-  { id: 4, image: "🏃", question: "Где готовят будущих чемпионов в Жлобине?", answers: ["СДЮШОР", "Школа №1", "ДЮСШ"], correct: 0 },
-  { id: 5, image: "🏊", question: "Какой объект имеет 50-метровые дорожки для плавания?", answers: ["Аквапарк", "Плавательный бассейн", "Озеро"], correct: 1 },
-  { id: 6, image: "🎉", question: "В каком году Жлобин принимал II Игры стран СНГ?", answers: ["2021", "2023", "2025"], correct: 1 },
-  { id: 7, image: "🏋️", question: "Какой вид спорта прославил Василия Руденкова?", answers: ["Метание молота", "Плавание", "Бокс"], correct: 0 },
-  { id: 8, image: "🤼", question: "Какой турнир ежегодно проходит памяти Шоты Нармания?", answers: ["Футбол", "Греко-римская борьба", "Хоккей"], correct: 1 }
+  // ЭТАП 1: ЗНАМЕНИТЫЕ ИМЕНА (Факты)
+  { 
+    stage: 1,
+    type: 'fact',
+    image: "🥇", 
+    question: "Этот спортсмен принес первое олимпийское золото Жлобину в метании молота. Назови его фамилию.", 
+    answers: ["Василий Руденков", "Владимир Ловецкий", "Николай Киров"], 
+    correct: 0,
+    explanation: "Василий Руденков — олимпийский чемпион 1960 года по метанию молота."
+  },
+  { 
+    stage: 1,
+    type: 'fact',
+    image: "🤼", 
+    question: "Этого борца помнят не только как спортсмена, но и как капитана милиции. В его честь ежегодно проходит турнир.", 
+    answers: ["Александр Кикинёв", "Шота Нармания", "Игорь Петренко"], 
+    correct: 1,
+    explanation: "Шота Нармания — мастер спорта и капитан милиции, погибший при исполнении."
+  },
+  { 
+    stage: 1,
+    type: 'fact',
+    image: "🏒", 
+    question: "Этот воспитанник жлобинской школы был выбран на драфте НХЛ под 2-м номером!", 
+    answers: ["Виталий Пинчук", "Артём Левшунов", "Егор Бориков"], 
+    correct: 1,
+    explanation: "Артём Левшунов был выбран «Чикаго» под общим 2-м номером на драфте НХЛ."
+  },
+
+  // ЭТАП 2: ТАЙНЫ АРЕН (Фото и логика)
+  { 
+    stage: 2,
+    type: 'fact',
+    image: "🏟️", 
+    question: "На каком стадионе проходят главные футбольные матчи города?", 
+    answers: ["Спартак", "Городской стадион", "Динамо"], 
+    correct: 1,
+    explanation: "Главная площадка для футбола в Жлобине — Городской стадион."
+  },
+  { 
+    stage: 2,
+    type: 'anagram',
+    image: "🔠", 
+    question: "Собери из букв название арены, где тренируются хоккеисты «Металлурга»:", 
+    anagram: "ЛЕДОВЫЙ ДВОРЕЦ",
+    answers: ["ЛЕДОВЫЙ ДВОРЕЦ", "ДВОРЕЦ СПОРТА", "АРЕНА МЕТАЛЛУРГ"], 
+    correct: 0,
+    explanation: "ХК «Металлург-Жлобин» проводит домашние матчи в Ледовом дворце."
+  },
+  { 
+    stage: 2,
+    type: 'fact',
+    image: "🏊", 
+    question: "Какой объект имеет 50-метровые дорожки для плавания?", 
+    answers: ["Аквапарк", "Плавательный бассейн", "Озеро"], 
+    correct: 1,
+    explanation: "В Жлобине есть современный плавательный бассейн с 50-метровыми дорожками."
+  },
+
+  // ЭТАП 3: ДЕТЕКТИВ НА КАРТЕ (Смешанный)
+  { 
+    stage: 3,
+    type: 'fact',
+    image: "🎉", 
+    question: "В каком году Жлобин принимал II Игры стран СНГ?", 
+    answers: ["2021", "2023", "2025"], 
+    correct: 1,
+    explanation: "В 2023 году Жлобин стал одной из площадок II Игр стран СНГ (соревнования по самбо)."
+  },
+  { 
+    stage: 3,
+    type: 'fact',
+    image: "🏆", 
+    question: "Она выиграла 3 золотые медали на Олимпиаде в Сочи и стала Героем Беларуси.", 
+    answers: ["Юлия Нестеренко", "Дарья Домрачева", "Надежда Скардино"], 
+    correct: 1,
+    explanation: "Дарья Домрачева — первая в истории женщина-биатлонистка, выигравшая 3 золота на одной Олимпиаде."
+  },
+  { 
+    stage: 3,
+    type: 'fact',
+    image: "🗺️", 
+    question: "Где по легенде Наполеон спрятал свою золотую карету?", 
+    answers: ["В центре Жлобина", "В заказнике «Смычок»", "На берегу Днепра"], 
+    correct: 1,
+    explanation: "Легенда гласит, что золото Наполеона зарыто в курганах заказника «Смычок»."
+  }
 ];
 
 let currentQuestStep = 0;
 let questScore = 0;
+let questLives = 3; // <--- ДОБАВЛЯЕМ ЖИЗНИ
 
 window.renderQuest = function() {
   if (!questContainer) return;
   
-   // Если квест закончен
+  // Если жизни закончились
+  if (questLives <= 0) {
+    questContainer.innerHTML = `
+      <div style="text-align: center; padding: 20px;">
+        <h3 style="font-size: 2rem; color: #ef4444; margin-bottom: 20px;">💔 Игра окончена</h3>
+        <p style="font-size: 1.2rem; margin-bottom: 30px;">Ты потерял все жизни. Ты не смог восстановить историю города!</p>
+        <button class="btn" onclick="restartQuest()">Попробовать снова</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Если квест закончен
   if (currentQuestStep >= QUEST_DATA.length) {
     let title = "🏆 Победа!";
     let text = `Отличный результат! Ты набрал ${questScore} из ${QUEST_DATA.length} баллов!`;
     let showSecretBtn = false;
 
-    if (questScore === 0) {
-      title = "😢 Попробуй еще раз!";
-      text = "Ты не ответил ни на один вопрос. Изучи карту и возвращайся!";
-    } else if (questScore < 4) {
-      title = "🤔 Неплохо!";
-      text = `Ты набрал ${questScore} из ${QUEST_DATA.length} баллов. Попробуй улучшить результат!`;
-    } else if (questScore >= 6) { // <--- Если набрал 6 и больше
+    if (questScore >= 6) { 
       title = "🌟 Настоящий эксперт!";
       text = `Превосходно! ${questScore} из ${QUEST_DATA.length} баллов. Ты знаешь спорт Жлобина на отлично! Но самое интересное...`;
-      showSecretBtn = true; // <--- Включаем кнопку секрета
+      showSecretBtn = true; 
       
-      // Активируем скрытый маркер
       if (typeof window.revealSecretMarker === 'function') {
         window.revealSecretMarker();
       }
@@ -2696,15 +2794,27 @@ window.renderQuest = function() {
     return;
   }
 
-  // Отрисовка вопроса
   const q = QUEST_DATA[currentQuestStep];
+  const currentStage = q.stage;
+  
+  // Отрисовка жизней и этапа
+  let stageName = currentStage === 1 ? "Знаменитые имена" : currentStage === 2 ? "Тайны арен" : "Детектив на карте";
+  let hearts = '❤️'.repeat(questLives) + '🖤'.repeat(3 - questLives);
+
   questContainer.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 800; color: var(--text-muted);">
+      <div>Этап ${currentStage}: ${stageName}</div>
+      <div style="font-size: 1.2rem;">${hearts}</div>
+    </div>
     <div style="text-align: center; margin-bottom: 20px; font-weight: 800; color: var(--text-muted);">
       Вопрос ${currentQuestStep + 1} из ${QUEST_DATA.length}
     </div>
     <div class="quiz-question">
       <div style="font-size: 5rem; text-align: center; margin-bottom: 15px; line-height: 1;">${q.image}</div>
       <h4 style="text-align: center; font-size: 1.2rem; margin-bottom: 20px;">${q.question}</h4>
+      
+      ${q.type === 'anagram' ? `<div style="text-align:center; font-size:1.5rem; letter-spacing: 5px; color: var(--primary); margin-bottom: 15px; font-weight: 900;">${q.anagram.split('').sort(() => 0.5 - Math.random()).join(' ')}</div>` : ''}
+      
       <div id="questOptions" style="margin-top: 10px;"></div>
     </div>
   `;
@@ -2725,12 +2835,13 @@ window.renderQuest = function() {
       } else {
         opt.classList.add('incorrect');
         allOpts[q.correct].classList.add('correct');
+        questLives--; // <--- ЗАБИРАЕМ ЖИЗНЬ ЗА ОШИБКУ
       }
       
       setTimeout(() => {
         currentQuestStep++;
         renderQuest();
-      }, 1000);
+      }, 1200);
     };
     optionsWrap.appendChild(opt);
   });
@@ -2739,9 +2850,9 @@ window.renderQuest = function() {
 window.restartQuest = function() {
   currentQuestStep = 0;
   questScore = 0;
+  questLives = 3; // Сбрасываем жизни
   renderQuest();
 };
-
 // Запуск при переходе на страницу
 document.querySelectorAll('[data-page-link="quest"]').forEach(link => {
   link.addEventListener('click', () => {
