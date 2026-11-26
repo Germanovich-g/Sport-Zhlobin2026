@@ -167,3 +167,14 @@ body {
 #nextLevelBtn:hover {
   background: #f59e0b;
 }
+/* Яркое золотое оформление для Детектива */
+body { background: radial-gradient(circle at top, #1b2942, #101a2e) !important; color: #f4f7ff; }
+.header { background: #101a2e; border-bottom: 3px solid #ffd700; }
+.btn { background: linear-gradient(135deg, #ffd700, #ff8c00) !important; color: #14213d !important; font-weight: 900; border: none; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+.btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5); }
+.method-detail { background: #1b2942; border: 1px solid #33435f; }
+.method-detail__header { background: #14213d; border-bottom: 2px solid #ffd700; }
+.quiz-option { background: #243654; border-color: #33435f; color: #f4f7ff; }
+.quiz-option:hover { border-color: #ffd700; }
+.quiz-option.correct { background: #064e3b; border-color: #10b981; color: #d1fae5; }
+.quiz-option.incorrect { background: #7f1d1d; border-color: #ef4444; color: #fee2e2; }
