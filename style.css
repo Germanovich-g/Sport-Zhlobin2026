@@ -861,3 +861,21 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 .info-card ul {
   flex-grow: 1; /* Это заставит текст занимать всё доступное пространство */
 }
+/* Бирюзовый стиль для квеста */
+.quiz-question {
+  background: #ffffff !important;
+  border: 2px solid #16b8a6 !important;
+  box-shadow: 0 10px 25px rgba(22, 184, 166, 0.15) !important;
+  border-radius: 20px;
+}
+
+.quiz-option {
+  background: #e6fffa !important;
+  border: 2px solid #16b8a6 !important;
+  color: #0d7f73 !important;
+}
+
+.quiz-option:hover {
+  border-color: #0d7f73 !important;
+  background: #b2f5ea !important;
+}
