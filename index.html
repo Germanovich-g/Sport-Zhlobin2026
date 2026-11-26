@@ -251,8 +251,7 @@
       </p>
 
       <div class="method-tiles" style="max-width: 900px; margin: 0 auto;">
-        <div class="method-tile" onclick="document.querySelector('[data-page-link=\'quest\']').click(); window.scrollTo(0,0);" style="border-bottom-color: #16b8a6;">
-          <div class="method-tile__icon">🗺️</div>
+        <div class="method-tile" onclick="document.getElementById('page-games').style.display='none'; document.getElementById('page-quest').style.display='block'; window.scrollTo(0,0); if(typeof renderQuest === 'function') renderQuest();" style="border-bottom-color: #16b8a6;">
           <div class="method-tile__title">Спортивный маршрут</div>
           <div class="method-tile__count">Пройди квест и найди клад!</div>
         </div>
