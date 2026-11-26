@@ -3094,3 +3094,144 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+// ============================================================
+// СПОРТИВНЫЙ ДЕТЕКТОР ЛЖИ
+// ============================================================
+const DETECTIVE_FACTS = [
+  // Жлобин и Беларусь (Реальные)
+  { text: "Василий Руденков выиграл золото Олимпиады в метании молота.", isTrue: true, expl: "Да, это произошло в 1960 году." },
+  { text: "Артём Левшунов был выбран на драфте НХЛ под 2-м номером.", isTrue: true, expl: "Да, его выбрал клуб «Чикаго»." },
+  { text: "ХК «Металлург-Жлобин» становился чемпионом Беларуси 4 раза.", isTrue: true, expl: "Да, это так." },
+  { text: "Дарья Домрачева выиграла 5 золотых медалей на одной Олимпиаде.", isTrue: false, expl: "Нет, она выиграла 3 золота в Сочи." },
+  { text: "Юлия Нестеренко выиграла золото Олимпиады в беге на 100 метров.", isTrue: true, expl: "Да, в Афинах в 2004 году." },
+  { text: "Виталий Щербо завоевал 6 золотых медалей на одной Олимпиаде.", isTrue: true, expl: "Да, в Барселоне в 1992 году." },
+  { text: "Шота Нармания был чемпионом мира по шахматам.", isTrue: false, expl: "Нет, он был борцом и капитаном милиции." },
+  { text: "Городской стадион в Жлобине вмещает 50 000 зрителей.", isTrue: false, expl: "Нет, его вместимость значительно меньше." },
+  { text: "В Жлобине ежегодно проходит турнир по греко-римской борьбе памяти Шоты Нармания.", isTrue: true, expl: "Да, это правда." },
+  { text: "Жлобин принимал II Игры стран СНГ в 2023 году.", isTrue: true, expl: "Да, там проходили соревнования по самбо." },
+  
+  // Мировые факты (Реальные)
+  { text: "Олимпийские игры в Древней Греции проводились в честь бога Зевса.", isTrue: true, expl: "Да." },
+  { text: "Первый марафонский бег был проведен в 1896 году.", isTrue: true, expl: "Да, на первых современных Олимпийских играх." },
+  { text: "В баскетболе на площадке от одной команды играют 6 человек.", isTrue: false, expl: "Нет, в баскетболе играют 5 на 5." },
+  { text: "Майкл Фелпс — самый титулованный олимпиец в истории (23 золота).", isTrue: true, expl: "Да, это мировой рекорд." },
+  { text: "В футболе матч длится 3 периода по 30 минут.", isTrue: false, expl: "Нет, в футболе 2 тайма по 45 минут." },
+  { text: "Усэйн Болт — олимпийский чемпион в беге на 100 и 200 метров.", isTrue: true, expl: "Да, он многократный чемпион." },
+  { text: "В хоккее на льду одновременно играют 5 полевых игроков и 1 вратарь.", isTrue: true, expl: "Да, по 6 человек от команды." },
+  { text: "Теннисный мяч весит около 1 килограмма.", isTrue: false, expl: "Нет, он весит около 58 граммов." },
+  { text: "Самый высокий баскетболист в истории имел рост более 230 см.", isTrue: true, expl: "Да, Сулейман Али Нашнуш (Иордания) имел рост 232 см." },
+  { text: "Олимпийский флаг имеет 5 колец, символизирующих 5 континентов.", isTrue: true, expl: "Да." },
+  
+  // Выдуманные (Смешные и абсурдные)
+  { text: "Наполеон Бонапарт спрятал свою золотую карету в заказнике «Смычок» под Жлобином.", isTrue: true, expl: "Это легенда, в которую до сих пор верят местные жители!" },
+  { text: "Первые в мире лыжи были сделаны из костей мамонтов.", isTrue: true, expl: "Да, это правда, они были найдены на территории России." },
+  { text: "В Древнем Риме атлеты соревновались в беге в мешках.", isTrue: false, expl: "Нет, это современная забава." },
+  { text: "Боксёрские перчатки изначально делали из кожи динозавров.", isTrue: false, expl: "Нет, динозавры вымерли задолго до появления бокса." },
+  { text: "В волейболе можно касаться мяча 5 раз подряд.", isTrue: false, expl: "Нет, максимально разрешено 3 касания." },
+  { text: "Самый длинный футбольный матч длился более 48 часов.", isTrue: true, expl: "Да, это было в Англии в 2001 году." },
+  { text: "Олимпийские игры отменяли из-за Первой и Второй мировых войн.", isTrue: true, expl: "Да, игры 1916, 1940 и 1944 годов были отменены." },
+  { text: "В гандболе разрешено делать 5 шагов с мячом.", isTrue: false, expl: "Нет, максимум 3 шага." },
+  { text: "Прыжки в длину когда-то были частью соревнований по плаванию.", isTrue: false, expl: "Нет, это абсурд." },
+  { text: "В фигурном катании есть элемент «тройной тулуп».", isTrue: true, expl: "Да, это один из прыжков." },
+  { text: "В Древней Греции атлеты выступали на Олимпиаде полностью обнаженными.", isTrue: true, expl: "Да, это исторический факт." },
+  { text: "В футболе вратарь может забить гол рукой.", isTrue: false, expl: "Нет, рукой забивать нельзя." },
+  { text: "В 1980 году Олимпиада проходила в Москве.", isTrue: true, expl: "Да, это правда." },
+  { text: "Сноуборд появился раньше, чем горные лыжи.", isTrue: false, expl: "Нет, горные лыжи появились гораздо раньше." },
+  { text: "В настольном теннисе мяч может развивать скорость более 100 км/ч.", isTrue: true, expl: "Да, это правда." },
+  { text: "В баскетболе за бросок из-за трехочковой линии дают 4 очка.", isTrue: false, expl: "Нет, дают 3 очка." },
+  { text: "Марафонская дистанция составляет ровно 42 километра.", isTrue: false, expl: "Нет, 42 километра 195 метров." },
+  { text: "В Древней Греции победителей Олимпиад награждали оливковым венком.", isTrue: true, expl: "Да." },
+  { text: "В хоккее шайба весит около 2 килограммов.", isTrue: false, expl: "Нет, шайба весит около 160 граммов." },
+  { text: "В спортивной гимнастике есть упражнения на коне.", isTrue: true, expl: "Да, конь — это снаряд." },
+  { text: "Плавание брассом — самый быстрый стиль плавания.", isTrue: false, expl: "Нет, самый быстрый — вольный стиль (кроль)." }
+];
+
+let detectiveTimer = null;
+let detectiveTimeLeft = 120;
+let detectiveScore = 0;
+let currentFact = null;
+let usedFacts = [];
+
+window.startDetector = function() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'flex';
+  
+  detectiveTimeLeft = 120;
+  detectiveScore = 0;
+  usedFacts = [];
+  
+  document.getElementById('detectiveTime').textContent = detectiveTimeLeft;
+  document.getElementById('detectiveScore').textContent = detectiveScore;
+  document.getElementById('explanationText').textContent = '';
+  
+  nextFact();
+  
+  if (detectiveTimer) clearInterval(detectiveTimer);
+  detectiveTimer = setInterval(() => {
+    detectiveTimeLeft--;
+    document.getElementById('detectiveTime').textContent = detectiveTimeLeft;
+    if (detectiveTimeLeft <= 0) endDetector();
+  }, 1000);
+};
+
+function nextFact() {
+  const factCard = document.getElementById('factText');
+  const explText = document.getElementById('explanationText');
+  const btns = document.getElementById('answerBtns');
+  
+  factCard.className = 'fact-card';
+  factCard.style.display = 'flex';
+  explText.style.display = 'none';
+  btns.style.display = 'flex';
+  
+  // Выбираем случайный факт, который еще не использовали
+  let availableFacts = DETECTIVE_FACTS.filter(f => !usedFacts.includes(f));
+  if (availableFacts.length === 0) {
+    usedFacts = [];
+    availableFacts = DETECTIVE_FACTS;
+  }
+  
+  currentFact = availableFacts[Math.floor(Math.random() * availableFacts.length)];
+  usedFacts.push(currentFact);
+  
+  factCard.textContent = currentFact.text;
+}
+
+window.checkFact = function(userAnswer) {
+  const factCard = document.getElementById('factText');
+  const explText = document.getElementById('explanationText');
+  const btns = document.getElementById('answerBtns');
+  
+  btns.style.display = 'none';
+  explText.style.display = 'block';
+  
+  if (userAnswer === currentFact.isTrue) {
+    factCard.classList.add('correct');
+    detectiveScore++;
+    document.getElementById('detectiveScore').textContent = detectiveScore;
+    explText.innerHTML = `✅ <strong>Верно!</strong> ${currentFact.expl}`;
+  } else {
+    factCard.classList.add('incorrect');
+    explText.innerHTML = `❌ <strong>Ошибка!</strong> ${currentFact.expl}`;
+  }
+  
+  setTimeout(() => {
+    if (detectiveTimeLeft > 0) nextFact();
+  }, 2500);
+};
+
+function endDetector() {
+  clearInterval(detectiveTimer);
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'block';
+  
+  document.getElementById('finalScore').textContent = detectiveScore;
+  
+  let rank = "Новичок";
+  if (detectiveScore >= 15) rank = "Настоящий эксперт!";
+  else if (detectiveScore >= 10) rank = "Хороший результат!";
+  else if (detectiveScore >= 5) rank = "Неплохо, но можно лучше.";
+  
+  document.getElementById('finalRank').textContent = rank;
+}
