@@ -5,7 +5,7 @@ document.querySelectorAll('[data-page-link]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const page = link.dataset.pageLink;
-        ['home', 'students', 'method', 'quiz', 'quest'].forEach(p => {
+        ['home', 'students', 'method', 'quiz', 'quest', 'games'].forEach(p => {
       const el = document.getElementById(`page-${p}`);
       if (el) el.style.display = 'none';
     });
