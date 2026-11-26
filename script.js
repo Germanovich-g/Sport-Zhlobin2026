@@ -2860,7 +2860,7 @@ window.renderQuest = function() {
     const opt = document.createElement('div');
     opt.className = 'quiz-option';
     opt.textContent = ans;
-        opt.onclick = () => {
+    opt.onclick = () => {
       if (opt.dataset.locked) return;
       const allOpts = optionsWrap.querySelectorAll('.quiz-option');
       allOpts.forEach(o => o.dataset.locked = '1');
@@ -2871,23 +2871,17 @@ window.renderQuest = function() {
       } else {
         opt.classList.add('incorrect');
         allOpts[q.correct].classList.add('correct');
-        questLives--;
+        questLives--; // <--- ЗАБИРАЕМ ЖИЗНЬ ЗА ОШИБКУ
       }
-
-      // ПОКАЗЫВАЕМ ПОДСКАЗКУ
-      const explDiv = document.createElement('div');
-      explDiv.className = 'quiz-explanation';
-      explDiv.innerHTML = `<strong>💡 Объяснение:</strong> ${q.explanation}`;
-      optionsWrap.appendChild(explDiv);
       
       setTimeout(() => {
         currentQuestStep++;
         renderQuest();
-      }, 3000);
+      }, 1200);
     };
     optionsWrap.appendChild(opt);
   });
-});
+};
 
 window.restartQuest = function() {
   currentQuestStep = 0;
