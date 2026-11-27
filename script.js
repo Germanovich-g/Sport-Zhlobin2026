@@ -1510,7 +1510,7 @@ window.renderStudentSubDetail = function(topicId, subId) {
   const sub = topic.subtopics.find(s => s.id === subId);
   if (!sub) return;
 
-  const tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения']; tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения', 'Схема'];
+  const tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения']; 
   const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Типичные ошибки': '⚠️', 'Упражнения': '💪' };
   const isDone = isChallengeDone(topicId, subId);
 
@@ -1520,7 +1520,6 @@ window.renderStudentSubDetail = function(topicId, subId) {
     'Как выполнять': sub.content['Как выполнять'] || '<p>Информация скоро появится.</p>',
     'Типичные ошибки': sub.content['Типичные ошибки'] || '<p>Информация скоро появится.</p>',
     'Упражнения': sub.content['Упражнения'] || '<p>Информация скоро появится.</p>',
-    'Схема': schemeContent
   };
 
   studentContainer.innerHTML = `
