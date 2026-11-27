@@ -75,7 +75,7 @@ const DATA = [
   { id:'spartakiada', layer:'events', title:'Спартакиада Союзного государства', address:'2018', text:'Старт соревнований.', lat:52.8860, lng:30.0290, photo:'spartakiada.jpg', link: 'spartakiada.html' },
   { id:'metallurg', layer:'teams', title:'ХК «Металлург-Жлобин»', address:'Хоккейный клуб', text:'Главная хоккейная команда города.', lat:52.8920, lng:30.0300, photo:'bg-events.jpg', link: 'metallurg.html' },
   { id:'iskra', layer:'teams', title:'ВК «Искра»', address:'Волейбольный клуб', text:'Женская волейбольная команда.', lat:52.8925, lng:30.0310, photo:'iskra.jpg', link: 'iskra.html' },
-  { id: 'secret', layer: 'events', title: '🌟 Секретная точка', address: 'Заказник «Смычок»', text: 'Вы нашли скрытое место! Говорят, именно здесь Наполеон спрятал свою золотую карету...', lat: 52.8800, lng: 30.0500, photo: 'secret.jpg', hidden: true, link: '' },
+  { id: 'secret', layer: 'events', title: '🌟 Секретная точка', address: 'Заказник «Смычок»', text: 'Вы нашли скрытое место! Говорят, именно здесь Наполеон спрятал свою золотую карету...', lat: 52.8800, lng: 30.0500, photo: 'secret.jpg', hidden: true, link: 'secret.html' },
 ];
 
 const LAYER_EMOJI = { objects: '🏟️', legends: '🏆', youth: '⭐', events: '🎉', teams: '🛡️' };
@@ -2769,15 +2769,6 @@ const QUEST_DATA = [
     correct: 1,
     explanation: "Дарья Домрачева — первая в истории женщина-биатлонистка, выигравшая 3 золота на одной Олимпиаде."
   },
-  { 
-    stage: 3,
-    type: 'fact',
-    image: "🗺️", 
-    question: "Где по легенде Наполеон спрятал свою золотую карету?", 
-    answers: ["В центре Жлобина", "В заказнике «Смычок»", "На берегу Днепра"], 
-    correct: 1,
-    explanation: "Легенда гласит, что золото Наполеона зарыто в курганах заказника «Смычок»."
-  }
 ];
 
 let currentQuestStep = 0;
