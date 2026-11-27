@@ -941,3 +941,7 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
 #about .info-card ul {
   padding-left: 20px;
 }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
