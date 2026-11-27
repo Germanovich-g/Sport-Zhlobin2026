@@ -2873,11 +2873,14 @@ window.renderQuest = function() {
         allOpts[q.correct].classList.add('correct');
         questLives--; // <--- ЗАБИРАЕМ ЖИЗНЬ ЗА ОШИБКУ
       }
-      
+            const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      explDiv.innerHTML = `<strong>💡 Объяснение:</strong> ${q.explanation}`;
+      optionsWrap.appendChild(explDiv);
       setTimeout(() => {
         currentQuestStep++;
         renderQuest();
-      }, 1200);
+      }, 3000);
     };
     optionsWrap.appendChild(opt);
   });
