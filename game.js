@@ -112,7 +112,10 @@ function initLevel() {
   levelTitleEl.textContent = level.title;
   caseTextEl.textContent = level.intro;
   progressEl.textContent = `Улики: 0 / ${level.evidenceCount}`;
-  resultMessage.textContent = "";
+  resultMessage.innerHTML = "";
+  resultMessage.classList.remove('show');
+  resultMessage.style.background = "transparent";
+  resultMessage.style.border = "none";
   nextLevelBtn.style.display = 'none';
   
   evidenceBoardEl.innerHTML = '';
@@ -153,8 +156,13 @@ function checkAnswer(selectedIndex, btn) {
   
   if (selectedIndex === question.correct) {
     btn.classList.add('correct');
-    resultMessage.textContent = "✅ Верно! Улика найдена!";
-    resultMessage.style.color = "#22c55e";
+    
+    // Показываем зеленую подсказку "Верно"
+    resultMessage.innerHTML = "✅ Верно! Улика найдена!";
+    resultMessage.classList.add('show');
+    resultMessage.style.background = "#dcfce7";
+    resultMessage.style.color = "#166534";
+    resultMessage.style.borderLeft = "5px solid #22c55e";
     
     const evidenceEl = document.getElementById(`evidence-${collectedEvidence}`);
     if (evidenceEl) {
@@ -174,24 +182,31 @@ function checkAnswer(selectedIndex, btn) {
           loadQuestion();
         }
       }
-    }, 1000);
+    }, 1500);
     
   } else {
     btn.classList.add('incorrect');
-    resultMessage.innerHTML = `❌ Ошибка!<br><span style="font-size: 0.9rem; font-weight: normal; color: #cbd5e1; margin-top: 5px; display: block;">${question.explanation}</span>`;
-    resultMessage.style.color = "#ef4444";
+    
+    // Показываем красную подсказку с объяснением
+    resultMessage.innerHTML = `❌ Ошибка!<br><span style="font-size: 0.95rem; font-weight: normal; margin-top: 5px; display: block;">${question.explanation}</span>`;
+    resultMessage.classList.add('show');
+    resultMessage.style.background = "#fee2e2";
+    resultMessage.style.color = "#991b1b";
+    resultMessage.style.borderLeft = "5px solid #ef4444";
     
     setTimeout(() => {
       btn.classList.remove('incorrect');
       document.querySelectorAll('.option-btn').forEach(b => b.disabled = false);
-      setTimeout(() => { resultMessage.innerHTML = ""; }, 4000);
-    }, 500);
+    }, 800);
   }
 }
 
 function finishLevel() {
-  resultMessage.textContent = "🕵️‍♂️ Дело раскрыто! Вы собрали все улики!";
-  resultMessage.style.color = "#fbbf24";
+  resultMessage.innerHTML = "🕵️‍♂️ Дело раскрыто! Вы собрали все улики!";
+  resultMessage.classList.add('show');
+  resultMessage.style.background = "#fef3c7";
+  resultMessage.style.color = "#92400e";
+  resultMessage.style.borderLeft = "5px solid #f59e0b";
   
   if (currentLevel < levels.length - 1) {
     nextLevelBtn.style.display = 'block';
