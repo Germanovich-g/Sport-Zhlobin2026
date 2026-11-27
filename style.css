@@ -215,7 +215,7 @@ body:has(.sport-martial) { background: linear-gradient(rgba(245, 248, 255, 0.6),
 body:has(.sport-volleyball) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat; }
 [data-theme="dark"] body:has(.sport-volleyball) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-volleyball.jpg') center/cover fixed no-repeat; }
 
-body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hammer.jpg') center/cover fixed no-repeat; }
+body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), rgba(245, 248, 255, 0.6)), url('img/bg-hammer.jpeg') center/cover fixed no-repeat; }
 [data-theme="dark"] body:has(.sport-hammer) { background: linear-gradient(rgba(16, 26, 46, 0.8), rgba(16, 26, 46, 0.8)), url('img/bg-hammer.jpg') center/cover fixed no-repeat; }
 
 /* ============================================================
