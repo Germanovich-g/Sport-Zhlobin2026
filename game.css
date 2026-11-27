@@ -61,3 +61,28 @@ body {
   background: #2a3f63 !important;
   transform: translateX(5px) !important;
 }
+/* Принудительные стили для кнопок Детектива */
+.question-area button.correct, .option-btn.correct {
+  background-color: #22c55e !important;
+  color: #ffffff !important;
+  border-color: #16a34a !important;
+  font-weight: 800 !important;
+}
+
+.question-area button.incorrect, .option-btn.incorrect {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+/* Стили для подсказки (объяснения) */
+.explanation-text, .case-text + div, div[id="explanation"] {
+  background: #fffbeb !important;
+  color: #78350f !important;
+  border-left: 5px solid #f59e0b !important;
+  padding: 15px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  margin-top: 20px !important;
+}
