@@ -945,3 +945,21 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+/* Основа для фона страниц */
+body {
+  position: relative;
+  background-color: #f5f8ff;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  opacity: 0.15; /* Фон будет бледным, чтобы не мешать тексту */
+  filter: blur(3px); /* Легкое размытие */
+  pointer-events: none;
+}
