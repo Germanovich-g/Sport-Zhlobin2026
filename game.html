@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Спортивный детектив | Жлобин-Спорт</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="game.css">
-      <style>
-    body { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important; color: #14213d !important; }
+  <style>
+    body { 
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important; 
+      color: #14213d !important; 
+      font-family: 'Montserrat', sans-serif; 
+    }
+    
     .detective-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; }
-    .detective-header h1 { color: #0284c7 !important; font-size: 2.5rem; }
-    .detective-header p { color: #0369a1 !important; }
-    .back-btn { color: #0284c7 !important; font-weight: 700; }
+    .detective-header { text-align: center; margin-bottom: 40px; }
+    .detective-header h1 { font-size: 2.5rem; color: #0284c7 !important; margin-bottom: 10px; }
+    .detective-header p { color: #0369a1 !important; font-size: 1.1rem; }
+    .back-btn { color: #0284c7 !important; font-weight: 700; text-decoration: none; }
     
     .case-container { 
       background: #ffffff !important; 
@@ -20,99 +25,71 @@
       padding: 30px; 
       box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15); 
     }
-    .case-info { color: #0284c7 !important; border-bottom: 2px solid #bae6fd !important; }
-    .case-text { color: #0369a1 !important; font-style: italic; }
+    .case-info { 
+      display: flex; justify-content: space-between; 
+      color: #0284c7 !important; border-bottom: 2px solid #bae6fd !important; 
+      padding-bottom: 15px; margin-bottom: 20px; font-weight: 700; 
+    }
+    .case-text { color: #0369a1 !important; font-style: italic; font-size: 1.1rem; margin-bottom: 20px; }
+    
+    .evidence-board { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+    .evidence-item {
+      width: 60px; height: 60px; border: 2px dashed #7dd3fc; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: #0284c7; background: #f0f9ff;
+    }
+    .evidence-item.active {
+      border-style: solid; border-color: #22c55e; background: #dcfce7; color: #166534;
+    }
     
     .question-area { 
       background: #f0f9ff !important; 
       border: 1px solid #bae6fd !important; 
-      border-radius: 16px; 
-      padding: 25px; 
+      border-radius: 16px; padding: 25px; 
     }
-    .question-area h2 { color: #0c4a6e !important; }
+    .question-area h2 { color: #0c4a6e !important; font-size: 1.3rem; margin-bottom: 20px; }
     
-    .question-area button, .option-btn { 
+    .option-btn { 
       background: #ffffff !important; 
       border: 2px solid #7dd3fc !important; 
       color: #0c4a6e !important; 
       padding: 15px 20px !important; 
       border-radius: 12px !important; 
-      text-align: left !important; 
-      width: 100% !important; 
+      text-align: left !important; width: 100% !important; 
       margin-bottom: 12px !important; 
-      font-weight: 600 !important; 
-      cursor: pointer; 
-      transition: 0.2s; 
+      font-weight: 600 !important; font-size: 1rem !important;
+      cursor: pointer; transition: 0.2s; 
+    }
+    .option-btn:hover { 
+      border-color: #0284c7 !important; background: #e0f2fe !important; 
+      transform: translateX(5px) !important; 
     }
     
-    .question-area button:hover, .option-btn:hover { 
-      border-color: #0284c7 !important; 
-      background: #e0f2fe !important; 
-      transform: translateX(5px) !important;
-    }
-    
-    .evidence-slot { 
-      background: #ffffff !important; 
-      border: 2px dashed #7dd3fc !important; 
-      color: #0284c7 !important; 
-    }
-        
-      .option-btn.correct, .option.correct {
-      background-color: #22c55e !important;
-      color: #ffffff !important;
-      border-color: #16a34a !important;
-      font-weight: 800;
-    }
-
-    .option-btn.incorrect, .option.incorrect {
-      background-color: #ef4444 !important;
-      color: #ffffff !important;
-      border-color: #dc2626 !important;
-      font-weight: 800;
-    }
-        
-        .case-text + div, 
-    .explanation-text, 
-    p[style*="color: #dbe6f7"] { 
-      background: #ef4444 !important; 
+    /* Правильный ответ */
+    .option-btn.correct { 
+      background-color: #22c55e !important; 
       color: #ffffff !important; 
-      border-left: 5px solid #991b1b !important; 
-      padding: 15px !important; 
-      border-radius: 8px !important; 
-      font-weight: 800 !important;
-      margin-top: 20px !important;
-      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important;
-    }
-    /* Стили для правильного ответа (зеленый) */
-    .option-btn.correct, .option.correct {
-      background-color: #22c55e !important;
-      color: #ffffff !important;
-      border-color: #16a34a !important;
-      font-weight: 800;
-    }
-
-    /* Стили для неправильного ответа (красный) */
-    .option-btn.incorrect, .option.incorrect {
-      background-color: #ef4444 !important;
-      color: #ffffff !important;
-      border-color: #dc2626 !important;
-      font-weight: 800;
+      border-color: #16a34a !important; 
+      font-weight: 800 !important; 
     }
     
-    /* Подсказка (объяснение) внизу */
-    .case-text + div, 
-    .explanation-text, 
-    p[style*="color: #dbe6f7"] { 
-      background: #ef4444 !important; 
+    /* Неправильный ответ */
+    .option-btn.incorrect { 
+      background-color: #ef4444 !important; 
       color: #ffffff !important; 
-      border-left: 5px solid #991b1b !important; 
-      padding: 15px !important; 
-      border-radius: 8px !important; 
-      font-weight: 800 !important;
-      margin-top: 20px !important;
-      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important;
+      border-color: #dc2626 !important; 
+      font-weight: 800 !important; 
     }
-</style>
+    
+    /* Подсказка (как в квесте) */
+    #resultMessage { 
+      margin-top: 20px; font-weight: 700; padding: 15px; border-radius: 8px;
+      display: none; 
+    }
+    #resultMessage.show { display: block; }
+    
+    #nextLevelBtn { margin-top: 20px; width: 100%; font-size: 1.1rem; padding: 15px; background: #0284c7 !important; }
+  </style>
 </head>
 <body>
   <div class="detective-page">
@@ -129,22 +106,15 @@
         <span id="progress">Улики: 0 / 3</span>
       </div>
 
-      <div class="case-text" id="caseText">
-        <!-- Текст завязки будет здесь -->
-      </div>
-
-      <div class="evidence-board" id="evidenceBoard">
-        <!-- Улики будут появляться здесь -->
-      </div>
+      <div class="case-text" id="caseText"></div>
+      <div class="evidence-board" id="evidenceBoard"></div>
 
       <div class="question-area">
         <h2 id="questionText">Вопрос</h2>
-        <div class="options" id="optionsContainer">
-          <!-- Варианты ответов -->
-        </div>
+        <div id="optionsContainer"></div>
       </div>
 
-      <div class="result-message" id="resultMessage"></div>
+      <div id="resultMessage"></div>
       <button id="nextLevelBtn" class="btn" style="display: none;">Следующее дело →</button>
     </div>
   </div>
