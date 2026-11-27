@@ -140,9 +140,20 @@ function revealSecretMarker() {
   // 3. Показываем только секретную точку, центрируем и открываем попап
   const secret = markerMap.get('secret');
   if (secret && map) {
-    secret.marker.addTo(map);
+        secret.marker.addTo(map);
     map.setView([secret.data.lat, secret.data.lng], 14); 
-    secret.marker.openPopup(); 
+    
+    // Создаем НОВЫЙ попап с кнопкой-ссылкой
+    const popupHTML = `
+      <div style="min-width:200px; text-align: center;">
+        <h4 style="margin-bottom: 10px; color: #d97706;">🌟 Секретная точка</h4>
+        <p style="margin-bottom: 15px; font-size: 0.9rem;">Вы нашли скрытое место! Говорят, здесь Наполеон спрятал свою золотую карету...</p>
+        <a href="secret.html" style="display:block; background: #f59e0b; color: #fff; text-align:center; padding:10px; border-radius: 8px; text-decoration:none; font-weight:bold;">Узнать тайну клада</a>
+      </div>
+    `;
+    
+    // Привязываем попап к маркеру и открываем его
+    secret.marker.bindPopup(popupHTML).openPopup();
   }
 }
 document.querySelectorAll('.chip[data-layer]').forEach(btn => {
