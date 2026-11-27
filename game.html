@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Спортивный детектив | Жлобин-Спорт</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="game.css">
-  <style>
-    body { 
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important; 
-      color: #14213d !important; 
-    }
+      <style>
+    body { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important; color: #14213d !important; }
     .detective-page { padding: 120px 20px 60px; max-width: 900px; margin: 0 auto; }
     .detective-header h1 { color: #0284c7 !important; font-size: 2.5rem; }
     .detective-header p { color: #0369a1 !important; }
-    .back-btn { color: #0284c7 !important; font-weight: 700; text-decoration: none; }
+    .back-btn { color: #0284c7 !important; font-weight: 700; }
     
     .case-container { 
       background: #ffffff !important; 
@@ -34,7 +31,6 @@
     }
     .question-area h2 { color: #0c4a6e !important; }
     
-    /* Стили для кнопок */
     .question-area button, .option-btn { 
       background: #ffffff !important; 
       border: 2px solid #7dd3fc !important; 
@@ -48,43 +44,11 @@
       cursor: pointer; 
       transition: 0.2s; 
     }
+    
     .question-area button:hover, .option-btn:hover { 
       border-color: #0284c7 !important; 
       background: #e0f2fe !important; 
       transform: translateX(5px) !important;
-    }
-    
-    /* ПРИНУДИТЕЛЬНОЕ ВЫДЕЛЕНИЕ ПРАВИЛЬНОГО ОТВЕТА */
-    .question-area button.correct, .option-btn.correct, .option.correct {
-      background-color: #22c55e !important; 
-      color: #ffffff !important; 
-      border-color: #16a34a !important;
-      font-weight: 800 !important;
-    }
-    
-    /* ПРИНУДИТЕЛЬНОЕ ВЫДЕЛЕНИЕ НЕПРАВИЛЬНОГО ОТВЕТА */
-    .question-area button.incorrect, .option-btn.incorrect, .option.incorrect {
-      background-color: #ef4444 !important; 
-      color: #ffffff !important; 
-      border-color: #dc2626 !important;
-      font-weight: 800 !important;
-    }
-    
-    /* Подсказка (как в квесте) */
-    .case-text + div, 
-    .explanation-text, 
-    p[style*="color: #dbe6f7"],
-    div[id="explanation"], 
-    div[class*="explanation"] {
-      background: #fffbeb !important; 
-      color: #78350f !important; 
-      border-left: 5px solid #f59e0b !important; 
-      padding: 15px !important; 
-      border-radius: 8px !important; 
-      font-weight: 700 !important;
-      margin-top: 20px !important;
-      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.15) !important;
-      display: block !important;
     }
     
     .evidence-slot { 
@@ -92,14 +56,70 @@
       border: 2px dashed #7dd3fc !important; 
       color: #0284c7 !important; 
     }
-  </style>
+        
+      .option-btn.correct, .option.correct {
+      background-color: #22c55e !important;
+      color: #ffffff !important;
+      border-color: #16a34a !important;
+      font-weight: 800;
+    }
+
+    .option-btn.incorrect, .option.incorrect {
+      background-color: #ef4444 !important;
+      color: #ffffff !important;
+      border-color: #dc2626 !important;
+      font-weight: 800;
+    }
+        
+        .case-text + div, 
+    .explanation-text, 
+    p[style*="color: #dbe6f7"] { 
+      background: #ef4444 !important; 
+      color: #ffffff !important; 
+      border-left: 5px solid #991b1b !important; 
+      padding: 15px !important; 
+      border-radius: 8px !important; 
+      font-weight: 800 !important;
+      margin-top: 20px !important;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important;
+    }
+    /* Стили для правильного ответа (зеленый) */
+    .option-btn.correct, .option.correct {
+      background-color: #22c55e !important;
+      color: #ffffff !important;
+      border-color: #16a34a !important;
+      font-weight: 800;
+    }
+
+    /* Стили для неправильного ответа (красный) */
+    .option-btn.incorrect, .option.incorrect {
+      background-color: #ef4444 !important;
+      color: #ffffff !important;
+      border-color: #dc2626 !important;
+      font-weight: 800;
+    }
+    
+    /* Подсказка (объяснение) внизу */
+    .case-text + div, 
+    .explanation-text, 
+    p[style*="color: #dbe6f7"] { 
+      background: #ef4444 !important; 
+      color: #ffffff !important; 
+      border-left: 5px solid #991b1b !important; 
+      padding: 15px !important; 
+      border-radius: 8px !important; 
+      font-weight: 800 !important;
+      margin-top: 20px !important;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important;
+    }
+</style>
 </head>
 <body>
   <div class="detective-page">
     <a href="index.html" class="back-btn">← На главную</a>
-
+    
     <div class="detective-header">
-      <h1>🕵️ Спортивный детектив</h1>
+      <h1>🕵️‍♂️ Спортивный детектив</h1>
       <p>Тайны белорусского золота</p>
     </div>
 
@@ -120,9 +140,12 @@
       <div class="question-area">
         <h2 id="questionText">Вопрос</h2>
         <div class="options" id="optionsContainer">
-          <!-- Варианты ответов будут здесь -->
+          <!-- Варианты ответов -->
         </div>
       </div>
+
+      <div class="result-message" id="resultMessage"></div>
+      <button id="nextLevelBtn" class="btn" style="display: none;">Следующее дело →</button>
     </div>
   </div>
 
