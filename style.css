@@ -879,3 +879,17 @@ body:has(.sport-hammer) { background: linear-gradient(rgba(245, 248, 255, 0.6), 
   border-color: #0d7f73 !important;
   background: #b2f5ea !important;
 }
+/* Яркое выделение правильного и неправильного ответа в квесте */
+.quiz-option.correct {
+  background-color: #22c55e !important; /* Ярко-зеленый */
+  color: #ffffff !important;
+  border-color: #16a34a !important;
+  font-weight: 800;
+}
+
+.quiz-option.incorrect {
+  background-color: #ef4444 !important; /* Ярко-красный */
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+  font-weight: 800;
+}
