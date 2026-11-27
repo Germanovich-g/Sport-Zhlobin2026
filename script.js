@@ -3211,3 +3211,48 @@ function endDetector() {
   
   document.getElementById('finalRank').textContent = rank;
 }
+// ============================================================
+// АВТОМАТИЧЕСКАЯ УСТАНОВКА ФОНА ДЛЯ СТРАНИЦ
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Определяем имя текущей страницы (например, "stadium")
+  const path = window.location.pathname;
+  const pageName = path.substring(path.lastIndexOf('/') + 1).replace('.html', '');
+  
+  // Список страниц и их фоновых картинок
+  const pageBackgrounds = {
+    // Объекты
+    'stadium': 'stadionfon.jpg',
+    'led': 'led.jpg',
+    'dvor': 'dvor.jpg',
+    'pool': 'pool.jpg',
+    'rowing': 'greb.jpg',
+    'ski-track': 'ski-track.jpg',
+    'sdyushor': 'sdyushor..jpg',
+    
+    // Команды (новые фото)
+    'metallurg': 'metalyrefon.jpg',
+    'iskra': 'iskrafon.jpg',
+    
+    // События (новые фото)
+    'cis-games': 'igrufon.jpg',
+    'narmania-event': 'shotafon.jpg',
+    'spartakiada': 'spartakiadafon.jpg',
+    
+    // Руденков (новое фото)
+    'rudenkov': 'rudenkovfon.jpg'
+  };
+
+  // Если для текущей страницы есть фон, применяем его
+  const bgImage = pageBackgrounds[pageName];
+  
+  if (bgImage) {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      body::before {
+        background-image: url('${bgImage}') !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+});
