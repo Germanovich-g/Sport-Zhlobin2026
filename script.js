@@ -1510,33 +1510,9 @@ window.renderStudentSubDetail = function(topicId, subId) {
   const sub = topic.subtopics.find(s => s.id === subId);
   if (!sub) return;
 
-  const tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения', 'Схема'];
-  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Типичные ошибки': '⚠️', 'Упражнения': '💪', 'Схема': '📐' };
+  const tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения']; tabs = ['Теория', 'Как выполнять', 'Типичные ошибки', 'Упражнения', 'Схема'];
+  const tabEmoji = { 'Теория': '📖', 'Как выполнять': '📝', 'Типичные ошибки': '⚠️', 'Упражнения': '💪' };
   const isDone = isChallengeDone(topicId, subId);
-
-  // Содержимое вкладки «Схема»
-    let schemeContent = '';
-  if (sub.content && sub.content['Как выполнять']) {
-    // Берем текст инструкции, убираем HTML-теги и делим на шаги
-    const steps = sub.content['Как выполнять'].replace(/<[^>]*>?/gm, '').split('. ').filter(s => s.trim().length > 5);
-    
-    schemeContent = `
-      <div style="background: var(--bg-alt); padding: 25px; border-radius: 16px; border: 2px dashed var(--primary);">
-        <h4 style="text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.2rem;">📐 Пошаговая схема выполнения</h4>
-        <div style="display: flex; flex-direction: column; gap: 15px;">
-          ${steps.map((step, i) => `
-            <div style="display: flex; align-items: flex-start; gap: 15px; background: var(--card); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-              <div style="background: var(--accent); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; flex-shrink: 0;">${i + 1}</div>
-              <p style="margin: 0; font-size: 1rem; color: var(--text); line-height: 1.5;">${step.trim()}.</p>
-            </div>
-          `).join('')}
-        </div>
-        <p style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);">💡 Следи за осанкой и выполняй упражнения после разминки!</p>
-      </div>
-    `;
-  } else {
-    schemeContent = `<p style="color: var(--text-muted); text-align: center;">Схема скоро появится</p>`;
-  }
 
   // Содержимое вкладок
   const contentMap = {
